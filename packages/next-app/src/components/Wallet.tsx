@@ -1,6 +1,19 @@
 import { Button } from "@/components/Button";
 import { useConnect, useNetwork } from "wagmi";
-import { Box, Text, HStack } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  HStack,
+  Modal,
+  Button as ChakraButton,
+  useDisclosure,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 
 interface WalletProps {
   isConnected: boolean;
@@ -8,10 +21,11 @@ interface WalletProps {
 }
 
 export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
-  const [{ data: connectData, error: connectError }, connect] = useConnect();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ data, error, loading }, switchNetwork] = useNetwork();
+  const [{ data: connectData, error: connectError }, connect] = useConnect();
 
-  if (isConnected && !isUnsupported)
+  if (isConnected && !isUnsupported) {
     return (
       <Box w="100%" aling="center">
         <Text
@@ -28,7 +42,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
         </Text>
       </Box>
     );
-  else if (isConnected && isUnsupported)
+  } else if (isConnected && isUnsupported) {
     return (
       <div>
         {switchNetwork &&
@@ -37,12 +51,24 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           )}
       </div>
     );
+  }
 
   return (
     <HStack spacing="24px">
-      {connectData.connectors.map((x) => (
-        <Button key={x.id} onClick={() => connect(x)} label={x.name} />
-      ))}
+      <Button onClick={onOpen} label="Connect Wallet" />
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent pb="5">
+          <ModalHeader>Connect your wallet</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {connectData.connectors.map((x) => (
+              <Button key={x.id} onClick={() => connect(x)} label={x.name} />
+            ))}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
 
       {connectError && <div>{connectError?.message ?? "Failed to connect"}</div>}
     </HStack>
