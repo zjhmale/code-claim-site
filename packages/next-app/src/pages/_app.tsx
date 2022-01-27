@@ -8,7 +8,7 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 import type { AppProps } from "next/app";
-import { providers } from "ethers";
+import ethers from "ethers";
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || "localhost";
@@ -50,12 +50,14 @@ type GetProviderArgs = {
 
 // The following is a fix to get localhost provider working. Ref: https://github.com/tmm/wagmi/issues/71
 const provider = ({ chainId, connector }: GetProviderArgs) => {
-  console.log("getting provider", chainId);
+  console.log("getting provider", chainId, chainName);
   if (chainName.toLowerCase().trim() === "localhost") {
     const chain = connector?.chains.find((x: any) => x.id == 31337)?.rpcUrls[0];
-    return new providers.JsonRpcProvider(chain);
+    return new ethers.providers.JsonRpcProvider(chain);
   }
-  return providers.getDefaultProvider(chainId);
+  return ethers.getDefaultProvider(chainId, {
+    infura: infuraId,
+  });
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
