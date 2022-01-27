@@ -51,13 +51,26 @@ type GetProviderArgs = {
 // The following is a fix to get localhost provider working. Ref: https://github.com/tmm/wagmi/issues/71
 const provider = ({ chainId, connector }: GetProviderArgs) => {
   console.log("getting provider", chainId, chainName);
-  if (chainName.toLowerCase().trim() === "localhost") {
-    const chain = connector?.chains.find((x: any) => x.id == 31337)?.rpcUrls[0];
-    return new ethers.providers.JsonRpcProvider(chain);
+
+  switch (chainName.toLowerCase().trim()) {
+    case "localhost":
+      const localRpcUrl = connector?.chains.find((x: any) => x.id == 31337)
+        ?.rpcUrls[0];
+      return new ethers.providers.JsonRpcProvider(localRpcUrl);
+    case "rinkeby":
+      return ethers.getDefaultProvider(chain.rinkeby.id, {
+        infura: infuraId,
+      });
+    case "mainnet":
+      return ethers.getDefaultProvider(chain.mainnet.id, {
+        infura: infuraId,
+      });
+    default:
+      console.error("Unsupported chainName:", chainName);
+      break;
   }
-  return ethers.getDefaultProvider(chainId, {
-    infura: infuraId,
-  });
+
+  return ethers.getDefaultProvider();
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
