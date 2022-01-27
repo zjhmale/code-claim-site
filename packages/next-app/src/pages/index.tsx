@@ -65,7 +65,7 @@ const Home: NextPage = () => {
           <MainBox isConnected={isConnected} isUnsupported={data.chain?.unsupported} />
         </Box>
         <Flex w={{ base: "100vw", lg: "50vw" }} h="100vh" m="0" backgroundColor="#F1F0F5" align="center" justifyContent="center">
-          <Box m={["24px", "10vw"]}>
+          <Box m={["24px", "10vw"]} w="100%">
             <ClaimCard data={claimCardData} />
           </Box>
         </Flex>
