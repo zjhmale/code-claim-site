@@ -3,13 +3,14 @@ import "@fontsource/zen-kaku-gothic-new";
 
 import { theme } from "@/chakra.config";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Provider, chain, defaultChains, Chain } from "wagmi";
+import { Provider, chain, Chain, Connector } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 import type { AppProps } from "next/app";
+import { providers } from "ethers";
 
-const infuraId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID;
+const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || "localhost";
 
 const chains: Chain[] = [];
@@ -33,6 +34,7 @@ const connectors = ({ chainId }: any) => {
   return [
     new InjectedConnector({ chains }),
     new WalletConnectConnector({
+      chains,
       options: {
         infuraId,
         qrcode: true,
@@ -41,9 +43,24 @@ const connectors = ({ chainId }: any) => {
   ];
 };
 
+type GetProviderArgs = {
+  chainId?: number;
+  connector?: Connector;
+};
+
+// The following is a fix to get localhost provider working. Ref: https://github.com/tmm/wagmi/issues/71
+const provider = ({ chainId, connector }: GetProviderArgs) => {
+  console.log("getting provider", chainId);
+  if (chainName.toLowerCase().trim() === "localhost") {
+    const chain = connector?.chains.find((x: any) => x.id == 31337)?.rpcUrls[0];
+    return new providers.JsonRpcProvider(chain);
+  }
+  return providers.getDefaultProvider(chainId);
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider autoConnect connectors={connectors}>
+    <Provider autoConnect connectors={connectors} provider={provider}>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
       </ChakraProvider>

@@ -1,4 +1,10 @@
 import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
+import { MouseEventHandler, useEffect } from "react";
+import { useContract, useContractRead, useProvider, useSigner } from "wagmi";
+
+import { CODEToken, CODEToken__factory } from "@/typechain";
+import { getContractAddress } from "@/utils";
+import useContractInfo from "@/hooks/useContractInfo";
 
 export enum ClaimCardState {
   disconnected,
@@ -34,7 +40,13 @@ const ButtonPlaceholder = () => (
   <Box background="gray.200" borderRadius="12px" w="100%" h="56px" mt="24px" />
 );
 
-const ClaimButton = ({ label }: { label: string }) => (
+const ClaimButton = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) => (
   <Button
     background="#08010D"
     borderRadius="12px"
@@ -50,6 +62,7 @@ const ClaimButton = ({ label }: { label: string }) => (
         "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
       transformStyle: "preserve-3d",
     }}
+    onClick={onClick}
   >
     <Text>
       CLAIM{" "}
@@ -130,6 +143,8 @@ const Position = ({
   </Flex>
 );
 
+const contractAddress = getContractAddress();
+
 export const ClaimCard = (props: { data: ClaimCardData }) => {
   const { address, state, allocations } = props.data;
   const positions = [
@@ -137,6 +152,17 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
     { title: "Pre Season 0 activity", value: allocations.voterOrPoap },
     { title: "Early Contributor", value: allocations.earlyContributor },
   ];
+
+  const [{ data: signer, error, loading }] = useSigner();
+  const contract = useContract<CODEToken>({
+    addressOrName: contractAddress,
+    contractInterface: CODEToken__factory.abi,
+    signerOrProvider: signer,
+  });
+
+  const { claimPeriodEnds } = useContractInfo();
+  console.log(claimPeriodEnds);
+
   return (
     <Flex
       w="100%"
@@ -173,7 +199,15 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
       {state === ClaimCardState.disconnected ? (
         <ButtonPlaceholder />
       ) : (
-        <ClaimButton label={allocations.total} />
+        <ClaimButton
+          label={allocations.total}
+          onClick={async () => {
+            console.warn("TODO CLAIM");
+
+            // TODO need to numTokens & create the proof. Similar to how it's done in packages\hardhat\test\CODEToken.test.ts
+            //const res = await contract.claimTokens()
+          }}
+        />
       )}
     </Flex>
   );

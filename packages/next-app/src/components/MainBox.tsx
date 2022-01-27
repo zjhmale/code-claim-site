@@ -11,13 +11,7 @@ interface MainBoxProps {
 }
 
 export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
-  const primaryButtonProps = {
-    w: "100%",
-  };
-
   const { width, height } = useWindowDimensions();
-
-  console.log(width, height);
 
   return (
     <div>
