@@ -8,7 +8,7 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 import type { AppProps } from "next/app";
-import ethers from "ethers";
+import { ethers } from "ethers";
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || "localhost";
