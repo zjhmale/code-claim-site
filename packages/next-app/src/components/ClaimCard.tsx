@@ -1,10 +1,22 @@
-import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Spacer,
+  Text,
+  useToast
+} from "@chakra-ui/react";
+
+import { ErrorToast } from "./snackbars/error";
+import { InfoToast } from "./snackbars/info";
+import { ConfirmToast } from "./snackbars/confirm";
 
 export enum ClaimCardState {
   disconnected,
   unclaimed,
   isClaiming,
-  claimed,
+  claimed
 }
 
 export interface ClaimCardData {
@@ -48,7 +60,7 @@ const ClaimButton = ({ label }: { label: string }) => (
     _hover={{
       transform:
         "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
-      transformStyle: "preserve-3d",
+      transformStyle: "preserve-3d"
     }}
   >
     <Text>
@@ -106,7 +118,7 @@ const Header = ({ address, image, showLabel, showPlaceholder }: HeaderData) => (
 const Position = ({
   title,
   value,
-  isBig = false,
+  isBig = false
 }: {
   title: string;
   value: string;
@@ -135,8 +147,9 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
   const positions = [
     { title: "Minted D4R NFT", value: allocations.member },
     { title: "Pre Season 0 activity", value: allocations.voterOrPoap },
-    { title: "Early Contributor", value: allocations.earlyContributor },
+    { title: "Early Contributor", value: allocations.earlyContributor }
   ];
+  const toast = useToast();
   return (
     <Flex
       w="100%"
@@ -175,6 +188,57 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
       ) : (
         <ClaimButton label={allocations.total} />
       )}
+
+      <Button
+        onClick={() =>
+          toast({
+            position: "bottom-right",
+            render: () => (
+              <ErrorToast
+                message="Could not connect wallet - "
+                link_message="view error"
+                link="https://google.com"
+              />
+            )
+          })
+        }
+      >
+        Error toast
+      </Button>
+
+      <Button
+        onClick={() =>
+          toast({
+            position: "bottom-right",
+            render: () => (
+              <InfoToast
+                message="Claim in progress - "
+                link_message="view on etherscan"
+                link="https://google.com"
+              />
+            )
+          })
+        }
+      >
+        Info toast
+      </Button>
+
+      <Button
+        onClick={() =>
+          toast({
+            position: "bottom-right",
+            render: () => (
+              <ConfirmToast
+                message="Claim succesful - "
+                link_message="view on etherscan"
+                link="https://google.com"
+              />
+            )
+          })
+        }
+      >
+        Confirm toast
+      </Button>
     </Flex>
   );
 };
