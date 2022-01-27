@@ -5,19 +5,17 @@ import {
   Text,
   HStack,
   Modal,
-  Button as ChakraButton,
   useDisclosure,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
 
 interface WalletProps {
-  isConnected: boolean;
-  isUnsupported: boolean;
+  isConnected: boolean | undefined;
+  isUnsupported: boolean | undefined;
 }
 
 export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {

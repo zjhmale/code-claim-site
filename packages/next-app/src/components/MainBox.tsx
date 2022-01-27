@@ -3,8 +3,8 @@ import { Wallet } from "@/components/Wallet";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
 interface MainBoxProps {
-  isConnected: boolean;
-  isUnsupported: boolean;
+  isConnected: boolean | undefined;
+  isUnsupported: boolean | undefined;
 }
 
 export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
