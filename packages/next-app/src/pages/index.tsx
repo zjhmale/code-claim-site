@@ -10,6 +10,12 @@ import {
 } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
+import airdropData from "@/airdrop_ui.json";
+
+const airdrop: Record<
+  string,
+  { nft: number; voter: number; earlyContrib: number }
+> = airdropData.airdrop;
 
 const Home: NextPage = () => {
   const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
@@ -34,12 +40,24 @@ const Home: NextPage = () => {
     address: accountData?.ens?.name || address || "",
     avatar: accountData?.ens?.avatar || "",
     allocations: {
-      member: "400",
-      voterOrPoap: "0",
-      earlyContributor: "1042",
-      total: "1442",
+      member: 0,
+      voterOrPoap: 0,
+      earlyContributor: 0,
+      total: 0,
     },
   };
+
+  if (accountData?.address && accountData.address in airdrop) {
+    claimCardData.allocations.member = airdrop[accountData.address].nft;
+    claimCardData.allocations.voterOrPoap = airdrop[accountData.address].voter;
+    claimCardData.allocations.earlyContributor =
+      airdrop[accountData.address].earlyContrib;
+
+    claimCardData.allocations.total =
+      claimCardData.allocations.member +
+      claimCardData.allocations.voterOrPoap +
+      claimCardData.allocations.earlyContributor;
+  }
 
   return (
     <Box m="0" w="100vw" h="100vh" background="blue">

@@ -18,10 +18,10 @@ export interface ClaimCardData {
   address: string;
   avatar: string;
   allocations: {
-    member: string;
-    voterOrPoap: string;
-    earlyContributor: string;
-    total: string;
+    member: number;
+    voterOrPoap: number;
+    earlyContributor: number;
+    total: number;
   };
 }
 
@@ -163,6 +163,8 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
   const { claimPeriodEnds } = useContractInfo();
   console.log(claimPeriodEnds);
 
+  const isEligible = allocations.total > 0;
+
   return (
     <Flex
       w="100%"
@@ -184,14 +186,18 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
         {positions.map((pos, index) => {
           return (
             <Box key={index} my="2">
-              <Position title={pos.title} value={pos.value} isBig={false} />
+              <Position
+                title={pos.title}
+                value={pos.value.toString()}
+                isBig={false}
+              />
             </Box>
           );
         })}
         <Box mt="6">
           <Position
             title="$CODE allocation"
-            value={allocations.total}
+            value={allocations.total.toString()}
             isBig={true}
           />
         </Box>
@@ -200,8 +206,10 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
         <ButtonPlaceholder />
       ) : (
         <ClaimButton
-          label={allocations.total}
+          label={allocations.total.toString()}
           onClick={async () => {
+            if (!isEligible) return console.warn("Not eligibile!");
+
             console.warn("TODO CLAIM");
 
             // TODO need to numTokens & create the proof. Similar to how it's done in packages\hardhat\test\CODEToken.test.ts
