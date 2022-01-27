@@ -56,7 +56,11 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    setClaimCardData((prevState) => ({ ...prevState, address: accountData?.ens?.name || maskWalletAddress(accountData?.address) }));
+    setClaimCardData((prevState) => ({
+      ...prevState,
+      avatar: accountData?.ens?.avatar || "",
+      address: accountData?.ens?.name || maskWalletAddress(accountData?.address),
+    }));
   }, [accountData?.address]);
 
   return (
@@ -72,7 +76,15 @@ const Home: NextPage = () => {
           </Box>
           <MainBox isConnected={isConnected} isUnsupported={data.chain?.unsupported} />
         </Box>
-        <Flex w={{ base: "100vw", lg: "50vw" }} h="100vh" m="0" backgroundColor="#F1F0F5" align="center" justifyContent="center">
+        <Flex
+          w={{ base: "100vw", lg: "50vw" }}
+          h="100vh"
+          m="0"
+          backgroundColor="#F1F0F5"
+          align="center"
+          justifyContent="center"
+          bgGradient={"linear(to-b, white, purple.300)"}
+        >
           <Box m={["24px", "10vw"]}>
             <ClaimCard data={claimCardData} />
           </Box>
