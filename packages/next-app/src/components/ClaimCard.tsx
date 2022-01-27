@@ -8,9 +8,9 @@ import {
   useToast
 } from "@chakra-ui/react";
 
-import { ErrorToast } from "./snackbars/error";
-import { InfoToast } from "./snackbars/info";
-import { ConfirmToast } from "./snackbars/confirm";
+import { ErrorToast } from "./toasts/error";
+import { InfoToast } from "./toasts/info";
+import { ConfirmToast } from "./toasts/confirm";
 
 export enum ClaimCardState {
   disconnected,
