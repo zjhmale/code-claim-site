@@ -14,7 +14,6 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
 
   return (
     <div>
-      <Confetti width={width} height={height} />
       <Box my={["24px", "0"]} w="100%">
         <Heading
           as="h1"
