@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Confetti from "react-confetti";
-import { Button } from "@/components/Button";
+import { Button, ButtonType } from "@/components/Button";
 import { Wallet } from "@/components/Wallet";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
@@ -50,19 +50,16 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
           color="white"
           fontSize={["20px", "24px"]}
           fontWeight="500"
+          fontFamily="Zen Kaku Gothic New"
         >
-          <span style={{ fontStyle: "italic" }}>$CODE</span> is the new
-          governance token for Developer DAO. Connect your wallet to determine
-          your airdrop eligibility.
+          $CODE is the new governance token for Developer DAO. Connect your
+          wallet to determine your airdrop eligibility.
         </Text>
         <Flex direction={["column", "row"]}>
           <Box mb={["4", "0"]} mr={["0", "7"]} w={["100%", "inherit"]}>
-            <Wallet
-              isConnected={!!isConnected}
-              isUnsupported={!!isUnsupported}
-            />
+            <Wallet isConnected={isConnected} isUnsupported={isUnsupported} />
           </Box>
-          <Button label="LEARN MORE" />
+          <Button label="LEARN MORE" buttonType={ButtonType.Learn} />
         </Flex>
       </Box>
     </div>

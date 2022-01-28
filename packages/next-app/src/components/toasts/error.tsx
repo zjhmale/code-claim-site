@@ -15,7 +15,7 @@ const bounceAnimation = `${bounce} infinite 1.5s ease`;
 export const ErrorToast = ({
   message,
   link_message,
-  link
+  link,
 }: {
   message: string;
   link_message: string;

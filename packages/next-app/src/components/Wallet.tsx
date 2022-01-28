@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button, ButtonType } from "@/components/Button";
 import { useConnect, useNetwork } from "wagmi";
 import {
   Box,
@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 interface WalletProps {
   isConnected: boolean | undefined;
@@ -22,6 +23,11 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ data, error, loading }, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
+
+  useEffect(() => {
+    if (switchNetwork && data?.chain?.id != data?.chains[0].id)
+      switchNetwork(data?.chains[0].id);
+  }, [connectData]);
 
   if (isConnected && !isUnsupported) {
     return (
@@ -43,23 +49,18 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   } else if (isConnected && isUnsupported) {
     return (
       <div>
-        {switchNetwork &&
-          data.chains.map((x) =>
-            x.id === data.chain?.id ? null : (
-              <Button
-                key={x.id}
-                onClick={() => switchNetwork(x.id)}
-                label={` Switch to ${x.name}`}
-              />
-            )
-          )}
+        <Button label={`CONNECTING`} buttonType={ButtonType.Switch} />
       </div>
     );
   }
 
   return (
     <HStack spacing="24px">
-      <Button onClick={onOpen} label="Connect Wallet" />
+      <Button
+        onClick={onOpen}
+        label="CONNECT WALLET"
+        buttonType={ButtonType.Connect}
+      />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -68,7 +69,12 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           <ModalCloseButton />
           <ModalBody>
             {connectData.connectors.map((x) => (
-              <Button key={x.id} onClick={() => connect(x)} label={x.name} />
+              <Button
+                key={x.id}
+                onClick={() => connect(x)}
+                label={x.name}
+                buttonType={ButtonType.Connect}
+              />
             ))}
           </ModalBody>
         </ModalContent>
