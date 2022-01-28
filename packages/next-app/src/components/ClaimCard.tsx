@@ -8,7 +8,7 @@ import keccak256 from "keccak256";
 import { CODEToken__factory } from "@/typechain";
 import { getContractAddress } from "@/utils";
 
-import airdropData from "../data/airdrop_ui_localhost.json";
+import airdropData from "../data/airdrop";
 
 const TOKEN_DECIMALS = 18;
 
@@ -98,7 +98,7 @@ function verify(
   }
 
   // Check if the computed hash (root) is equal to the provided root
-  return [computedHash.toString("hex") === root, index];
+  return ["0x" + computedHash.toString("hex") === root, index];
 }
 
 function getMerkleTreeValues(address: string, tokenAmount: number) {
@@ -292,6 +292,9 @@ export const ClaimCard = () => {
             merkleTree.getHexRoot(),
             "0x" + leaf.toString("hex")
           );
+
+          console.log(isVerified);
+          console.log(index);
 
           if (!isVerified) return console.error("Couldn't verify proof!");
 
