@@ -1,34 +1,41 @@
-import { Button as ChakraButton, Spinner,Flex} from "@chakra-ui/react";
+import { Button as ChakraButton, Spinner, Flex } from "@chakra-ui/react";
+
+export enum ButtonType {
+  Connect = 1,
+  Connected,
+  Switch,
+  Learn,
+}
 
 interface ButtonProps {
   label: string;
-  button_type: string;
+  buttonType: ButtonType;
   onClick?: () => void;
 }
 
-export const Button = ({button_type, label, ...props }: ButtonProps) => {
+export const Button = ({ buttonType, label, ...props }: ButtonProps) => {
   return (
     <ChakraButton
       type="button"
       backgroundColor={(() => {
-   switch(button_type) {
-     case "connect":
-       return "#fff"
-     case "learn":
-       return "#000"
-     case "switch":
-       return "rgba(255, 255, 255, 0.08)"
-   }
- })()}
+        switch (buttonType) {
+          case ButtonType.Connect:
+            return "#fff";
+          case ButtonType.Learn:
+            return "#000";
+          case ButtonType.Switch:
+            return "rgba(255, 255, 255, 0.08)";
+        }
+      })()}
       color={(() => {
-   switch(button_type) {
-    case "connect":
-       return "#000"
-    case "learn":
-       return "#fff"
-    case "switch":
-       return "#fff"
-   }
+        switch (buttonType) {
+          case ButtonType.Connect:
+            return "#000";
+          case ButtonType.Learn:
+            return "#fff";
+          case ButtonType.Switch:
+            return "#fff";
+        }
       })()}
       fontSize={["16px", "18px"]}
       height="52px"
@@ -45,9 +52,7 @@ export const Button = ({button_type, label, ...props }: ButtonProps) => {
       _active={{}}
       {...props}
     >
-      {
-        button_type == "switch" ? <Spinner mr="5" /> : null
-      }
+      {buttonType == ButtonType.Switch ? <Spinner mr="5" /> : null}
       {label}
     </ChakraButton>
   );

@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button, ButtonType } from "@/components/Button";
 import { useConnect, useNetwork } from "wagmi";
 import {
   Box,
@@ -49,14 +49,18 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   } else if (isConnected && isUnsupported) {
     return (
       <div>
-        <Button label={`CONNECTING`} button_type="switch" />
+        <Button label={`CONNECTING`} buttonType={ButtonType.Switch} />
       </div>
     );
   }
 
   return (
     <HStack spacing="24px">
-      <Button onClick={onOpen} label="CONNECT WALLET" button_type="connect" />
+      <Button
+        onClick={onOpen}
+        label="CONNECT WALLET"
+        buttonType={ButtonType.Connect}
+      />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -69,7 +73,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
                 key={x.id}
                 onClick={() => connect(x)}
                 label={x.name}
-                button_type="connect"
+                buttonType={ButtonType.Connect}
               />
             ))}
           </ModalBody>
