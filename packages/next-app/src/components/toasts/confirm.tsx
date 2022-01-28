@@ -5,7 +5,7 @@ import { CheckIcon } from "@chakra-ui/icons";
 export const ConfirmToast = ({
   message,
   link_message,
-  link
+  link,
 }: {
   message: string;
   link_message: string;

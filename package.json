@@ -34,13 +34,23 @@
     "next:test": "yarn workspace next-app run test",
     "next:build": "yarn workspace next-app run build",
     "e2e": "yarn workspace next-app run e2e",
-    "prepare": "yarn workspace hardhat run prepare"
+    "prepare": "husky install && yarn workspace hardhat run prepare"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
     "eslint": "^8.2.0",
+    "husky": "^7.0.4",
     "prettier": "^2.4.1"
+  },
+  "lint-staged": {
+    "packages/hardhat/**/*.{ts,js,sol}": "yarn workspace hardhat prettier --write",
+    "packages/hardhat/**/*.{js,ts}": "yarn workspace hardhat eslint --fix",
+    "packages/hardhat/**/*.sol": "yarn workspace hardhat solhint --fix",
+    "packages/next-app/**/*.{ts,js,tsx,jsx}": [
+      "yarn workspace next-app prettier --write",
+      "yarn workspace next-app eslint --fix"
+    ]
   }
 }
