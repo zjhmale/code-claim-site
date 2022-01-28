@@ -12,6 +12,9 @@ pragma solidity ^0.8.9;
  *
  * See `test/utils/cryptography/MerkleProof.test.js` for some examples.
  */
+
+import "hardhat/console.sol";
+
 library MerkleProof {
     /**
      * @dev Returns true if a `leaf` can be proved to be a part of a Merkle tree
@@ -23,7 +26,7 @@ library MerkleProof {
         bytes32[] memory proof,
         bytes32 root,
         bytes32 leaf
-    ) internal pure returns (bool, uint256) {
+    ) internal view returns (bool, uint256) {
         bytes32 computedHash = leaf;
         uint256 index = 0;
 
@@ -40,6 +43,8 @@ library MerkleProof {
                 index += 1;
             }
         }
+
+        console.log("Index %s", index);
 
         // Check if the computed hash (root) is equal to the provided root
         return (computedHash == root, index);

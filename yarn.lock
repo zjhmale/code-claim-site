@@ -18725,6 +18725,8 @@ __metadata:
     framer-motion: ^5
     identity-obj-proxy: ^3.0.0
     jest: ^27.3.1
+    keccak256: ^1.0.6
+    merkletreejs: ^0.2.27
     next: 12.0.3
     react: 17.0.2
     react-confetti: ^6.0.1
