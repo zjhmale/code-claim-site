@@ -66,7 +66,8 @@ const Home: NextPage = () => {
     setClaimCardData((prevState) => ({
       ...prevState,
       avatar: accountData?.ens?.avatar || "",
-      address: accountData?.ens?.name || maskWalletAddress(accountData?.address),
+      address:
+        accountData?.ens?.name || maskWalletAddress(accountData?.address),
     }));
   }, [accountData?.address, accountData?.ens]);
 
@@ -100,9 +101,8 @@ const Home: NextPage = () => {
           backgroundColor="#F1F0F5"
           align="center"
           justifyContent="center"
-          bgGradient={"linear(to-b, white, purple.300)"}
         >
-          <Box m={["24px", "10vw"]}>
+          <Box m={["24px", "10vw"]} w="100%">
             <ClaimCard data={claimCardData} />
           </Box>
         </Flex>

@@ -43,7 +43,6 @@ const ClaimButton = ({ label }: { label: string }) => (
     fontWeight="900"
     w="100%"
     h="56px"
-    mt="24px"
     _active={{}}
     _hover={{
       transform:
@@ -82,12 +81,11 @@ const Header = ({ address, image, showLabel, showPlaceholder }: HeaderData) => (
             mr="8px"
           />
           <Text
-            bgClip="text"
-            bgGradient="linear(to-r, #AD00FF, #4E00EC)"
+            color="#4E4853"
             fontSize={["16px", "18px"]}
             fontWeight="500"
           >
-            ELIGIBLE
+            Eligible wallet
           </Text>
         </Flex>
       )}
@@ -113,12 +111,17 @@ const Position = ({
   isBig: boolean;
 }) => (
   <Flex direction="column">
-    <Flex direction="row" align="baseline">
-      <Text fontSize={isBig ? "20px" : "16px"} fontWeight="500">
+    <Flex direction="row" align="baseline" px="24px">
+      <Text
+        color={isBig ? "#08010D" : "#4E4853"}
+        fontSize={isBig ? "24px" : "18px"}
+        fontWeight="500"
+      >
         {title}
       </Text>
       <Spacer />
       <Text
+        color={isBig ? "#08010D" : "#4E4853"}
         fontFamily="IBM Plex Mono"
         fontSize={isBig ? "32px" : "24px"}
         fontWeight="400"
@@ -126,7 +129,6 @@ const Position = ({
         {value}
       </Text>
     </Flex>
-    <Box border="1px dashed #4E4853" />
   </Flex>
 );
 
@@ -146,15 +148,17 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
       borderRadius="24px"
       box-shadow="inset 0px 0px 100px rgba(255, 255, 255, 0.25)"
       direction="column"
-      p="24px"
     >
-      <Header
-        address={address}
-        image=""
-        showLabel={state !== ClaimCardState.disconnected}
-        showPlaceholder={state === ClaimCardState.disconnected}
-      />
-      <Flex direction="column" mt="8" mb="8">
+      <Box p="24px">
+        <Header
+          address={address}
+          image=""
+          showLabel={state !== ClaimCardState.disconnected}
+          showPlaceholder={state === ClaimCardState.disconnected}
+        />
+      </Box>
+      <Flex direction="column" mb="8">
+        <Box border="1px solid #08010D" opacity="8%" />
         {positions.map((pos, index) => {
           return (
             <Box key={index} my="2">
@@ -162,7 +166,8 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
             </Box>
           );
         })}
-        <Box mt="6">
+        <Box border="1px solid #08010D" opacity="8%" my="4"/> 
+        <Box>
           <Position
             title="$CODE allocation"
             value={allocations.total}
@@ -170,11 +175,13 @@ export const ClaimCard = (props: { data: ClaimCardData }) => {
           />
         </Box>
       </Flex>
-      {state === ClaimCardState.disconnected ? (
-        <ButtonPlaceholder />
-      ) : (
-        <ClaimButton label={allocations.total} />
-      )}
+      <Box px="24px" pb="24px">
+        {state === ClaimCardState.disconnected ? (
+          <ButtonPlaceholder />
+        ) : (
+          <ClaimButton label={allocations.total} />
+        )}
+      </Box>
     </Flex>
   );
 };
