@@ -57,12 +57,11 @@ export default class Generator {
       this.recipients.map(({ address, value }) => this.generateLeaf(address, value)),
       // Hashing function
       keccak256,
-      { sort: true }
+      { sortPairs: true }
     );
 
     // Collect and log merkle root
     const merkleRoot: string = merkleTree.getHexRoot();
-    console.info(`Generated Merkle root: ${merkleRoot}`);
 
     return {
       merkleRoot,
