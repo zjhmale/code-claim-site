@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import Confetti from "react-confetti";
 import { Button } from "@/components/Button";
 import { Wallet } from "@/components/Wallet";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
@@ -8,9 +10,22 @@ interface MainBoxProps {
 }
 
 export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
-  const primaryButtonProps = {
-    w: "100%",
-  };
+  const [windowSize, setWindowSize] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div>
@@ -18,6 +33,7 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
         width={windowSize.width}
         height={windowSize.height}
         colors={["#DD95FF"]}
+        hidden
       />
       <Box my={["24px", "0"]} w="100%">
         <Heading
