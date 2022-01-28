@@ -248,9 +248,12 @@ export const ClaimCard = () => {
     fetchEns: true,
   });
 
-  const allocations = accountData?.address
-    ? airdrop[ethers.utils.getAddress(accountData.address)]
-    : { nft: 0, voter: 0, earlyContrib: 0 };
+  const allocations =
+    accountData?.address &&
+    ethers.utils.getAddress(accountData.address) in airdrop
+      ? airdrop[ethers.utils.getAddress(accountData.address)]
+      : { nft: 0, voter: 0, earlyContrib: 0 };
+
   const totalAllocation =
     allocations.nft + allocations.voter + allocations.earlyContrib;
 
