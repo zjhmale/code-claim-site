@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import keccak256 from "keccak256";
 
 import { CODEToken__factory } from "@/typechain";
-import { getContractAddress } from "@/utils";
+import { getContractAddress, maskWalletAddress } from "@/utils";
 
 import airdropData from "../data/airdrop";
 
@@ -150,7 +150,6 @@ const ClaimButton = ({
     fontWeight="900"
     w="100%"
     h="56px"
-    mt="24px"
     _active={{}}
     _hover={{
       transform:
@@ -189,13 +188,8 @@ const Header = ({ address, image, showLabel, showPlaceholder }: HeaderData) => (
             h="20px"
             mr="8px"
           />
-          <Text
-            bgClip="text"
-            bgGradient="linear(to-r, #AD00FF, #4E00EC)"
-            fontSize={["16px", "18px"]}
-            fontWeight="500"
-          >
-            ELIGIBLE
+          <Text color="#4E4853" fontSize={["16px", "18px"]} fontWeight="500">
+            Eligible wallet
           </Text>
         </Flex>
       )}
@@ -221,12 +215,17 @@ const Position = ({
   isBig: boolean;
 }) => (
   <Flex direction="column">
-    <Flex direction="row" align="baseline">
-      <Text fontSize={isBig ? "20px" : "16px"} fontWeight="500">
+    <Flex direction="row" align="baseline" px="24px">
+      <Text
+        color={isBig ? "#08010D" : "#4E4853"}
+        fontSize={isBig ? "24px" : "18px"}
+        fontWeight="500"
+      >
         {title}
       </Text>
       <Spacer />
       <Text
+        color={isBig ? "#08010D" : "#4E4853"}
         fontFamily="IBM Plex Mono"
         fontSize={isBig ? "32px" : "24px"}
         fontWeight="400"
@@ -234,7 +233,6 @@ const Position = ({
         {value}
       </Text>
     </Flex>
-    <Box border="1px dashed #4E4853" />
   </Flex>
 );
 
@@ -268,10 +266,7 @@ export const ClaimCard = () => {
   // Format address
   let formattedAddress = "";
   if (accountData?.address) {
-    formattedAddress = `${accountData.address.slice(
-      0,
-      6
-    )}...${accountData.address.slice(-4)}`;
+    formattedAddress = maskWalletAddress(accountData.address);
   }
 
   // Effect to set initial state after account connected
@@ -326,12 +321,14 @@ export const ClaimCard = () => {
       borderRadius="24px"
       box-shadow="inset 0px 0px 100px rgba(255, 255, 255, 0.25)"
       direction="column"
-      p="24px"
     >
       <Header
         address={accountData?.ens?.name || formattedAddress || ""}
-        image=""
-        showLabel={cardState !== ClaimCardState.disconnected}
+        image={accountData?.ens?.avatar || ""}
+        showLabel={
+          cardState !== ClaimCardState.disconnected &&
+          cardState !== ClaimCardState.notEligible
+        }
         showPlaceholder={cardState === ClaimCardState.disconnected}
       />
       <Flex direction="column" mt="8" mb="8">
@@ -346,7 +343,8 @@ export const ClaimCard = () => {
             </Box>
           );
         })}
-        <Box mt="6">
+        <Box border="1px solid #08010D" opacity="8%" my="4" />
+        <Box>
           <Position
             title="$CODE allocation"
             value={totalAllocation.toString()}
