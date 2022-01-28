@@ -61,7 +61,7 @@ const Home: NextPage = () => {
       avatar: accountData?.ens?.avatar || "",
       address: accountData?.ens?.name || maskWalletAddress(accountData?.address),
     }));
-  }, [accountData?.address]);
+  }, [accountData?.address, accountData?.ens]);
 
   return (
     <Box m="0" w="100vw" h="100vh" background="blue">
