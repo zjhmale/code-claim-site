@@ -322,16 +322,19 @@ export const ClaimCard = () => {
       box-shadow="inset 0px 0px 100px rgba(255, 255, 255, 0.25)"
       direction="column"
     >
-      <Header
-        address={accountData?.ens?.name || formattedAddress || ""}
-        image={accountData?.ens?.avatar || ""}
-        showLabel={
-          cardState !== ClaimCardState.disconnected &&
-          cardState !== ClaimCardState.notEligible
-        }
-        showPlaceholder={cardState === ClaimCardState.disconnected}
-      />
-      <Flex direction="column" mt="8" mb="8">
+      <Box p="24px">
+        <Header
+          address={accountData?.ens?.name || formattedAddress || ""}
+          image={accountData?.ens?.avatar || ""}
+          showLabel={
+            cardState !== ClaimCardState.disconnected &&
+            cardState !== ClaimCardState.notEligible
+          }
+          showPlaceholder={cardState === ClaimCardState.disconnected}
+        />
+      </Box>
+      <Flex direction="column" mb="8">
+        <Box border="1px solid #08010D" opacity="8%" />
         {positions.map((pos, index) => {
           return (
             <Box key={index} my="2">
@@ -352,48 +355,50 @@ export const ClaimCard = () => {
           />
         </Box>
       </Flex>
-      {cardState === ClaimCardState.disconnected ? (
-        <ButtonPlaceholder />
-      ) : cardState === ClaimCardState.claimed ? (
-        <ButtonPlaceholder />
-      ) : (
-        <ClaimButton
-          label={totalAllocation.toString()}
-          onClick={async () => {
-            if (!isEligible) return console.warn("Not eligibile!");
-            if (!signer) return console.warn("Not connected!");
+      <Box px="24px" pb="24px">
+        {cardState === ClaimCardState.disconnected ? (
+          <ButtonPlaceholder />
+        ) : cardState === ClaimCardState.claimed ? (
+          <ButtonPlaceholder />
+        ) : (
+          <ClaimButton
+            label={totalAllocation.toString()}
+            onClick={async () => {
+              if (!isEligible) return console.warn("Not eligibile!");
+              if (!signer) return console.warn("Not connected!");
 
-            const tokenContract = CODEToken__factory.connect(
-              contractAddress,
-              signer
-            );
+              const tokenContract = CODEToken__factory.connect(
+                contractAddress,
+                signer
+              );
 
-            const contractMerkleRoot = await tokenContract.merkleRoot();
+              const contractMerkleRoot = await tokenContract.merkleRoot();
 
-            if (merkleTree.getHexRoot() !== contractMerkleRoot)
-              throw new Error("Local & Contract merkle root's aren't equal!");
+              if (merkleTree.getHexRoot() !== contractMerkleRoot)
+                throw new Error("Local & Contract merkle root's aren't equal!");
 
-            const accountAddress = await signer.getAddress();
+              const accountAddress = await signer.getAddress();
 
-            const { proof, numTokens } = getMerkleTreeValues(
-              accountAddress,
-              totalAllocation
-            );
+              const { proof, numTokens } = getMerkleTreeValues(
+                accountAddress,
+                totalAllocation
+              );
 
-            try {
-              setCardState(ClaimCardState.isClaiming);
-              const tx = await tokenContract.claimTokens(numTokens, proof);
-              await tx.wait(1);
-              setCardState(ClaimCardState.claimed);
-              console.warn("TODO: show confetti etc");
-            } catch (e) {
-              setCardState(ClaimCardState.unclaimed);
-              console.error(`Error when claiming tokens: ${e}`);
-              console.log(e);
-            }
-          }}
-        />
-      )}
+              try {
+                setCardState(ClaimCardState.isClaiming);
+                const tx = await tokenContract.claimTokens(numTokens, proof);
+                await tx.wait(1);
+                setCardState(ClaimCardState.claimed);
+                console.warn("TODO: show confetti etc");
+              } catch (e) {
+                setCardState(ClaimCardState.unclaimed);
+                console.error(`Error when claiming tokens: ${e}`);
+                console.log(e);
+              }
+            }}
+          />
+        )}
+      </Box>
     </Flex>
   );
 };
