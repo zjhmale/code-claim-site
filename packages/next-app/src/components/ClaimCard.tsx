@@ -7,8 +7,8 @@ import keccak256 from "keccak256";
 
 import { CODEToken__factory } from "@/typechain";
 import { getContractAddress } from "@/utils";
-import useContractInfo from "@/hooks/useContractInfo";
-import airdropData from "@/data/airdrop_ui_localhost.json";
+
+import airdropData from "../data/airdrop_ui_localhost.json";
 
 const TOKEN_DECIMALS = 18;
 
