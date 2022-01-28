@@ -5,7 +5,7 @@ import { InfoOutlineIcon } from "@chakra-ui/icons";
 export const InfoToast = ({
   message,
   link_message,
-  link
+  link,
 }: {
   message: string;
   link_message: string;
