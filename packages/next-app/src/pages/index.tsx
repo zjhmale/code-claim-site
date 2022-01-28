@@ -8,7 +8,11 @@ import { useAccount, useConnect, useNetwork } from "wagmi";
 import { CODEToken__factory } from "@/typechain";
 import { hasEthereum, maskWalletAddress } from "@/utils";
 
-import { ClaimCard, ClaimCardData, ClaimCardState } from "@/components/ClaimCard";
+import {
+  ClaimCard,
+  ClaimCardData,
+  ClaimCardState,
+} from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
 
@@ -41,7 +45,10 @@ const Home: NextPage = () => {
   async function fetchStore() {
     if (hasEthereum()) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const tokenContract = CODEToken__factory.connect(contractAddress, provider);
+      const tokenContract = CODEToken__factory.connect(
+        contractAddress,
+        provider
+      );
       try {
         const data = await tokenContract.claimPeriodEnds();
         setClaimPeriodEnds(data.toNumber());
@@ -70,11 +77,21 @@ const Home: NextPage = () => {
       </Head>
       <Flex direction="row" flexWrap="wrap">
         {/* {width && height && <Confetti width={width} height={height} />} */}
-        <Box w={{ base: "100vw", lg: "50vw" }} h="100vh" m="0" pl={["24px", "5vw"]} pr={["40px", "8vw"]} background="#08010D">
+        <Box
+          w={{ base: "100vw", lg: "50vw" }}
+          h="100vh"
+          m="0"
+          pl={["24px", "5vw"]}
+          pr={["40px", "8vw"]}
+          background="#08010D"
+        >
           <Box mt={["32px", "48px"]} mb="22vh">
             <Logo />
           </Box>
-          <MainBox isConnected={isConnected} isUnsupported={data.chain?.unsupported} />
+          <MainBox
+            isConnected={isConnected}
+            isUnsupported={data.chain?.unsupported}
+          />
         </Box>
         <Flex
           w={{ base: "100vw", lg: "50vw" }}
