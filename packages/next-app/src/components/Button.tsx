@@ -1,23 +1,41 @@
-import { Button as ChakraButton } from "@chakra-ui/react";
+import { Button as ChakraButton, Spinner,Flex} from "@chakra-ui/react";
 
 interface ButtonProps {
   label: string;
-  primary?: boolean;
+  button_type: string;
   onClick?: () => void;
 }
 
-export const Button = ({ primary = false, label, ...props }: ButtonProps) => {
+export const Button = ({button_type, label, ...props }: ButtonProps) => {
   return (
     <ChakraButton
       type="button"
-      backgroundColor={primary ? "#fff" : "#08010d"}
-      color={primary ? "#000" : "#fff"}
+      backgroundColor={(() => {
+   switch(button_type) {
+     case "connect":
+       return "#fff"
+     case "learn":
+       return "#000"
+     case "switch":
+       return "rgba(255, 255, 255, 0.08)"
+   }
+ })()}
+      color={(() => {
+   switch(button_type) {
+    case "connect":
+       return "#000"
+    case "learn":
+       return "#fff"
+    case "switch":
+       return "#fff"
+   }
+      })()}
       fontSize={["16px", "18px"]}
       height="52px"
       lineHeight={24}
       fontWeight="900"
       border={"2px solid #fff"}
-      borderRadius={primary ? 8 : "0.5rem"}
+      borderRadius={"0.5rem"}
       padding="0 2rem"
       _hover={{
         transform:
@@ -27,6 +45,9 @@ export const Button = ({ primary = false, label, ...props }: ButtonProps) => {
       _active={{}}
       {...props}
     >
+      {
+        button_type == "switch" ? <Spinner mr="5" /> : null
+      }
       {label}
     </ChakraButton>
   );

@@ -47,7 +47,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
       <div>
         {switchNetwork &&
           data.chains.map((x) =>
-            x.id === data.chain?.id ? null : <Button key={x.id} onClick={() => switchNetwork(x.id)} label={` Switch to ${x.name}`} />
+            x.id === data.chain?.id ? null : <Button key={x.id} onClick={() => switchNetwork(x.id)} label={`CONNECTING`} button_type="switch"/>
           )}
       </div>
     );
@@ -55,7 +55,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
 
   return (
     <HStack spacing="24px">
-      <Button onClick={onOpen} label="Connect Wallet" />
+      <Button onClick={onOpen} label="CONNECT WALLET" button_type="connect"/>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -64,7 +64,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           <ModalCloseButton />
           <ModalBody>
             {connectData.connectors.map((x) => (
-              <Button key={x.id} onClick={() => connect(x)} label={x.name} />
+              <Button key={x.id} onClick={() => connect(x)} label={x.name} button_type="connect"/>
             ))}
           </ModalBody>
         </ModalContent>

@@ -34,7 +34,7 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
           <Box mb={["4", "0"]} mr={["0", "7"]} w={["100%", "inherit"]}>
             <Wallet isConnected={isConnected} isUnsupported={isUnsupported} />
           </Box>
-          <Button label="LEARN MORE" />
+          <Button label="LEARN MORE" button_type="learn"/>
         </Flex>
       </Box>
     </div>
