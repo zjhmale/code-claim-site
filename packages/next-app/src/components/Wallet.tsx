@@ -5,19 +5,17 @@ import {
   Text,
   HStack,
   Modal,
-  Button as ChakraButton,
   useDisclosure,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
 
 interface WalletProps {
-  isConnected: boolean;
-  isUnsupported: boolean;
+  isConnected: boolean | undefined;
+  isUnsupported: boolean | undefined;
 }
 
 export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
@@ -47,7 +45,13 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
       <div>
         {switchNetwork &&
           data.chains.map((x) =>
-            x.id === data.chain?.id ? null : <Button key={x.id} onClick={() => switchNetwork(x.id)} label={` Switch to ${x.name}`} />
+            x.id === data.chain?.id ? null : (
+              <Button
+                key={x.id}
+                onClick={() => switchNetwork(x.id)}
+                label={` Switch to ${x.name}`}
+              />
+            )
           )}
       </div>
     );
@@ -70,7 +74,9 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
         </ModalContent>
       </Modal>
 
-      {connectError && <div>{connectError?.message ?? "Failed to connect"}</div>}
+      {connectError && (
+        <div>{connectError?.message ?? "Failed to connect"}</div>
+      )}
     </HStack>
   );
 };
