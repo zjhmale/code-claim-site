@@ -14,6 +14,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 interface WalletProps {
   isConnected: boolean;
@@ -24,6 +25,13 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ data, error, loading }, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
+
+
+  useEffect(() => {
+    if(switchNetwork && data?.chain?.id != 1)
+      switchNetwork(1);
+  },[connectData]);
+
 
   if (isConnected && !isUnsupported) {
     return (
@@ -45,10 +53,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   } else if (isConnected && isUnsupported) {
     return (
       <div>
-        {switchNetwork &&
-          data.chains.map((x) =>
-            x.id === data.chain?.id ? null : <Button key={x.id} onClick={() => switchNetwork(x.id)} label={`CONNECTING`} button_type="switch"/>
-          )}
+        <Button label={`CONNECTING`} button_type="switch"/>  
       </div>
     );
   }
