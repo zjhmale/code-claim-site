@@ -57,7 +57,10 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
         </Text>
         <Flex direction={["column", "row"]}>
           <Box mb={["4", "0"]} mr={["0", "7"]} w={["100%", "inherit"]}>
-            <Wallet isConnected={isConnected} isUnsupported={isUnsupported} />
+            <Wallet
+              isConnected={!!isConnected}
+              isUnsupported={!!isUnsupported}
+            />
           </Box>
           <Button label="LEARN MORE" />
         </Flex>
