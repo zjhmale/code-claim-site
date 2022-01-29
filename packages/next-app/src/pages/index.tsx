@@ -1,6 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { Box, Flex, SlideFade } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  SlideFade,
+  Image,
+  Center,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useAccount, useNetwork } from "wagmi";
 
 import { ClaimCard } from "@/components/ClaimCard";
@@ -12,6 +19,10 @@ const Home: NextPage = () => {
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   });
+
+  const sm = "web";
+  const breakpointValue = useBreakpointValue({ base: "mobile", sm });
+  const isWeb = breakpointValue === sm;
 
   const isConnected =
     typeof accountData !== "undefined" &&
@@ -29,14 +40,14 @@ const Home: NextPage = () => {
         scrollSnapType="y mandatory"
         overflowY="scroll"
       >
-        <Box
+        <Flex
           w={{ base: "100vw", lg: "50vw" }}
           h="100vh"
-          m="0"
           pl={["24px", "5vw"]}
-          pr={["40px", "8vw"]}
+          pr={["24px", "8vw"]}
           background="#08010D"
           scrollSnapAlign="start"
+          direction="column"
         >
           <Box mt={["32px", "48px"]} mb="22vh">
             <Logo />
@@ -45,7 +56,19 @@ const Home: NextPage = () => {
             isConnected={isConnected}
             isUnsupported={!!networkData.chain?.unsupported}
           />
-        </Box>
+          <Center flexGrow="1">
+            {!isWeb && (
+              <Image
+                alignSelf="end"
+                mb="5"
+                src="assets/arrow-down.svg"
+                alt="scroll down"
+                w="34px"
+                h="34px"
+              />
+            )}
+          </Center>
+        </Flex>
         <Flex
           w={{ base: "100vw", lg: "50vw" }}
           h="100vh"
@@ -56,8 +79,22 @@ const Home: NextPage = () => {
           scrollSnapAlign="start"
         >
           <SlideFade in={isConnected} offsetY="20px">
-            <Box m={["24px", "10vw"]}>
-              <ClaimCard />
+            <Box m={["24px", "10vw"]} h="100vh">
+              <Center flexGrow="1">
+                {!isWeb && (
+                  <Image
+                    alignSelf="end"
+                    mt="5"
+                    src="assets/arrow-up.svg"
+                    alt="scroll up"
+                    w="34px"
+                    h="34px"
+                  />
+                )}
+              </Center>
+              <Box mt="15vh">
+                <ClaimCard />
+              </Box>
             </Box>
           </SlideFade>
         </Flex>
