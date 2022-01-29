@@ -22,7 +22,13 @@ const Home: NextPage = () => {
       <Head>
         <title>$CODE Claim Page</title>
       </Head>
-      <Flex direction="row" flexWrap="wrap">
+      <Flex
+        direction="row"
+        flexWrap="wrap"
+        h="100vh"
+        scrollSnapType="y mandatory"
+        overflowY="scroll"
+      >
         <Box
           w={{ base: "100vw", lg: "50vw" }}
           h="100vh"
@@ -30,6 +36,7 @@ const Home: NextPage = () => {
           pl={["24px", "5vw"]}
           pr={["40px", "8vw"]}
           background="#08010D"
+          scrollSnapAlign="start"
         >
           <Box mt={["32px", "48px"]} mb="22vh">
             <Logo />
@@ -46,6 +53,7 @@ const Home: NextPage = () => {
           backgroundColor="#F1F0F5"
           align="center"
           justifyContent="center"
+          scrollSnapAlign="start"
         >
           <SlideFade in={isConnected} offsetY="20px">
             <Box m={["24px", "10vw"]}>
