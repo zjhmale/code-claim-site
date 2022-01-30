@@ -41,6 +41,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           height="52px"
           padding={["13px 4rem", "13px 2rem"]}
           w="100%"
+          textAlign={"center"}
         >
           WALLET CONNECTED
         </Text>
