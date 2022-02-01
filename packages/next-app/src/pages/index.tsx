@@ -22,7 +22,7 @@ const Home: NextPage = () => {
 
   const sm = "web";
   const breakpointValue = useBreakpointValue({ base: "mobile", sm });
-  const isWeb = breakpointValue === sm;
+  const isMobile = breakpointValue !== sm;
 
   const isConnected =
     typeof accountData !== "undefined" &&
@@ -48,16 +48,21 @@ const Home: NextPage = () => {
           background="#08010D"
           scrollSnapAlign="start"
           direction="column"
+          position="relative"
         >
-          <Box mt={["32px", "48px"]} mb="22vh">
+          <Box mt={["32px", "48px"]}>
             <Logo />
           </Box>
-          <MainBox
-            isConnected={isConnected}
-            isUnsupported={!!networkData.chain?.unsupported}
-          />
-          <Center flexGrow="1">
-            {!isWeb && (
+
+          <Flex h="100vh" alignItems="center">
+            <MainBox
+              isConnected={isConnected}
+              isUnsupported={!!networkData.chain?.unsupported}
+            />
+          </Flex>
+
+          {isMobile && (
+            <Center position="absolute" bottom="0" left="0" right="0">
               <Image
                 alignSelf="end"
                 mb="5"
@@ -66,8 +71,8 @@ const Home: NextPage = () => {
                 w="34px"
                 h="34px"
               />
-            )}
-          </Center>
+            </Center>
+          )}
         </Flex>
         <Flex
           w={{ base: "100vw", lg: "50vw" }}
@@ -77,11 +82,12 @@ const Home: NextPage = () => {
           align="center"
           justifyContent="center"
           scrollSnapAlign="start"
+          position="relative"
         >
           <SlideFade in={isConnected} offsetY="20px">
             <Box m={["24px", "10vw"]} h="100vh">
-              <Center flexGrow="1">
-                {!isWeb && (
+              {isMobile && (
+                <Center position="absolute" top="0" left="0" right="0">
                   <Image
                     alignSelf="end"
                     mt="5"
@@ -90,11 +96,12 @@ const Home: NextPage = () => {
                     w="34px"
                     h="34px"
                   />
-                )}
-              </Center>
-              <Box mt="15vh">
+                </Center>
+              )}
+
+              <Flex h="100vh" alignItems="center">
                 <ClaimCard />
-              </Box>
+              </Flex>
             </Box>
           </SlideFade>
         </Flex>
