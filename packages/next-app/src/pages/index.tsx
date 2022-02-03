@@ -20,9 +20,7 @@ const Home: NextPage = () => {
     fetchEns: true,
   });
 
-  const sm = "web";
-  const breakpointValue = useBreakpointValue({ base: "mobile", sm });
-  const isMobile = breakpointValue !== sm;
+  const isMobile = useBreakpointValue({ base: true, lg: false });
 
   const isConnected =
     typeof accountData !== "undefined" &&
