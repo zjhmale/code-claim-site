@@ -29,40 +29,39 @@ const Home: NextPage = () => {
     Object.entries(accountData).length > 0;
 
   return (
-    <Box m="0" w="100vw" h="100vh" background="blue">
+    <Box
+      m="0"
+      w="100vw"
+      h="100vh"
+      background="blue"
+      scrollSnapType={{ base: "y mandatory", lg: "none" }}
+      overflowY={{ base: "scroll", lg: "clip" }}
+    >
       <Head>
         <title>$CODE Claim Page</title>
       </Head>
-      <Flex
-        direction="row"
-        flexWrap="wrap"
-        h="100vh"
-        scrollSnapType="y mandatory"
-        overflowY="scroll"
-      >
-        <Flex
+
+      <Flex direction="row" flexWrap="wrap" h="100vh">
+        <Box
           w={{ base: "100vw", lg: "50vw" }}
           h="100vh"
+          m="0"
           pl={["24px", "5vw"]}
-          pr={["24px", "8vw"]}
+          pr={["40px", "8vw"]}
           background="#08010D"
-          scrollSnapAlign="start"
-          direction="column"
+          scrollSnapAlign={{ base: "start", lg: "none" }}
           position="relative"
         >
-          <Box mt={["32px", "48px"]}>
+          <Box mt={["32px", "48px"]} mb="22vh">
             <Logo />
           </Box>
 
-          <Flex h="100vh" alignItems="center">
-            <MainBox
-              isConnected={isConnected}
-              isUnsupported={!!networkData.chain?.unsupported}
-            />
-          </Flex>
-
-          {isMobile && (
-            <Center position="absolute" bottom="0" left="0" right="0">
+          <MainBox
+            isConnected={isConnected}
+            isUnsupported={!!networkData.chain?.unsupported}
+          />
+          <Center position="absolute" bottom="0" left="0" right="0">
+            {isMobile && (
               <Image
                 alignSelf="end"
                 mb="5"
@@ -71,9 +70,10 @@ const Home: NextPage = () => {
                 w="34px"
                 h="34px"
               />
-            </Center>
-          )}
-        </Flex>
+            )}
+          </Center>
+        </Box>
+
         <Flex
           w={{ base: "100vw", lg: "50vw" }}
           h="100vh"
@@ -81,27 +81,25 @@ const Home: NextPage = () => {
           backgroundColor="#F1F0F5"
           align="center"
           justifyContent="center"
-          scrollSnapAlign="start"
+          direction="column"
+          scrollSnapAlign={{ base: "start", lg: "none" }}
           position="relative"
         >
+          <Center position="absolute" top="0" left="0" right="0">
+            {isMobile && (
+              <Image
+                alignSelf="end"
+                mt="5"
+                src="assets/arrow-up.svg"
+                alt="scroll up"
+                w="34px"
+                h="34px"
+              />
+            )}
+          </Center>
           <SlideFade in={isConnected} offsetY="20px">
-            <Box m={["24px", "10vw"]} h="100vh">
-              {isMobile && (
-                <Center position="absolute" top="0" left="0" right="0">
-                  <Image
-                    alignSelf="end"
-                    mt="5"
-                    src="assets/arrow-up.svg"
-                    alt="scroll up"
-                    w="34px"
-                    h="34px"
-                  />
-                </Center>
-              )}
-
-              <Flex h="100vh" alignItems="center">
-                <ClaimCard />
-              </Flex>
+            <Box m={["24px", "10vw"]}>
+              <ClaimCard />
             </Box>
           </SlideFade>
         </Flex>
