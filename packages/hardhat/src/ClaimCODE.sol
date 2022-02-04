@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
 interface IERC20Mintable {
-    function mint(address _to, uint256 _value) external returns (bool _success);
+    function mint(address _to, uint256 _value) external;
 }
 import "hardhat/console.sol";
 
