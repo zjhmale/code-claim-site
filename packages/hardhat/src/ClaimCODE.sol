@@ -3,9 +3,10 @@ pragma solidity ^0.8.9;
 
 import "./MerkleProof.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
-interface IERC20Mintable {
+interface IERC20Mintable is IERC20 {
     function mint(address _to, uint256 _value) external;
 }
 import "hardhat/console.sol";
@@ -35,24 +36,29 @@ contract ClaimCODE is Ownable {
     error MintGovernanceDisable();
     error InitError();
 
-    constructor(uint256 _claimPeriodEnds, address _codeToken) {
+    constructor(
+        uint256 _claimPeriodEnds,
+        address _codeToken,
+        uint256 _airdropSupply
+    ) {
         if (_codeToken == address(0)) revert Address0Error();
         claimPeriodEnds = _claimPeriodEnds;
         codeToken = IERC20Mintable(_codeToken);
+        codeToken.mint(address(this), _airdropSupply * 1e18);
     }
 
-    function claimTokens(uint256 amount, bytes32[] calldata merkleProof) external {
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
-        (bool valid, uint256 index) = MerkleProof.verify(merkleProof, merkleRoot, leaf);
+    function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender, _amount));
+        (bool valid, uint256 index) = MerkleProof.verify(_merkleProof, merkleRoot, leaf);
         if (!mintingEnabled) revert ClaimNotEnabled();
         if (!valid) revert InvalidProof();
         if (isClaimed(index)) revert AlreadyClaimed();
         if (block.timestamp > claimPeriodEnds) revert ClaimEnded();
 
         claimed.set(index);
-        emit Claim(msg.sender, amount);
+        emit Claim(msg.sender, _amount);
 
-        codeToken.mint(msg.sender, amount);
+        codeToken.transfer(msg.sender, _amount);
     }
 
     function isClaimed(uint256 index) public view returns (bool) {
