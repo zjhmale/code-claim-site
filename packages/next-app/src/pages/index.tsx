@@ -16,9 +16,11 @@ import Confetti from "react-confetti";
 import { ClaimCard } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
+import useConfirmations from "@/hooks/useConfirmations";
 
 const Home: NextPage = () => {
-  const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
+  const confirmations = useConfirmations()
+  const [{ data: networkData, error, loading }] = useNetwork();
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   });
@@ -48,6 +50,7 @@ const Home: NextPage = () => {
     typeof accountData !== "undefined" &&
     Object.entries(accountData).length > 0;
 
+  console.log(confirmations)
   return (
     <div>
       <Confetti

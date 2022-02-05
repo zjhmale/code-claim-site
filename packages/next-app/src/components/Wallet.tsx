@@ -24,10 +24,10 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const [{ data, error, loading }, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
 
-  useEffect(() => {
-    if (switchNetwork && data?.chain?.id != data?.chains[0].id)
-      switchNetwork(data?.chains[0].id);
-  }, [connectData]);
+  // useEffect(() => {
+  //   if (switchNetwork && data?.chain?.id != data?.chains[0].id)
+  //     switchNetwork(data?.chains[0].id);
+  // }, [connectData]);
 
   if (isConnected && !isUnsupported) {
     return (
@@ -86,4 +86,4 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
       )}
     </HStack>
   );
-};
+}

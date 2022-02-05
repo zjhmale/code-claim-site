@@ -50,7 +50,6 @@
     "**/yarn-error.log": true,
     "**/.yalc": true
   },
-  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
