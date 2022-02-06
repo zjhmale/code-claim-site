@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState, Dispatch } from "react";
 import { useBlockNumber } from "wagmi";
 
 type BlockConfirmations = number | undefined;
+type Confirmations = [BlockConfirmations, Dispatch<SetStateAction<BlockConfirmations>>]
 
-const useConfirmations = (): BlockConfirmations => {
-  const [{ data, error, loading }, getBlockNumber] = useBlockNumber();
+const useConfirmations = (): Confirmations => {
+  const [{ data }] = useBlockNumber();
   const [confirmations, setConfirmations] = useState<BlockConfirmations>(0);
 
   useEffect(() => {
     setConfirmations(data)
     return (): void => {};
-  }, []); // Empty array ensures that effect is only run on mount
+  }, []);
 
-  return confirmations;
+  return [confirmations, setConfirmations];
 };
 
 export default useConfirmations;
