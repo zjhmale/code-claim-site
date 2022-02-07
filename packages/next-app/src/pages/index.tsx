@@ -17,9 +17,9 @@ import { ClaimCard } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
 import useConfirmations from "@/hooks/useConfirmations";
+import { Confirmations } from "@/components/Confirmations";
 
 const Home: NextPage = () => {
-  const confirmations = useConfirmations()
   const [{ data: networkData, error, loading }] = useNetwork();
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
@@ -50,7 +50,6 @@ const Home: NextPage = () => {
     typeof accountData !== "undefined" &&
     Object.entries(accountData).length > 0;
 
-  console.log(confirmations)
   return (
     <div>
       <Confetti
