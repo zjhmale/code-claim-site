@@ -1,19 +1,25 @@
 import { SetStateAction, useEffect, useState, Dispatch } from "react";
-import { useBlockNumber } from "wagmi";
+import { useBlockNumber, useWaitForTransaction } from "wagmi";
 
-type BlockConfirmations = number | undefined;
-type Confirmations = [BlockConfirmations, Dispatch<SetStateAction<BlockConfirmations>>]
+type BlockConfirmations = {
+  currentBlock: number | undefined;
+  transactionBlock: number | undefined;
+  blockConfirmations: number | undefined;
+};
 
-const useConfirmations = (): Confirmations => {
+type Confirmations = [BlockConfirmations, Dispatch<SetStateAction<BlockConfirmations>>];
+
+const useConfirmations = (hash: string): number | undefined => {
   const [{ data }] = useBlockNumber();
-  const [confirmations, setConfirmations] = useState<BlockConfirmations>(0);
+  const [{ data: transactionData }, wait] = useWaitForTransaction({ hash });
+  const [confirmations, setConfirmations] = useState<BlockConfirmations>({ currentBlock: 0, transactionBlock: 0, blockConfirmations: 0 });
 
   useEffect(() => {
-    setConfirmations(data)
+    setConfirmations({ ...confirmations, currentBlock: data });
     return (): void => {};
   }, []);
 
-  return [confirmations, setConfirmations];
+  return confirmations.blockConfirmations;
 };
 
 export default useConfirmations;
