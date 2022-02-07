@@ -412,7 +412,47 @@ export const ClaimCard = () => {
         {cardState === ClaimCardState.disconnected ? (
           <ButtonPlaceholder />
         ) : cardState === ClaimCardState.claimed ? (
-          <ButtonPlaceholder />
+          <Box>
+            <Button
+              background="#08010D"
+              borderRadius="12px"
+              color="#FFF"
+              fontSize={["16px", "18px"]}
+              fontWeight="900"
+              w="100%"
+              h="56px"
+              mb="8px"
+              _active={{}}
+              _hover={{
+                transform:
+                  "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
+                transformStyle: "preserve-3d",
+              }}
+              //onClick={}
+            >
+              <Text>VIEW CLAIM TRANSACTION</Text>
+            </Button>
+
+            <Button
+              borderRadius="12px"
+              borderColor="#08010D"
+              borderWidth="2px"
+              color="#08010D"
+              fontSize={["16px", "18px"]}
+              fontWeight="900"
+              w="100%"
+              h="56px"
+              _active={{}}
+              _hover={{
+                transform:
+                  "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
+                transformStyle: "preserve-3d",
+              }}
+              //onClick={}
+            >
+              <Text>ADD $CODE TO METAMASK</Text>
+            </Button>
+          </Box>
         ) : (
           <ClaimButton
             label={totalAllocation.toString()}
