@@ -1,4 +1,12 @@
-import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Spacer,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useAccount, useSigner } from "wagmi";
 import MerkleTree from "merkletreejs";
@@ -250,6 +258,9 @@ export const ClaimCard = ({
     fetchEns: true,
   });
 
+  const [claimDate, setClaimDate] = useState(new Date());
+  const [blockConfirmations, setBlockConfirmations] = useState(10);
+
   const allocations =
     accountData?.address &&
     ethers.utils.getAddress(accountData.address) in airdrop
@@ -340,18 +351,22 @@ export const ClaimCard = ({
         />
       </Box>
       <Flex direction="column" mb="8">
-        <Box border="1px solid #08010D" opacity="8%" />
-        {positions.map((pos, index) => {
-          return (
-            <Box key={index} my="2">
-              <Position
-                title={pos.title}
-                value={pos.value.toString()}
-                isBig={false}
-              />
-            </Box>
-          );
-        })}
+        {cardState !== ClaimCardState.claimed && (
+          <Box border="1px solid #08010D" opacity="8%" />
+        )}
+        {cardState !== ClaimCardState.claimed &&
+          positions.map((pos, index) => {
+            return (
+              <Box key={index} my="2">
+                <Position
+                  title={pos.title}
+                  value={pos.value.toString()}
+                  isBig={false}
+                />
+              </Box>
+            );
+          })}
+
         <Box border="1px solid #08010D" opacity="8%" my="4" />
         <Box>
           <Position
@@ -359,13 +374,91 @@ export const ClaimCard = ({
             value={totalAllocation.toString()}
             isBig={true}
           />
+          {cardState === ClaimCardState.claimed && (
+            <Box mt="16px">
+              <Text
+                px="24px"
+                fontFamily="Zen Kaku Gothic New"
+                color="#4E4853"
+                fontSize="18px"
+                fontWeight="500"
+              >
+                Claimed on{" "}
+                {claimDate.toLocaleDateString("en-UK", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </Text>
+
+              <Flex mx="24px" mt="8px">
+                <Image
+                  src="assets/block-confirmations.svg"
+                  alt="confirmations"
+                  w="24px"
+                  h="24px"
+                  alignSelf="center"
+                />
+                <Text
+                  fontFamily="IBM Plex Mono"
+                  bgGradient="linear(to-r, #AD00FF, #4E00EC)"
+                  bgClip="text"
+                  fontSize="18px"
+                  fontWeight="500"
+                  pl="8px"
+                >
+                  {blockConfirmations} block confirmations
+                </Text>
+              </Flex>
+            </Box>
+          )}
         </Box>
       </Flex>
       <Box px="24px" pb="24px">
         {cardState === ClaimCardState.disconnected ? (
           <ButtonPlaceholder />
         ) : cardState === ClaimCardState.claimed ? (
-          <ButtonPlaceholder />
+          <Box>
+            <Button
+              background="#08010D"
+              borderRadius="12px"
+              color="#FFF"
+              fontSize={["16px", "18px"]}
+              fontWeight="900"
+              w="100%"
+              h="56px"
+              mb="8px"
+              _active={{}}
+              _hover={{
+                transform:
+                  "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
+                transformStyle: "preserve-3d",
+              }}
+              //onClick={}
+            >
+              <Text>VIEW CLAIM TRANSACTION</Text>
+            </Button>
+
+            <Button
+              borderRadius="12px"
+              borderColor="#08010D"
+              borderWidth="2px"
+              color="#08010D"
+              fontSize={["16px", "18px"]}
+              fontWeight="900"
+              w="100%"
+              h="56px"
+              _active={{}}
+              _hover={{
+                transform:
+                  "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
+                transformStyle: "preserve-3d",
+              }}
+              //onClick={}
+            >
+              <Text>ADD $CODE TO METAMASK</Text>
+            </Button>
+          </Box>
         ) : (
           <ClaimButton
             label={totalAllocation.toString()}
