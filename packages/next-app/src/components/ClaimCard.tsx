@@ -238,7 +238,11 @@ const Position = ({
 
 const contractAddress = getContractAddress();
 
-export const ClaimCard = () => {
+export const ClaimCard = ({
+  setConfetti,
+}: {
+  setConfetti: CallableFunction;
+}) => {
   const [cardState, setCardState] = useState(ClaimCardState.disconnected);
 
   const [{ data: signer, error, loading }] = useSigner();
@@ -301,6 +305,8 @@ export const ClaimCard = () => {
             signer
           );
           const isClaimed = await tokenContract.isClaimed(index);
+
+          if (isClaimed) setConfetti({ state: true });
 
           setCardState(
             isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed
