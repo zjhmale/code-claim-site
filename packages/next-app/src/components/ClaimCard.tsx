@@ -12,19 +12,15 @@ import airdropData from "../data/airdrop";
 
 const TOKEN_DECIMALS = 18;
 
-const airdrop: Record<
-  string,
-  { nft: number; voter: number; earlyContrib: number }
-> = airdropData.airdrop;
+const airdrop: Record<string, { nft: number; voter: number; earlyContrib: number }> =
+  airdropData.airdrop;
 
 // Helper function to generate leafs
 function generateLeaf(address: string, value: string): Buffer {
   return Buffer.from(
     // Hash in appropriate Merkle format
-    ethers.utils
-      .solidityKeccak256(["address", "uint256"], [address, value])
-      .slice(2),
-    "hex"
+    ethers.utils.solidityKeccak256(["address", "uint256"], [address, value]).slice(2),
+    "hex",
   );
 }
 
@@ -35,28 +31,20 @@ const merkleTree = new MerkleTree(
       ethers.utils.getAddress(address),
       ethers.utils
         .parseUnits(
-          (
-            allocation.nft +
-            allocation.voter +
-            allocation.earlyContrib
-          ).toString(),
-          TOKEN_DECIMALS
+          (allocation.nft + allocation.voter + allocation.earlyContrib).toString(),
+          TOKEN_DECIMALS,
         )
-        .toString()
-    )
+        .toString(),
+    ),
   ),
   keccak256,
   {
     sortPairs: true,
-  }
+  },
 );
 
 // This is a port of the verify logic in  packages\hardhat\src\MerkleProof.sol
-function verify(
-  proof: string[],
-  root: string,
-  leaf: string
-): [boolean, number] {
+function verify(proof: string[], root: string, leaf: string): [boolean, number] {
   let computedHash = Buffer.from(leaf.slice(2), "hex");
   let index = 0;
 
@@ -73,10 +61,10 @@ function verify(
             [
               "0x" + computedHash.toString("hex").padStart(64, "0"),
               "0x" + proofElement.toString("hex").padStart(64, "0"),
-            ]
+            ],
           )
           .slice(2),
-        "hex"
+        "hex",
       );
     } else {
       // Hash(current element of the proof + current computed hash)
@@ -87,10 +75,10 @@ function verify(
             [
               "0x" + proofElement.toString("hex").padStart(64, "0"),
               "0x" + computedHash.toString("hex").padStart(64, "0"),
-            ]
+            ],
           )
           .slice(2),
-        "hex"
+        "hex",
       );
 
       index += 1;
@@ -102,9 +90,7 @@ function verify(
 }
 
 function getMerkleTreeValues(address: string, tokenAmount: number) {
-  const numTokens = ethers.utils
-    .parseUnits(tokenAmount.toString(), TOKEN_DECIMALS)
-    .toString();
+  const numTokens = ethers.utils.parseUnits(tokenAmount.toString(), TOKEN_DECIMALS).toString();
 
   const leaf = generateLeaf(ethers.utils.getAddress(address), numTokens);
   const proof = merkleTree.getHexProof(leaf);
@@ -122,12 +108,7 @@ export enum ClaimCardState {
 
 const Avatar = () => {
   return (
-    <Box
-      background="gray.200"
-      w={["96px", "120px"]}
-      h={["96px", "120px"]}
-      borderRadius="16px"
-    />
+    <Box background="gray.200" w={["96px", "120px"]} h={["96px", "120px"]} borderRadius="16px" />
   );
 };
 
@@ -159,11 +140,7 @@ const ClaimButton = ({
     onClick={onClick}
   >
     <Text>
-      CLAIM{" "}
-      <span style={{ fontFamily: "IBM Plex Mono", fontWeight: 600 }}>
-        {label}
-      </span>{" "}
-      TOKENS
+      CLAIM <span style={{ fontFamily: "IBM Plex Mono", fontWeight: 600 }}>{label}</span> TOKENS
     </Text>
   </Button>
 );
@@ -181,24 +158,13 @@ const Header = ({ address, image, showLabel, showPlaceholder }: HeaderData) => (
     <Flex direction="column" ml={["20px", "32px"]}>
       {showLabel && (
         <Flex align="center">
-          <Image
-            src="assets/eligible-check.svg"
-            alt="check"
-            w="20px"
-            h="20px"
-            mr="8px"
-          />
+          <Image src="assets/eligible-check.svg" alt="check" w="20px" h="20px" mr="8px" />
           <Text color="#4E4853" fontSize={["16px", "18px"]} fontWeight="500">
             Eligible wallet
           </Text>
         </Flex>
       )}
-      <Text
-        color="#08010D"
-        fontSize={["32px", "42px"]}
-        fontWeight="500"
-        mt="-8px"
-      >
+      <Text color="#08010D" fontSize={["32px", "42px"]} fontWeight="500" mt="-8px">
         {address}
       </Text>
     </Flex>
@@ -247,13 +213,11 @@ export const ClaimCard = () => {
   });
 
   const allocations =
-    accountData?.address &&
-    ethers.utils.getAddress(accountData.address) in airdrop
+    accountData?.address && ethers.utils.getAddress(accountData.address) in airdrop
       ? airdrop[ethers.utils.getAddress(accountData.address)]
       : { nft: 0, voter: 0, earlyContrib: 0 };
 
-  const totalAllocation =
-    allocations.nft + allocations.voter + allocations.earlyContrib;
+  const totalAllocation = allocations.nft + allocations.voter + allocations.earlyContrib;
 
   const positions = [
     { title: "Minted D4R NFT", value: allocations.nft },
@@ -280,15 +244,12 @@ export const ClaimCard = () => {
 
           const accountAddress = await signer.getAddress();
 
-          const { leaf, proof } = getMerkleTreeValues(
-            accountAddress,
-            totalAllocation
-          );
+          const { leaf, proof } = getMerkleTreeValues(accountAddress, totalAllocation);
 
           const [isVerified, index] = verify(
             proof,
             merkleTree.getHexRoot(),
-            "0x" + leaf.toString("hex")
+            "0x" + leaf.toString("hex"),
           );
 
           console.log(isVerified);
@@ -296,15 +257,10 @@ export const ClaimCard = () => {
 
           if (!isVerified) return console.error("Couldn't verify proof!");
 
-          const tokenContract = CODEToken__factory.connect(
-            contractAddress,
-            signer
-          );
+          const tokenContract = CODEToken__factory.connect(contractAddress, signer);
           const isClaimed = await tokenContract.isClaimed(index);
 
-          setCardState(
-            isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed
-          );
+          setCardState(isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed);
         }
       }
     };
@@ -327,8 +283,7 @@ export const ClaimCard = () => {
           address={accountData?.ens?.name || formattedAddress || ""}
           image={accountData?.ens?.avatar || ""}
           showLabel={
-            cardState !== ClaimCardState.disconnected &&
-            cardState !== ClaimCardState.notEligible
+            cardState !== ClaimCardState.disconnected && cardState !== ClaimCardState.notEligible
           }
           showPlaceholder={cardState === ClaimCardState.disconnected}
         />
@@ -338,21 +293,13 @@ export const ClaimCard = () => {
         {positions.map((pos, index) => {
           return (
             <Box key={index} my="2">
-              <Position
-                title={pos.title}
-                value={pos.value.toString()}
-                isBig={false}
-              />
+              <Position title={pos.title} value={pos.value.toString()} isBig={false} />
             </Box>
           );
         })}
         <Box border="1px solid #08010D" opacity="8%" my="4" />
         <Box>
-          <Position
-            title="$CODE allocation"
-            value={totalAllocation.toString()}
-            isBig={true}
-          />
+          <Position title="$CODE allocation" value={totalAllocation.toString()} isBig={true} />
         </Box>
       </Flex>
       <Box px="24px" pb="24px">
@@ -367,10 +314,7 @@ export const ClaimCard = () => {
               if (!isEligible) return console.warn("Not eligibile!");
               if (!signer) return console.warn("Not connected!");
 
-              const tokenContract = CODEToken__factory.connect(
-                contractAddress,
-                signer
-              );
+              const tokenContract = CODEToken__factory.connect(contractAddress, signer);
 
               const contractMerkleRoot = await tokenContract.merkleRoot();
 
@@ -379,10 +323,7 @@ export const ClaimCard = () => {
 
               const accountAddress = await signer.getAddress();
 
-              const { proof, numTokens } = getMerkleTreeValues(
-                accountAddress,
-                totalAllocation
-              );
+              const { proof, numTokens } = getMerkleTreeValues(accountAddress, totalAllocation);
 
               try {
                 setCardState(ClaimCardState.isClaiming);

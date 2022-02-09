@@ -29,19 +29,9 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
 
   return (
     <div>
-      <Confetti
-        width={windowSize.width}
-        height={windowSize.height}
-        colors={["#DD95FF"]}
-        hidden
-      />
+      <Confetti width={windowSize.width} height={windowSize.height} colors={["#DD95FF"]} hidden />
       <Box my={["24px", "0"]} w="100%">
-        <Heading
-          as="h1"
-          color="white"
-          fontSize={["44px", "96px"]}
-          fontWeight="500"
-        >
+        <Heading as="h1" color="white" fontSize={["44px", "96px"]} fontWeight="500">
           Airdrop
         </Heading>
         <Text
@@ -52,8 +42,8 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
           fontWeight="500"
           fontFamily="Zen Kaku Gothic New"
         >
-          $CODE is the new governance token for Developer DAO. Connect your
-          wallet to determine your airdrop eligibility.
+          $CODE is the new governance token for Developer DAO. Connect your wallet to determine your
+          airdrop eligibility.
         </Text>
         <Flex direction={["column", "row"]}>
           <Box mb={["4", "0"]} mr={["0", "7"]} w={["100%", "inherit"]}>

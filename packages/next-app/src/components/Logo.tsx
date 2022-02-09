@@ -7,13 +7,7 @@ export const Logo = () => {
 
   return (
     <Flex align="center">
-      <Image
-        src="assets/devdao-logo.svg"
-        alt="Developer DAO logo"
-        w="48px"
-        h="48px"
-        mr="16px"
-      />
+      <Image src="assets/devdao-logo.svg" alt="Developer DAO logo" w="48px" h="48px" mr="16px" />
       {isWeb && (
         <Text color="white" fontSize="24px" fontWeight="500">
           Developer DAO

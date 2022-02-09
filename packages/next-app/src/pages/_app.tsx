@@ -54,8 +54,7 @@ const provider = ({ chainId, connector }: GetProviderArgs) => {
 
   switch (chainName.toLowerCase().trim()) {
     case "localhost":
-      const localRpcUrl = connector?.chains.find((x: any) => x.id == 31337)
-        ?.rpcUrls[0];
+      const localRpcUrl = connector?.chains.find((x: any) => x.id == 31337)?.rpcUrls[0];
       return new ethers.providers.JsonRpcProvider(localRpcUrl);
     case "rinkeby":
       return ethers.getDefaultProvider(chain.rinkeby.id, {

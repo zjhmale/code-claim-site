@@ -25,8 +25,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const [{ data: connectData, error: connectError }, connect] = useConnect();
 
   useEffect(() => {
-    if (switchNetwork && data?.chain?.id != data?.chains[0].id)
-      switchNetwork(data?.chains[0].id);
+    if (switchNetwork && data?.chain?.id != data?.chains[0].id) switchNetwork(data?.chains[0].id);
   }, [connectData]);
 
   if (isConnected && !isUnsupported) {
@@ -57,11 +56,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
 
   return (
     <HStack spacing="24px">
-      <Button
-        onClick={onOpen}
-        label="CONNECT WALLET"
-        buttonType={ButtonType.Connect}
-      />
+      <Button onClick={onOpen} label="CONNECT WALLET" buttonType={ButtonType.Connect} />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -69,21 +64,21 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           <ModalHeader>Connect your wallet</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {connectData.connectors.map((x) => (
-              <Button
-                key={x.id}
-                onClick={() => connect(x)}
-                label={x.name}
-                buttonType={ButtonType.Connect}
-              />
-            ))}
+            <HStack spacing="24px">
+              {connectData.connectors.map((x) => (
+                <Button
+                  key={x.id}
+                  onClick={() => connect(x)}
+                  label={x.name}
+                  buttonType={ButtonType.Connect}
+                />
+              ))}
+            </HStack>
           </ModalBody>
         </ModalContent>
       </Modal>
 
-      {connectError && (
-        <div>{connectError?.message ?? "Failed to connect"}</div>
-      )}
+      {connectError && <div>{connectError?.message ?? "Failed to connect"}</div>}
     </HStack>
   );
 };

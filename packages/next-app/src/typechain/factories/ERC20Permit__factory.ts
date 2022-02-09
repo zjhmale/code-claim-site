@@ -359,10 +359,7 @@ export class ERC20Permit__factory {
   static createInterface(): ERC20PermitInterface {
     return new utils.Interface(_abi) as ERC20PermitInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): ERC20Permit {
+  static connect(address: string, signerOrProvider: Signer | Provider): ERC20Permit {
     return new Contract(address, _abi, signerOrProvider) as ERC20Permit;
   }
 }

@@ -1,30 +1,23 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {
-  Box,
-  Flex,
-  SlideFade,
-  Image,
-  Center,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Box, Flex, SlideFade, Image, Center, useBreakpointValue } from "@chakra-ui/react";
 import { useAccount, useNetwork } from "wagmi";
 
 import { ClaimCard } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
+import useConfirmations from "@/hooks/useConfirmations";
+import { Confirmations } from "@/components/Confirmations";
 
 const Home: NextPage = () => {
-  const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
+  const [{ data: networkData, error, loading }] = useNetwork();
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   });
 
   const isMobile = useBreakpointValue({ base: true, lg: false });
 
-  const isConnected =
-    typeof accountData !== "undefined" &&
-    Object.entries(accountData).length > 0;
+  const isConnected = typeof accountData !== "undefined" && Object.entries(accountData).length > 0;
 
   return (
     <Box
@@ -54,10 +47,7 @@ const Home: NextPage = () => {
             <Logo />
           </Box>
 
-          <MainBox
-            isConnected={isConnected}
-            isUnsupported={!!networkData.chain?.unsupported}
-          />
+          <MainBox isConnected={isConnected} isUnsupported={!!networkData.chain?.unsupported} />
           <Center position="absolute" bottom="0" left="0" right="0">
             {isMobile && (
               <Image

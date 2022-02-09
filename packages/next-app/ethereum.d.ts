@@ -7,16 +7,13 @@ export declare global {
       path: string;
       sendAsync: (
         request: { method: string; params?: Array<any> },
-        callback: (error: any, response: any) => void
+        callback: (error: any, response: any) => void,
       ) => void;
       send: (
         request: { method: string; params?: Array<any> },
-        callback: (error: any, response: any) => void
+        callback: (error: any, response: any) => void,
       ) => void;
-      request: (request: {
-        method: string;
-        params?: Array<any>;
-      }) => Promise<any>;
+      request: (request: { method: string; params?: Array<any> }) => Promise<any>;
     };
   }
 }
