@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Image,
-  Spacer,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useAccount, useSigner } from "wagmi";
 import MerkleTree from "merkletreejs";
@@ -17,6 +9,7 @@ import { CODEToken__factory } from "@/typechain";
 import { getContractAddress, maskWalletAddress } from "@/utils";
 
 import airdropData from "../data/airdrop";
+import { addCodeToken } from "../utils/add-token";
 
 const TOKEN_DECIMALS = 18;
 
@@ -128,10 +121,26 @@ export enum ClaimCardState {
   notEligible,
 }
 
-const Avatar = () => {
-  return (
+const Avatar = ({
+  imageUrl,
+  showPlaceholder,
+}: {
+  imageUrl: string | null | undefined;
+  showPlaceholder: boolean;
+}) => {
+  const shouldShowPlaceholder =
+    showPlaceholder || imageUrl === null || imageUrl === undefined;
+  return shouldShowPlaceholder ? (
     <Box
       background="gray.200"
+      w={["96px", "120px"]}
+      h={["96px", "120px"]}
+      borderRadius="16px"
+    />
+  ) : (
+    <Image
+      src={imageUrl}
+      alt="avatar"
       w={["96px", "120px"]}
       h={["96px", "120px"]}
       borderRadius="16px"
@@ -185,7 +194,7 @@ interface HeaderData {
 
 const Header = ({ address, image, showLabel, showPlaceholder }: HeaderData) => (
   <Flex align="center">
-    <Avatar />
+    <Avatar imageUrl={image} showPlaceholder={showPlaceholder} />
     <Flex direction="column" ml={["20px", "32px"]}>
       {showLabel && (
         <Flex align="center">
@@ -283,6 +292,11 @@ export const ClaimCard = ({
   if (accountData?.address) {
     formattedAddress = maskWalletAddress(accountData.address);
   }
+
+  const addCodeToMetaMask = async () => {
+    if (window.ethereum === undefined) return;
+    await addCodeToken(window.ethereum);
+  };
 
   // Effect to set initial state after account connected
   useEffect(() => {
@@ -454,7 +468,7 @@ export const ClaimCard = ({
                   "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
                 transformStyle: "preserve-3d",
               }}
-              //onClick={}
+              onClick={addCodeToMetaMask}
             >
               <Text>ADD $CODE TO METAMASK</Text>
             </Button>
