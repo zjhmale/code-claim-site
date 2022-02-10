@@ -120,10 +120,26 @@ export enum ClaimCardState {
   notEligible,
 }
 
-const Avatar = () => {
-  return (
+const Avatar = ({
+  imageUrl,
+  showPlaceholder,
+}: {
+  imageUrl: string | null | undefined;
+  showPlaceholder: boolean;
+}) => {
+  const shouldShowPlaceholder =
+    showPlaceholder || imageUrl === null || imageUrl === undefined;
+  return shouldShowPlaceholder ? (
     <Box
       background="gray.200"
+      w={["96px", "120px"]}
+      h={["96px", "120px"]}
+      borderRadius="16px"
+    />
+  ) : (
+    <Image
+      src={imageUrl}
+      alt="avatar"
       w={["96px", "120px"]}
       h={["96px", "120px"]}
       borderRadius="16px"
@@ -177,7 +193,7 @@ interface HeaderData {
 
 const Header = ({ address, image, showLabel, showPlaceholder }: HeaderData) => (
   <Flex align="center">
-    <Avatar />
+    <Avatar imageUrl={image} showPlaceholder={showPlaceholder} />
     <Flex direction="column" ml={["20px", "32px"]}>
       {showLabel && (
         <Flex align="center">
