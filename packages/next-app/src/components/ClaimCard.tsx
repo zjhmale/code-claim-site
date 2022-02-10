@@ -9,6 +9,7 @@ import { CODEToken__factory } from "@/typechain";
 import { getContractAddress, maskWalletAddress } from "@/utils";
 
 import airdropData from "../data/airdrop";
+import { addCodeToken } from "../utils/add-token";
 
 const TOKEN_DECIMALS = 18;
 
@@ -292,6 +293,11 @@ export const ClaimCard = ({
     formattedAddress = maskWalletAddress(accountData.address);
   }
 
+  const addCodeToMetaMask = async () => {
+    if (window.ethereum === undefined) return;
+    await addCodeToken(window.ethereum);
+  };
+
   // Effect to set initial state after account connected
   useEffect(() => {
     const checkAlreadyClaimed = async () => {
@@ -462,7 +468,7 @@ export const ClaimCard = ({
                   "translate3d(0px, -2px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
                 transformStyle: "preserve-3d",
               }}
-              //onClick={}
+              onClick={addCodeToMetaMask}
             >
               <Text>ADD $CODE TO METAMASK</Text>
             </Button>
