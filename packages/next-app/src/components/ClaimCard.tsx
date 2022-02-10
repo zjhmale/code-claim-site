@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Image,
-  Spacer,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useAccount, useSigner } from "wagmi";
 import MerkleTree from "merkletreejs";
