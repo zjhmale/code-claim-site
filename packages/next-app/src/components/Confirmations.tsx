@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useConfirmations from "@/hooks/useConfirmations";
+import useConfirmations from "../hooks/useConfirmations";
 
 interface ConfirmationsType {
   hash: string | undefined;

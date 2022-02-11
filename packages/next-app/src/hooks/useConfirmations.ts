@@ -4,7 +4,7 @@ import { useBlockNumber, useWaitForTransaction } from "wagmi";
 type BlockConfirmations = number | undefined;
 
 const useConfirmations = (latestBlockHash: string | undefined): number | undefined => {
-  const [{ data }] = useBlockNumber();
+  const [{ data }] = useBlockNumber({ watch: true });
   const [confirmations, setConfirmations] = useState<BlockConfirmations>(0);
   const [{ data: waitTransaction }] = useWaitForTransaction({ hash: latestBlockHash });
 
@@ -14,7 +14,7 @@ const useConfirmations = (latestBlockHash: string | undefined): number | undefin
       setConfirmations(blockConfirmations < 0 ? 0 : blockConfirmations);
     }
     return (): void => {};
-  }, [waitTransaction]);
+  }, [waitTransaction, data]);
 
   return confirmations;
 };
