@@ -18,7 +18,7 @@ import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
 
 const Home: NextPage = () => {
-  const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
+  const [{ data: networkData, error, loading }] = useNetwork();
   const [{ data: accountData }, disconnect] = useAccount({
     fetchEns: true,
   });
