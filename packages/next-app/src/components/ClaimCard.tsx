@@ -243,6 +243,15 @@ export const ClaimCard = ({
     }
   };
 
+  const headerData = {
+    address: accountData?.ens?.name || formattedAddress || "",
+    image: accountData?.ens?.avatar || "",
+    showLabel:
+      cardState !== ClaimCardState.disconnected &&
+      cardState !== ClaimCardState.notEligible,
+    showPlaceholder: cardState === ClaimCardState.disconnected,
+  };
+
   return (
     <Flex
       w="100%"
@@ -254,15 +263,7 @@ export const ClaimCard = ({
       direction="column"
     >
       <Box p="24px">
-        <Header
-          address={accountData?.ens?.name || formattedAddress || ""}
-          image={accountData?.ens?.avatar || ""}
-          showLabel={
-            cardState !== ClaimCardState.disconnected &&
-            cardState !== ClaimCardState.notEligible
-          }
-          showPlaceholder={cardState === ClaimCardState.disconnected}
-        />
+        <Header data={headerData} />
       </Box>
       {cardState === ClaimCardState.claimed && (
         <ClaimedView

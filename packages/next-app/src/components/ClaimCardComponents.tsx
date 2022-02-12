@@ -78,11 +78,10 @@ interface HeaderData {
 }
 
 export const Header = ({
-  address,
-  image,
-  showLabel,
-  showPlaceholder,
-}: HeaderData) => (
+  data: { address, image, showLabel, showPlaceholder },
+}: {
+  data: HeaderData;
+}) => (
   <Flex align="center">
     <Avatar imageUrl={image} showPlaceholder={showPlaceholder} />
     <Flex direction="column" ml={["20px", "32px"]}>
