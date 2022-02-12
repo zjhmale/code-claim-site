@@ -204,6 +204,7 @@ export const ClaimCard = ({
       }
     };
 
+    // FIXME:
     // checkAlreadyClaimed();
   }, [signer, cardState, isEligible, totalAllocation]);
 
