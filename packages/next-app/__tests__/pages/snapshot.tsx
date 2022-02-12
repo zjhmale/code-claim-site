@@ -10,7 +10,7 @@ it("renders homepage unchanged", () => {
     .create(
       <ChakraProvider theme={theme}>
         <Index />
-      </ChakraProvider>
+      </ChakraProvider>,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();

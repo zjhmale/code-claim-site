@@ -24,7 +24,11 @@ const App = () => {
       if (etherium) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        const bananaPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+        const bananaPortalContract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer,
+        );
 
         /*
          * Call the getAllMsgs method from your Smart Contract
@@ -98,7 +102,9 @@ const App = () => {
         return;
       }
 
-      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
 
       console.log("Connected", accounts[0]);
       setCurrentAccount(accounts[0]);
@@ -120,10 +126,16 @@ const App = () => {
         const signer = provider.getSigner();
 
         //abi
-        const bananaPortalContract = new ethers.Contract(contractAdress, contractABI, signer);
+        const bananaPortalContract = new ethers.Contract(
+          contractAdress,
+          contractABI,
+          signer,
+        );
 
         //execute throw banana
-        const bananaTxn = await bananaPortalContract.throwBanana("This is a message");
+        const bananaTxn = await bananaPortalContract.throwBanana(
+          "This is a message",
+        );
         console.log("Mining...", bananaTxn.hash);
 
         await bananaTxn.wait();
@@ -145,7 +157,8 @@ const App = () => {
         <div className="header">Monke, throw banana 🍌!</div>
 
         <div className="bio">
-          I am Jess and I am studying EE and learning about web3 in my freetime. Connect your Ethereum wallet and throw a banana at me!
+          I am Jess and I am studying EE and learning about web3 in my freetime.
+          Connect your Ethereum wallet and throw a banana at me!
         </div>
 
         <button className="waveButton" onClick={throwBanana}>
@@ -169,7 +182,14 @@ const App = () => {
 
         {allBananas.map((bananaMsg, index) => {
           return (
-            <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+            <div
+              key={index}
+              style={{
+                backgroundColor: "OldLace",
+                marginTop: "16px",
+                padding: "8px",
+              }}
+            >
               <div>Address: {bananaMsg.address}</div>
               <div>Time: {bananaMsg.timestamp.toString()}</div>
               <div>Message: {bananaMsg.message}</div>

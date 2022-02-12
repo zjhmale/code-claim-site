@@ -25,7 +25,7 @@ function generateLeaf(address: string, value: string): Buffer {
     ethers.utils
       .solidityKeccak256(["address", "uint256"], [address, value])
       .slice(2),
-    "hex"
+    "hex",
   );
 }
 
@@ -41,22 +41,22 @@ const merkleTree = new MerkleTree(
             allocation.voter +
             allocation.earlyContrib
           ).toString(),
-          TOKEN_DECIMALS
+          TOKEN_DECIMALS,
         )
-        .toString()
-    )
+        .toString(),
+    ),
   ),
   keccak256,
   {
     sortPairs: true,
-  }
+  },
 );
 
 // This is a port of the verify logic in  packages\hardhat\src\MerkleProof.sol
 function verify(
   proof: string[],
   root: string,
-  leaf: string
+  leaf: string,
 ): [boolean, number] {
   let computedHash = Buffer.from(leaf.slice(2), "hex");
   let index = 0;
@@ -74,10 +74,10 @@ function verify(
             [
               "0x" + computedHash.toString("hex").padStart(64, "0"),
               "0x" + proofElement.toString("hex").padStart(64, "0"),
-            ]
+            ],
           )
           .slice(2),
-        "hex"
+        "hex",
       );
     } else {
       // Hash(current element of the proof + current computed hash)
@@ -88,10 +88,10 @@ function verify(
             [
               "0x" + proofElement.toString("hex").padStart(64, "0"),
               "0x" + computedHash.toString("hex").padStart(64, "0"),
-            ]
+            ],
           )
           .slice(2),
-        "hex"
+        "hex",
       );
 
       index += 1;
@@ -311,13 +311,13 @@ export const ClaimCard = ({
 
           const { leaf, proof } = getMerkleTreeValues(
             accountAddress,
-            totalAllocation
+            totalAllocation,
           );
 
           const [isVerified, index] = verify(
             proof,
             merkleTree.getHexRoot(),
-            "0x" + leaf.toString("hex")
+            "0x" + leaf.toString("hex"),
           );
 
           console.log(isVerified);
@@ -327,14 +327,14 @@ export const ClaimCard = ({
 
           const tokenContract = CODEToken__factory.connect(
             contractAddress,
-            signer
+            signer,
           );
           const isClaimed = await tokenContract.isClaimed(index);
 
           if (isClaimed) setConfetti({ state: true });
 
           setCardState(
-            isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed
+            isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed,
           );
         }
       }
@@ -482,7 +482,7 @@ export const ClaimCard = ({
 
               const tokenContract = CODEToken__factory.connect(
                 contractAddress,
-                signer
+                signer,
               );
 
               const contractMerkleRoot = await tokenContract.merkleRoot();
@@ -494,7 +494,7 @@ export const ClaimCard = ({
 
               const { proof, numTokens } = getMerkleTreeValues(
                 accountAddress,
-                totalAllocation
+                totalAllocation,
               );
 
               try {
