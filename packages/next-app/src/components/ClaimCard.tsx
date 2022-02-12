@@ -129,7 +129,10 @@ const Avatar = ({
   showPlaceholder: boolean;
 }) => {
   const shouldShowPlaceholder =
-    showPlaceholder || imageUrl === null || imageUrl === undefined;
+    showPlaceholder ||
+    imageUrl === null ||
+    imageUrl === undefined ||
+    imageUrl.length === 0;
   return shouldShowPlaceholder ? (
     <Box
       background="gray.200"
