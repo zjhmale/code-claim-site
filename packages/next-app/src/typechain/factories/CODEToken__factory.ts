@@ -619,14 +619,14 @@ export class CODEToken__factory extends ContractFactory {
     treasurySupply: BigNumberish,
     airdropSupply: BigNumberish,
     _claimPeriodEnds: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<CODEToken> {
     return super.deploy(
       _treasury,
       treasurySupply,
       airdropSupply,
       _claimPeriodEnds,
-      overrides || {}
+      overrides || {},
     ) as Promise<CODEToken>;
   }
   getDeployTransaction(
@@ -634,14 +634,14 @@ export class CODEToken__factory extends ContractFactory {
     treasurySupply: BigNumberish,
     airdropSupply: BigNumberish,
     _claimPeriodEnds: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _treasury,
       treasurySupply,
       airdropSupply,
       _claimPeriodEnds,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): CODEToken {
@@ -657,7 +657,7 @@ export class CODEToken__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): CODEToken {
     return new Contract(address, _abi, signerOrProvider) as CODEToken;
   }
