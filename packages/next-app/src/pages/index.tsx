@@ -4,6 +4,7 @@ import {
   Box,
   Flex,
   SlideFade,
+  Spacer,
   Image,
   Center,
   useBreakpointValue,
@@ -16,6 +17,7 @@ import Confetti from "react-confetti";
 import { ClaimCard } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
+import { SocialLinks } from "@/components/SocialLinks";
 
 const Home: NextPage = () => {
   const [{ data: networkData, error, loading }] = useNetwork();
@@ -81,9 +83,15 @@ const Home: NextPage = () => {
             scrollSnapAlign={{ base: "start", lg: "none" }}
             position="relative"
           >
-            <Box mt={["32px", "48px"]} mb="22vh">
+            <Flex mt={["32px", "48px"]} mb="22vh">
               <Logo />
-            </Box>
+              {isMobile && (
+                <>
+                  <Spacer />
+                  <SocialLinks />
+                </>
+              )}
+            </Flex>
 
             <MainBox
               isConnected={isConnected}
@@ -137,6 +145,20 @@ const Home: NextPage = () => {
             </SlideFade>
           </Flex>
         </Flex>
+
+        {isMobile ? (
+          <Flex />
+        ) : (
+          <Flex
+            position="absolute"
+            top="48px"
+            left={["24px", "5vw"]}
+            right={["24px", "5vw"]}
+          >
+            <Spacer />
+            <SocialLinks />
+          </Flex>
+        )}
       </Box>
     </div>
   );
