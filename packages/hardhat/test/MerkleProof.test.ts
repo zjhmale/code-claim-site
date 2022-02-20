@@ -7,9 +7,9 @@ import MerkleGenerator from '../utils/merkleGenerator';
 
 const TOKEN_DECIMALS = 18;
 
-describe("MerkleProof", function () {
+describe('MerkleProof', function () {
   beforeEach(async function () {
-    const merkleProofCf = await ethers.getContractFactory("MerkleProofWrapper");
+    const merkleProofCf = await ethers.getContractFactory('MerkleProofWrapper');
     this.merkleProof = await merkleProofCf.deploy();
     await this.merkleProof.deployed();
     const unnamedAccounts = await getUnnamedAccounts();
