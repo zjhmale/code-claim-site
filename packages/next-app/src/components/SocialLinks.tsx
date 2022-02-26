@@ -23,7 +23,7 @@ export const SocialLinks = () => {
     <Flex align="center">
       <Link href="https://github.com/Developer-DAO/code-claim-site" isExternal>
         <SocialLink
-          icon="assets/github-icon.png"
+          icon="assets/github-icon.svg"
           iconAlt="Contract link"
           title="Contract"
           isMobile={isMobile}
