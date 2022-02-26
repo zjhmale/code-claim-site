@@ -9,7 +9,7 @@ interface SocialLinkProps {
 
 const SocialLink = ({ icon, iconAlt, title, isMobile }: SocialLinkProps) =>
   isMobile ? (
-    <Image src={icon} alt={iconAlt} w="16px" h="16px" />
+    <Image src={icon} alt={iconAlt} w="32px" h="32px" />
   ) : (
     <Text fontSize="18px" fontWeight="500" color="#08010D">
       {title}
