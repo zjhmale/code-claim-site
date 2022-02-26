@@ -92,7 +92,10 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
                 {connectData.connectors.map((x) => (
                   <Button
                     key={x.id}
-                    onClick={() => connect(x)}
+                    onClick={() => {
+                      connect(x);
+                      onClose();
+                    }}
                     label={x.name}
                     buttonType={ButtonType.Connect}
                   />
