@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useAccount, useSigner, useWaitForTransaction } from "wagmi";
 import MerkleTree from "merkletreejs";
@@ -140,6 +140,8 @@ export const ClaimCard = ({
     fetchEns: true,
   });
 
+  const toast = useToast();
+
   // Remove confetti after some delay that's set on activation
   const [confettiDelay, setConfettiDelay] = useState<null | number>(null);
   useTimeout(() => setConfetti({ state: false }), confettiDelay);
@@ -276,9 +278,22 @@ export const ClaimCard = ({
 
       setCardState(ClaimCardState.claimed);
 
+      toast({
+        position: "bottom-right",
+        duration: null,
+        render: () => (
+          <ConfirmToast
+            message={`Successfully claimed ${totalAllocation} CODE tokens.`}
+            link={`https://etherscan.io/tx/${tx.hash}`}
+            link_message="View TX on Etherscan"
+          />
+        ),
+      });
+
       setConfetti({ state: true });
       setConfettiDelay(3000);
 
+      setTxHash(tx.hash);
       await localforage.setItem("code_claim_tx_hash", tx.hash);
     } catch (e) {
       setCardState(ClaimCardState.unclaimed);
