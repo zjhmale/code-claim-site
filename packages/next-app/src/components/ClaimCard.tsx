@@ -1,9 +1,10 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useAccount, useSigner } from "wagmi";
+import { useAccount, useSigner, useWaitForTransaction } from "wagmi";
 import MerkleTree from "merkletreejs";
 import { ethers } from "ethers";
 import keccak256 from "keccak256";
+import localforage from "localforage";
 
 import { CODEToken__factory } from "@/typechain";
 import { getContractAddress, maskWalletAddress } from "@/utils";
@@ -11,6 +12,7 @@ import { getContractAddress, maskWalletAddress } from "@/utils";
 import airdropData from "../data/airdrop";
 import { addCodeToken } from "../utils/add-token";
 import { Header, ClaimedView, UnclaimedView } from "./ClaimCardComponents";
+import useConfirmations from "@/hooks/useConfirmations";
 
 const TOKEN_DECIMALS = 18;
 
@@ -137,7 +139,25 @@ export const ClaimCard = ({
   });
 
   const [claimDate, setClaimDate] = useState(new Date());
-  const [blockConfirmations, setBlockConfirmations] = useState(10);
+
+  const [txHash, setTxHash] = useState<undefined | string>();
+
+  const [{ data: waitTransaction }] = useWaitForTransaction({
+    hash: txHash,
+  });
+  useEffect(() => {
+    async function getThing() {
+      if (waitTransaction?.blockNumber) {
+        const block = await signer?.provider?.getBlock(
+          waitTransaction?.blockNumber,
+        );
+        if (block?.timestamp) {
+          setClaimDate(new Date(block.timestamp * 1000));
+        }
+      }
+    }
+    getThing();
+  }, [waitTransaction, signer]);
 
   const allocations =
     accountData?.address &&
@@ -162,6 +182,20 @@ export const ClaimCard = ({
     formattedAddress = maskWalletAddress(accountData.address);
   }
 
+  // OnMount
+  useEffect(() => {
+    async function getTxHash() {
+      const loadedTxHash = await localforage.getItem<string | undefined>(
+        "code_claim_tx_hash",
+      );
+      if (loadedTxHash) setTxHash(loadedTxHash);
+    }
+
+    getTxHash();
+  }, []);
+
+  const blockConfirmations = useConfirmations(txHash);
+
   // Effect to set initial state after account connected
   useEffect(() => {
     const checkAlreadyClaimed = async () => {
@@ -184,9 +218,6 @@ export const ClaimCard = ({
             "0x" + leaf.toString("hex"),
           );
 
-          console.log(isVerified);
-          console.log(index);
-
           if (!isVerified) return console.error("Couldn't verify proof!");
 
           const tokenContract = CODEToken__factory.connect(
@@ -204,9 +235,8 @@ export const ClaimCard = ({
       }
     };
 
-    // FIXME:
-    // checkAlreadyClaimed();
-  }, [signer, cardState, isEligible, totalAllocation]);
+    checkAlreadyClaimed();
+  }, [signer, cardState, isEligible, totalAllocation, setConfetti]);
 
   const addCodeToMetaMask = async () => {
     if (window.ethereum === undefined) return;
@@ -235,8 +265,11 @@ export const ClaimCard = ({
       setCardState(ClaimCardState.isClaiming);
       const tx = await tokenContract.claimTokens(numTokens, proof);
       await tx.wait(1);
+
       setCardState(ClaimCardState.claimed);
-      console.warn("TODO: show confetti etc");
+      setConfetti({ state: true });
+
+      await localforage.setItem("code_claim_tx_hash", tx.hash);
     } catch (e) {
       setCardState(ClaimCardState.unclaimed);
       console.error(`Error when claiming tokens: ${e}`);
@@ -269,14 +302,21 @@ export const ClaimCard = ({
       {cardState === ClaimCardState.claimed && (
         <ClaimedView
           blockConfirmations={blockConfirmations}
-          claimDate={claimDate.toLocaleDateString("en-UK", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+          claimDate={claimDate.toLocaleDateString(
+            window?.navigator?.language || "en-UK",
+            {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            },
+          )}
           totalAllocation={totalAllocation.toString()}
           onAddCodeToMetaMask={addCodeToMetaMask}
-          onViewTransaction={() => console.log("view transaction")}
+          onViewTransaction={() =>
+            window.open(`https://etherscan.io/tx/${txHash}`, "_blank")
+          }
         />
       )}
       {cardState !== ClaimCardState.claimed && (

@@ -143,7 +143,7 @@ const Position = ({
 );
 
 interface ClaimedViewProps {
-  blockConfirmations: number;
+  blockConfirmations: undefined | number;
   claimDate: string;
   totalAllocation: string;
   onAddCodeToMetaMask: () => void;
@@ -187,16 +187,18 @@ export const ClaimedView = (props: ClaimedViewProps) => {
                 h="24px"
                 alignSelf="center"
               />
-              <Text
-                fontFamily="IBM Plex Mono"
-                bgGradient="linear(to-r, #AD00FF, #4E00EC)"
-                bgClip="text"
-                fontSize="18px"
-                fontWeight="500"
-                pl="8px"
-              >
-                {blockConfirmations} block confirmations
-              </Text>
+              {typeof blockConfirmations !== "undefined" && (
+                <Text
+                  fontFamily="IBM Plex Mono"
+                  bgGradient="linear(to-r, #AD00FF, #4E00EC)"
+                  bgClip="text"
+                  fontSize="18px"
+                  fontWeight="500"
+                  pl="8px"
+                >
+                  {blockConfirmations} block confirmations
+                </Text>
+              )}
             </Flex>
           </Box>
         </Box>
