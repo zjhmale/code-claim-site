@@ -13,7 +13,6 @@ Array [
           "position": "absolute",
           "right": 0,
           "top": 0,
-          "visibility": "hidden",
           "zIndex": 2,
         }
       }
@@ -29,7 +28,7 @@ Array [
           className="css-1dylgbt"
         >
           <div
-            className="css-16c5fzj"
+            className="css-j3c8bm"
           >
             <div
               className="css-70qvj9"
@@ -73,7 +72,7 @@ Array [
                 </div>
               </div>
               <button
-                className="chakra-button css-1yl2sr6"
+                className="chakra-button css-11ggol1"
                 type="button"
               >
                 LEARN MORE
@@ -119,7 +118,7 @@ Array [
                       className="css-16xm8g5"
                     >
                       <p
-                        className="chakra-text css-13hayda"
+                        className="chakra-text css-fh9fau"
                       >
                         
                       </p>
@@ -246,6 +245,53 @@ Array [
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div
+        className="css-alkhma"
+      >
+        <div
+          className="css-17xejub"
+        />
+        <div
+          className="css-70qvj9"
+        >
+          <a
+            className="chakra-link css-f4h6uy"
+            href="https://github.com/Developer-DAO/code-claim-site"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <p
+              className="chakra-text css-1uzh1ux"
+            >
+              Contract
+            </p>
+          </a>
+          <a
+            className="chakra-link css-9ogsct"
+            href="https://discord.gg/devdao"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <p
+              className="chakra-text css-1uzh1ux"
+            >
+              Discord
+            </p>
+          </a>
+          <a
+            className="chakra-link css-9ogsct"
+            href="https://twitter.com/developer_dao"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <p
+              className="chakra-text css-1uzh1ux"
+            >
+              Twitter
+            </p>
+          </a>
         </div>
       </div>
     </div>
