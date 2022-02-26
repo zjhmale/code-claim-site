@@ -4,7 +4,7 @@ const tokenSymbol = "CODE";
 const tokenDecimals = 18;
 const tokenImage =
   typeof window !== "undefined"
-    ? `${window.location.protocol}//${window.location.host}/assets/devdao-logo.svg`
+    ? `${window.location.protocol}//${window.location.host}/assets/devdao-logo_dark.svg`
     : "";
 
 export async function addCodeToken(ethereum: any) {
