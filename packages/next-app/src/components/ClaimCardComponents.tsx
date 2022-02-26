@@ -134,12 +134,7 @@ export const Header = ({
           </Text>
         </Flex>
       )}
-      <Text
-        color="#08010D"
-        fontSize={["32px", "42px"]}
-        fontWeight="500"
-        mt="-8px"
-      >
+      <Text color="#08010D" fontSize={["32px", "42px"]} fontWeight="500">
         {address}
       </Text>
     </Flex>
@@ -195,7 +190,7 @@ export const ClaimedView = (props: ClaimedViewProps) => {
   } = props;
   return (
     <>
-      <Flex direction="column" mb="8">
+      <Flex direction="column" mb="10">
         <Box border="1px solid #08010D" opacity="8%" my="4" />
         <Box>
           <Position
@@ -203,7 +198,7 @@ export const ClaimedView = (props: ClaimedViewProps) => {
             value={totalAllocation}
             isBig={true}
           />
-          <Box mt="16px">
+          <Box mt="24px">
             <Text
               px="24px"
               fontFamily="Zen Kaku Gothic New"
@@ -214,7 +209,7 @@ export const ClaimedView = (props: ClaimedViewProps) => {
               Claimed on {claimDate}
             </Text>
 
-            <Flex mx="24px" mt="8px">
+            <Flex mx="24px" mt="10px">
               <Image
                 src="assets/block-confirmations.svg"
                 alt="confirmations"
@@ -231,7 +226,8 @@ export const ClaimedView = (props: ClaimedViewProps) => {
                   fontWeight="500"
                   pl="8px"
                 >
-                  {blockConfirmations} block confirmations
+                  {blockConfirmations > 20 ? "> 20" : blockConfirmations} block
+                  confirmations
                 </Text>
               )}
             </Flex>

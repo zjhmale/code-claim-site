@@ -201,7 +201,7 @@ export const ClaimCard = ({
     getTxHash();
   }, []);
 
-  const blockConfirmations = useConfirmations(txHash);
+  const blockConfirmations = useConfirmations(txHash, 20);
 
   // Effect to set initial state after account connected
   useEffect(() => {
