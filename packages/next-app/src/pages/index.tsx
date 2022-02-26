@@ -138,11 +138,13 @@ const Home: NextPage = () => {
             </Center>
             <SlideFade in={isConnected} offsetY="20px">
               <Box m={["24px", "10vw"]}>
-                <ClaimCard
-                  setConfetti={({ state }: { state: boolean }) =>
-                    setShowConfetti(state)
-                  }
-                />
+                {!networkData.chain?.unsupported && (
+                  <ClaimCard
+                    setConfetti={({ state }: { state: boolean }) =>
+                      setShowConfetti(state)
+                    }
+                  />
+                )}
               </Box>
             </SlideFade>
           </Flex>

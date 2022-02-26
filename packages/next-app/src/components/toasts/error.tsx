@@ -5,7 +5,7 @@ import { WarningTwoIcon } from "@chakra-ui/icons";
 const bounce = keyframes`
         0%   { transform: translateY(0); }
         30%   { transform: translateY(0); }
-        50%  { transform: translateY(-50px); }
+        50%  { transform: translateY(-20px); }
         70%  { transform: translateY(0); }
         100% { transform: translateY(0); }
 `;
@@ -18,8 +18,8 @@ export const ErrorToast = ({
   link,
 }: {
   message: string;
-  link_message: string;
-  link: string;
+  link_message?: string;
+  link?: string;
 }) => (
   <Box
     color="#FFFFFF"
@@ -36,7 +36,7 @@ export const ErrorToast = ({
       <WarningTwoIcon mr="5" color="#FF0042" />
       <Text fontSize="sm">
         {message}
-        <Link href={link}>{link_message}</Link>
+        {link && link_message && <Link href={link}>{link_message}</Link>}
       </Text>
     </Flex>
   </Box>

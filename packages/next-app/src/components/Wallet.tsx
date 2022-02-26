@@ -11,8 +11,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  useToast,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ErrorToast } from "./toasts/error";
 
 interface WalletProps {
   isConnected: boolean | undefined;
@@ -21,13 +23,25 @@ interface WalletProps {
 
 export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [{ data, error, loading }, switchNetwork] = useNetwork();
+
+  const toast = useToast();
+  const isToastOpen = useRef(false);
+
+  const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
 
-  // useEffect(() => {
-  //   if (switchNetwork && data?.chain?.id != data?.chains[0].id)
-  //     switchNetwork(data?.chains[0].id);
-  // }, [connectData]);
+  useEffect(() => {
+    if (!isToastOpen.current && connectError) {
+      isToastOpen.current = true;
+      toast({
+        position: "bottom-right",
+        render: () => (
+          <ErrorToast message={connectError?.message ?? "Failed to connect"} />
+        ),
+        onCloseComplete: () => (isToastOpen.current = false),
+      });
+    }
+  }, [connectError, toast, isToastOpen]);
 
   if (isConnected && !isUnsupported) {
     return (
@@ -50,42 +64,43 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   } else if (isConnected && isUnsupported) {
     return (
       <div>
-        <Button label={`CONNECTING`} buttonType={ButtonType.Switch} />
+        <Button
+          onClick={() =>
+            switchNetwork ? switchNetwork(networkData?.chains[0].id) : null
+          }
+          label="SWITCH NETWORK"
+          buttonType={ButtonType.Connect}
+        />
       </div>
     );
-  }
+  } else
+    return (
+      <HStack spacing="24px">
+        <Button
+          onClick={onOpen}
+          label="CONNECT WALLET"
+          buttonType={ButtonType.Connect}
+        />
 
-  return (
-    <HStack spacing="24px">
-      <Button
-        onClick={onOpen}
-        label="CONNECT WALLET"
-        buttonType={ButtonType.Connect}
-      />
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent pb="5">
-          <ModalHeader>Connect your wallet</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <HStack spacing="24px">
-              {connectData.connectors.map((x) => (
-                <Button
-                  key={x.id}
-                  onClick={() => connect(x)}
-                  label={x.name}
-                  buttonType={ButtonType.Connect}
-                />
-              ))}
-            </HStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      {connectError && (
-        <div>{connectError?.message ?? "Failed to connect"}</div>
-      )}
-    </HStack>
-  );
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent pb="5">
+            <ModalHeader>Connect your wallet</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <HStack spacing="24px">
+                {connectData.connectors.map((x) => (
+                  <Button
+                    key={x.id}
+                    onClick={() => connect(x)}
+                    label={x.name}
+                    buttonType={ButtonType.Connect}
+                  />
+                ))}
+              </HStack>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </HStack>
+    );
 };
