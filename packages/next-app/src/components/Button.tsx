@@ -22,7 +22,7 @@ export const Button = ({ buttonType, label, ...props }: ButtonProps) => {
           case ButtonType.Connect:
             return "#fff";
           case ButtonType.Learn:
-            return "#000";
+            return "transparent";
           case ButtonType.Switch:
             return "rgba(255, 255, 255, 0.08)";
         }
