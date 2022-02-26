@@ -1,16 +1,7 @@
 import { Box, Flex, Text, Link, keyframes } from "@chakra-ui/react";
 
 import { WarningTwoIcon } from "@chakra-ui/icons";
-
-const bounce = keyframes`
-        0%   { transform: translateY(0); }
-        30%   { transform: translateY(0); }
-        50%  { transform: translateY(-20px); }
-        70%  { transform: translateY(0); }
-        100% { transform: translateY(0); }
-`;
-
-const bounceAnimation = `${bounce} infinite 1.5s ease`;
+import { bounceAnimation } from "@/chakra.config";
 
 export const ErrorToast = ({
   message,

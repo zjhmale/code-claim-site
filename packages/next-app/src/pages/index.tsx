@@ -19,6 +19,7 @@ import { ClaimCard } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
 import { SocialLinks } from "@/components/SocialLinks";
+import { bounceAnimation } from "@/chakra.config";
 
 const Home: NextPage = () => {
   const [{ data: networkData, error, loading }] = useNetwork();
@@ -100,54 +101,57 @@ const Home: NextPage = () => {
               isUnsupported={!!networkData.chain?.unsupported}
             />
             <Center position="absolute" bottom="0" left="0" right="0">
-              {isMobile && (
+              {isMobile && !networkData.chain?.unsupported && isConnected && (
                 <Image
                   alignSelf="end"
                   mb="5"
                   src="assets/arrow-down.svg"
                   alt="scroll down"
-                  w="34px"
-                  h="34px"
+                  w="64px"
+                  h="64px"
+                  animation={bounceAnimation}
                 />
               )}
             </Center>
           </Box>
 
-          <Flex
-            w={{ base: "100vw", lg: "50vw" }}
-            h="100vh"
-            m="0"
-            backgroundColor="#F1F0F5"
-            align="center"
-            justifyContent="center"
-            direction="column"
-            scrollSnapAlign={{ base: "start", lg: "none" }}
-            position="relative"
-          >
-            <Center position="absolute" top="0" left="0" right="0">
-              {isMobile && (
-                <Image
-                  alignSelf="end"
-                  mt="5"
-                  src="assets/arrow-up.svg"
-                  alt="scroll up"
-                  w="34px"
-                  h="34px"
-                />
-              )}
-            </Center>
-            <SlideFade in={isConnected} offsetY="20px">
-              <Box m={["24px", "10vw"]}>
-                {!networkData.chain?.unsupported && (
-                  <ClaimCard
-                    setConfetti={({ state }: { state: boolean }) =>
-                      setShowConfetti(state)
-                    }
+          {(!isMobile || (!networkData.chain?.unsupported && isConnected)) && (
+            <Flex
+              w={{ base: "100vw", lg: "50vw" }}
+              h="100vh"
+              m="0"
+              backgroundColor="#F1F0F5"
+              align="center"
+              justifyContent="center"
+              direction="column"
+              scrollSnapAlign={{ base: "start", lg: "none" }}
+              position="relative"
+            >
+              <Center position="absolute" top="0" left="0" right="0">
+                {isMobile && (
+                  <Image
+                    alignSelf="end"
+                    mt="5"
+                    src="assets/arrow-up.svg"
+                    alt="scroll up"
+                    w="64px"
+                    h="64px"
                   />
                 )}
-              </Box>
-            </SlideFade>
-          </Flex>
+              </Center>
+              <SlideFade in={isConnected} offsetY="20px">
+                <Box m={["24px", "10vw"]}>
+                  {!networkData.chain?.unsupported && (
+                    <ClaimCard
+                      setConfetti={({ state }: { state: boolean }) =>
+                        setShowConfetti(state)
+                      }
+                    />
+                  )}
+                </Box>
+              </SlideFade>
+            </Flex>
+          )}
         </Flex>
 
         {isMobile ? (
