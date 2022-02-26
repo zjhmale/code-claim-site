@@ -1,4 +1,12 @@
-import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Spacer,
+  Text,
+  Spinner,
+} from "@chakra-ui/react";
 import { MouseEventHandler } from "react";
 
 import { ClaimCardState } from "./ClaimCard";
@@ -67,6 +75,33 @@ const ClaimButton = ({
       </span>{" "}
       TOKENS
     </Text>
+  </Button>
+);
+
+const IsClaimingButton = ({ label }: { label: string }) => (
+  <Button
+    background="rgba(8, 1, 13, 0.05)"
+    color="#4E4853"
+    borderRadius="12px"
+    fontSize={["16px", "18px"]}
+    fontWeight="900"
+    w="100%"
+    h="56px"
+    _active={{}}
+    _disabled={{ opacity: 1, cursor: "default" }}
+    _hover={{}}
+    disabled
+  >
+    <Flex>
+      <Spinner />
+      <Text ml={2}>
+        CLAIMING{" "}
+        <span style={{ fontFamily: "IBM Plex Mono", fontWeight: 600 }}>
+          {label}
+        </span>{" "}
+        TOKENS
+      </Text>
+    </Flex>
   </Button>
 );
 
@@ -290,6 +325,8 @@ export const UnclaimedView = ({
       <Box px="24px" pb="24px">
         {cardState === ClaimCardState.disconnected ? (
           <ButtonPlaceholder />
+        ) : cardState === ClaimCardState.isClaiming ? (
+          <IsClaimingButton label={totalAllocation} />
         ) : (
           <ClaimButton label={totalAllocation} onClick={onClickClaim} />
         )}
