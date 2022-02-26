@@ -8,6 +8,7 @@ import {
   Image,
   Center,
   useBreakpointValue,
+  usePrefersReducedMotion,
 } from "@chakra-ui/react";
 import { useAccount, useNetwork } from "wagmi";
 import { useState, useEffect } from "react";
@@ -31,6 +32,7 @@ const Home: NextPage = () => {
   });
 
   const [showConfetti, setShowConfetti] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     function handleResize() {
@@ -52,14 +54,14 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <Confetti
-        width={windowSize.width}
-        height={windowSize.height}
-        colors={["#DD95FF"]}
-        style={{
-          visibility: showConfetti ? "visible" : "hidden",
-        }}
-      />
+      {!prefersReducedMotion && (
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          colors={["#DD95FF"]}
+          numberOfPieces={showConfetti ? 200 : 0}
+        />
+      )}
       <Box
         m="0"
         w="100vw"

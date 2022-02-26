@@ -5,14 +5,16 @@ import MerkleTree from "merkletreejs";
 import { ethers } from "ethers";
 import keccak256 from "keccak256";
 import localforage from "localforage";
+import { useTimeout } from "usehooks-ts";
 
 import { CODEToken__factory } from "@/typechain";
 import { getContractAddress, maskWalletAddress } from "@/utils";
+import useConfirmations from "@/hooks/useConfirmations";
 
 import airdropData from "../data/airdrop";
 import { addCodeToken } from "../utils/add-token";
 import { Header, ClaimedView, UnclaimedView } from "./ClaimCardComponents";
-import useConfirmations from "@/hooks/useConfirmations";
+import { ConfirmToast } from "./toasts/confirm";
 
 const TOKEN_DECIMALS = 18;
 
@@ -138,8 +140,11 @@ export const ClaimCard = ({
     fetchEns: true,
   });
 
-  const [claimDate, setClaimDate] = useState(new Date());
+  // Remove confetti after some delay that's set on activation
+  const [confettiDelay, setConfettiDelay] = useState<null | number>(null);
+  useTimeout(() => setConfetti({ state: false }), confettiDelay);
 
+  const [claimDate, setClaimDate] = useState(new Date());
   const [txHash, setTxHash] = useState<undefined | string>();
 
   const [{ data: waitTransaction }] = useWaitForTransaction({
@@ -226,7 +231,10 @@ export const ClaimCard = ({
           );
           const isClaimed = await tokenContract.isClaimed(index);
 
-          if (isClaimed) setConfetti({ state: true });
+          if (isClaimed) {
+            setConfetti({ state: true });
+            setConfettiDelay(3000);
+          }
 
           setCardState(
             isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed,
@@ -267,7 +275,9 @@ export const ClaimCard = ({
       await tx.wait(1);
 
       setCardState(ClaimCardState.claimed);
+
       setConfetti({ state: true });
+      setConfettiDelay(3000);
 
       await localforage.setItem("code_claim_tx_hash", tx.hash);
     } catch (e) {
