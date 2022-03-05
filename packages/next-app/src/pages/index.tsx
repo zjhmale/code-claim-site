@@ -48,7 +48,7 @@ const Home: NextPage = () => {
   80% { transform:translate(3%, 35%) }
   90% { transform:translate(-10%, 10%) }
 `;
-  const noiseAnimation = `${noiseMovement} infinite 10s linear`;
+  const noiseAnimation = `${noiseMovement} infinite 2s linear`;
 
   useEffect(() => {
     function handleResize() {
