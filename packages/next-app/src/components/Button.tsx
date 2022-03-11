@@ -1,4 +1,10 @@
-import { Button as ChakraButton, Spinner, Flex, Box } from "@chakra-ui/react";
+import {
+  Button as ChakraButton,
+  ButtonProps as ChakraButtonProps,
+  Spinner,
+  Flex,
+  Box,
+} from "@chakra-ui/react";
 
 export enum ButtonType {
   Connect = 1,
@@ -7,7 +13,7 @@ export enum ButtonType {
   Learn,
 }
 
-interface ButtonProps {
+interface ButtonProps extends ChakraButtonProps {
   label: string;
   buttonType: ButtonType;
   onClick?: () => void;
