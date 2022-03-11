@@ -19,18 +19,20 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
         Airdrop
       </Heading>
       <Text
-        mt="5"
-        mb="8"
+        mt="48px"
+        mb="60px"
+        lineHeight="40px"
         color="white"
         fontSize={["20px", "24px"]}
         fontWeight="500"
         fontFamily="Zen Kaku Gothic New"
+        maxW="2xl"
       >
         $CODE is the new governance token for Developer DAO. Connect your wallet
         to determine your airdrop eligibility.
       </Text>
       <Flex direction={["column", "row"]}>
-        <Box mb={["4", "0"]} mr={["0", "7"]} w={["100%", "inherit"]}>
+        <Box mb={["4", "0"]} mr={["0", "6"]} w={["100%", "inherit"]}>
           <Wallet isConnected={isConnected} isUnsupported={isUnsupported} />
         </Box>
         <Button label="LEARN MORE" buttonType={ButtonType.Learn} />

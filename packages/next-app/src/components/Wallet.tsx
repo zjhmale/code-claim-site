@@ -51,8 +51,9 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           borderRadius={8}
           color="#1AECAD"
           fontSize={["16px", "18px"]}
+          lineHeight={["1.8em", "1.4em"]}
           fontWeight="900"
-          height="52px"
+          height="56px"
           padding={["13px 4rem", "13px 2rem"]}
           w="100%"
           textAlign={"center"}
@@ -70,16 +71,18 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           }
           label="SWITCH NETWORK"
           buttonType={ButtonType.Connect}
+          width="full"
         />
       </div>
     );
   } else
     return (
-      <HStack spacing="24px">
+      <HStack width="full">
         <Button
           onClick={onOpen}
           label="CONNECT WALLET"
           buttonType={ButtonType.Connect}
+          width="full"
         />
 
         <Modal isOpen={isOpen} onClose={onClose}>

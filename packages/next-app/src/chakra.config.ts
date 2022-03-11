@@ -9,8 +9,8 @@ export const theme = extendTheme({
     },
   },
   fonts: {
-    heading: "Zen Kaku Gothic New",
-    body: "Zen Kaku Gothic New",
+    heading: "'Zen Kaku Gothic New', sans-serif",
+    body: "'Zen Kaku Gothic New', sans-serif",
   },
 });
 

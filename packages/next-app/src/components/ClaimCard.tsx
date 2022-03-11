@@ -15,6 +15,7 @@ import airdropData from "../data/airdrop";
 import { addCodeToken } from "../utils/add-token";
 import { Header, ClaimedView, UnclaimedView } from "./ClaimCardComponents";
 import { ConfirmToast } from "./toasts/confirm";
+import { ErrorToast } from "./toasts/error";
 
 const TOKEN_DECIMALS = 18;
 
@@ -295,8 +296,16 @@ export const ClaimCard = ({
 
       setTxHash(tx.hash);
       await localforage.setItem("code_claim_tx_hash", tx.hash);
-    } catch (e) {
+    } catch (e: any) {
       setCardState(ClaimCardState.unclaimed);
+
+      toast({
+        position: "bottom-right",
+        render: () => (
+          <ErrorToast message={e?.message ?? "Error while claiming."} />
+        ),
+      });
+
       console.error(`Error when claiming tokens: ${e}`);
       console.log(e);
     }
@@ -313,9 +322,9 @@ export const ClaimCard = ({
 
   return (
     <Flex
-      w="100%"
+      w={["100%", "560px"]}
       backdropFilter="blur(300px)"
-      background="rgba(255, 255, 255, 0.5)"
+      background="rgba(255, 255, 255, 0.8)"
       border="3px solid #DEDEDE"
       borderRadius="24px"
       box-shadow="inset 0px 0px 100px rgba(255, 255, 255, 0.25)"

@@ -29,6 +29,16 @@ export const SocialLinks = () => {
           isMobile={isMobile}
         />
       </Link>
+      {!isMobile && (
+        <div
+          style={{
+            marginLeft: "60px",
+            border: "1px solid rgba(78, 72, 83, 0.35)",
+            height: "16px",
+            marginTop: "2px",
+          }}
+        ></div>
+      )}
       <Link href="https://discord.gg/devdao" isExternal ml={["32px", "60px"]}>
         <SocialLink
           icon="assets/discord-icon.svg"

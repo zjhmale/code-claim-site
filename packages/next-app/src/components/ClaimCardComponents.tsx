@@ -26,16 +26,16 @@ const Avatar = ({
   return shouldShowPlaceholder ? (
     <Box
       background="gray.200"
-      w={["96px", "120px"]}
-      h={["96px", "120px"]}
+      w={["100px", "130px"]}
+      h={["100px", "130px"]}
       borderRadius="16px"
     />
   ) : (
     <Image
       src={imageUrl}
       alt="avatar"
-      w={["96px", "120px"]}
-      h={["96px", "120px"]}
+      w={["100px", "130px"]}
+      h={["100px", "130px"]}
       borderRadius="16px"
     />
   );
@@ -119,7 +119,7 @@ export const Header = ({
 }) => (
   <Flex align="center">
     <Avatar imageUrl={image} showPlaceholder={showPlaceholder} />
-    <Flex direction="column" ml={["20px", "32px"]}>
+    <Flex direction="column" ml={"20px"}>
       {showLabel && (
         <Flex align="center">
           <Image
@@ -156,15 +156,17 @@ const Position = ({
         color={isBig ? "#08010D" : "#4E4853"}
         fontSize={isBig ? "24px" : "18px"}
         fontWeight="500"
+        lineHeight={isBig ? "24px" : "18px"}
       >
         {title}
       </Text>
-      <Spacer />
+      <Spacer h="1" />
       <Text
         color={isBig ? "#08010D" : "#4E4853"}
         fontFamily="IBM Plex Mono"
         fontSize={isBig ? "32px" : "24px"}
         fontWeight="400"
+        lineHeight={isBig ? "32px" : "24px"}
       >
         {value}
       </Text>
@@ -298,19 +300,21 @@ export const UnclaimedView = ({
     <>
       <Flex direction="column" mb="8">
         <Box border="1px solid #08010D" opacity="8%" />
-        {positions.map((pos, index) => {
-          return (
-            <Box key={index} my="2">
-              <Position
-                title={pos.title}
-                value={pos.value.toString()}
-                isBig={false}
-              />
-            </Box>
-          );
-        })}
-        <Box border="1px solid #08010D" opacity="8%" my="4" />
-        <Box>
+        <Flex direction="column" justify="space-evenly" height="48">
+          {positions.map((pos, index) => {
+            return (
+              <Box key={index}>
+                <Position
+                  title={pos.title}
+                  value={pos.value.toString()}
+                  isBig={false}
+                />
+              </Box>
+            );
+          })}
+        </Flex>
+        <Box border="1px solid #08010D" opacity="8%" />
+        <Box mt="6">
           <Position
             title="$CODE allocation"
             value={totalAllocation}

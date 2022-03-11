@@ -81,7 +81,7 @@ const Home: NextPage = () => {
             h="100vh"
             m="0"
             pl={["24px", "5vw"]}
-            pr={["40px", "8vw"]}
+            pr={["24px", "8vw"]}
             background="#08010D"
             scrollSnapAlign={{ base: "start", lg: "none" }}
             position="relative"
@@ -107,8 +107,8 @@ const Home: NextPage = () => {
                   mb="5"
                   src="assets/arrow-down.svg"
                   alt="scroll down"
-                  w="64px"
-                  h="64px"
+                  w="48px"
+                  h="48px"
                   animation={bounceAnimation}
                 />
               )}
@@ -120,7 +120,9 @@ const Home: NextPage = () => {
               w={{ base: "100vw", lg: "50vw" }}
               h="100vh"
               m="0"
-              backgroundColor="#F1F0F5"
+              backgroundImage={`linear-gradient(0deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url("/assets/bg-art.svg")`}
+              backgroundRepeat="no-repeat"
+              backgroundSize="cover"
               align="center"
               justifyContent="center"
               direction="column"
@@ -134,21 +136,19 @@ const Home: NextPage = () => {
                     mt="5"
                     src="assets/arrow-up.svg"
                     alt="scroll up"
-                    w="64px"
-                    h="64px"
+                    w="48px"
+                    h="48px"
                   />
                 )}
               </Center>
               <SlideFade in={isConnected} offsetY="20px">
-                <Box m={["24px", "10vw"]}>
-                  {!networkData.chain?.unsupported && (
-                    <ClaimCard
-                      setConfetti={({ state }: { state: boolean }) =>
-                        setShowConfetti(state)
-                      }
-                    />
-                  )}
-                </Box>
+                {!networkData.chain?.unsupported && (
+                  <ClaimCard
+                    setConfetti={({ state }: { state: boolean }) =>
+                      setShowConfetti(state)
+                    }
+                  />
+                )}
               </SlideFade>
             </Flex>
           )}
