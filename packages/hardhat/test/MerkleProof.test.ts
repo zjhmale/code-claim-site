@@ -42,7 +42,7 @@ describe('MerkleProof', function () {
       expect(result[1].toNumber()).to.equal(0);
     });
 
-    it('returns true and index 1 for a valid Merkle proof', async function () {
+    it('returns true and index 2 for a valid Merkle proof', async function () {
       const formattedAddress: string = ethers.utils.getAddress(this.users[2].address);
       const numTokens: string = ethers.utils.parseUnits('200', TOKEN_DECIMALS).toString();
       const leaf: Buffer = generateLeaf(formattedAddress, numTokens);
