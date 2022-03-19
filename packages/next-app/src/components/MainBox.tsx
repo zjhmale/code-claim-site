@@ -1,6 +1,6 @@
 import { Button, ButtonType } from "@/components/Button";
 import { Wallet } from "@/components/Wallet";
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Link, Text } from "@chakra-ui/react";
 
 interface MainBoxProps {
   isConnected: boolean | undefined;
@@ -35,7 +35,12 @@ export const MainBox = ({ isConnected, isUnsupported }: MainBoxProps) => {
         <Box mb={["4", "0"]} mr={["0", "6"]} w={["100%", "inherit"]}>
           <Wallet isConnected={isConnected} isUnsupported={isUnsupported} />
         </Box>
-        <Button label="LEARN MORE" buttonType={ButtonType.Learn} />
+        <Link
+          href="https://developerdao.notion.site/The-CODE-Token-3c1e14dbc6bd461fa07978bf37d04fd9"
+          isExternal
+        >
+          <Button label="LEARN MORE" buttonType={ButtonType.Learn} />
+        </Link>
       </Flex>
     </Box>
   );
