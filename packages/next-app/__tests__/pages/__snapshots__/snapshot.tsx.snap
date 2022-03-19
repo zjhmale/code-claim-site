@@ -25,7 +25,7 @@ Array [
         className="css-w2otz0"
       >
         <div
-          className="css-1dylgbt"
+          className="css-1107s9w"
         >
           <div
             className="css-j3c8bm"
@@ -49,7 +49,7 @@ Array [
               Airdrop
             </h1>
             <p
-              className="chakra-text css-1a46olu"
+              className="chakra-text css-wqku87"
             >
               $CODE is the new governance token for Developer DAO. Connect your wallet to determine your airdrop eligibility.
             </p>
@@ -57,26 +57,41 @@ Array [
               className="css-obc5ee"
             >
               <div
-                className="css-170yw0x"
+                className="css-16pvocw"
               >
                 <div
-                  className="chakra-stack css-1y5q8ss"
+                  className="chakra-stack css-1d0c3h9"
                 >
                   <button
-                    className="chakra-button css-jdzci2"
+                    className="chakra-button css-1aknvb1"
                     onClick={[Function]}
                     type="button"
                   >
-                    CONNECT WALLET
+                    <div
+                      className="css-1jqno4x"
+                    >
+                      CONNECT WALLET
+                    </div>
                   </button>
                 </div>
               </div>
-              <button
-                className="chakra-button css-11ggol1"
-                type="button"
+              <a
+                className="chakra-link css-f4h6uy"
+                href="https://developerdao.notion.site/The-CODE-Token-3c1e14dbc6bd461fa07978bf37d04fd9"
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                LEARN MORE
-              </button>
+                <button
+                  className="chakra-button css-1rzszvy"
+                  type="button"
+                >
+                  <div
+                    className="css-1jqno4x"
+                  >
+                    LEARN MORE
+                  </div>
+                </button>
+              </a>
             </div>
           </div>
           <div
@@ -84,7 +99,7 @@ Array [
           />
         </div>
         <div
-          className="css-14diwl5"
+          className="css-1s92duk"
         >
           <div
             className="css-ixvcpa"
@@ -99,11 +114,11 @@ Array [
             }
           >
             <div
-              className="css-uyuamr"
+              className="css-7u7k82"
             >
               <div
                 box-shadow="inset 0px 0px 100px rgba(255, 255, 255, 0.25)"
-                className="css-1wro70b"
+                className="css-m1gti1"
               >
                 <div
                   className="css-19kzrtu"
@@ -112,10 +127,10 @@ Array [
                     className="css-70qvj9"
                   >
                     <div
-                      className="css-9vdwij"
+                      className="css-qqeux9"
                     />
                     <div
-                      className="css-16xm8g5"
+                      className="css-1wc4c43"
                     >
                       <p
                         className="chakra-text css-fh9fau"
@@ -132,85 +147,89 @@ Array [
                     className="css-1f7ccr8"
                   />
                   <div
-                    className="css-1eyj61a"
+                    className="css-zl1avt"
                   >
                     <div
-                      className="css-j7qwjs"
+                      className="css-0"
                     >
                       <div
-                        className="css-xokn3q"
+                        className="css-j7qwjs"
                       >
-                        <p
-                          className="chakra-text css-811q2t"
-                        >
-                          Minted D4R NFT
-                        </p>
                         <div
-                          className="css-17xejub"
-                        />
-                        <p
-                          className="chakra-text css-11ob47e"
+                          className="css-xokn3q"
                         >
-                          0
-                        </p>
+                          <p
+                            className="chakra-text css-16rgb2m"
+                          >
+                            Minted D4R NFT
+                          </p>
+                          <div
+                            className="css-50ft43"
+                          />
+                          <p
+                            className="chakra-text css-owpb89"
+                          >
+                            0
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="css-0"
+                    >
+                      <div
+                        className="css-j7qwjs"
+                      >
+                        <div
+                          className="css-xokn3q"
+                        >
+                          <p
+                            className="chakra-text css-16rgb2m"
+                          >
+                            Pre Season 0 activity
+                          </p>
+                          <div
+                            className="css-50ft43"
+                          />
+                          <p
+                            className="chakra-text css-owpb89"
+                          >
+                            0
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="css-0"
+                    >
+                      <div
+                        className="css-j7qwjs"
+                      >
+                        <div
+                          className="css-xokn3q"
+                        >
+                          <p
+                            className="chakra-text css-16rgb2m"
+                          >
+                            Early Contributor
+                          </p>
+                          <div
+                            className="css-50ft43"
+                          />
+                          <p
+                            className="chakra-text css-owpb89"
+                          >
+                            0
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div
-                    className="css-1eyj61a"
-                  >
-                    <div
-                      className="css-j7qwjs"
-                    >
-                      <div
-                        className="css-xokn3q"
-                      >
-                        <p
-                          className="chakra-text css-811q2t"
-                        >
-                          Pre Season 0 activity
-                        </p>
-                        <div
-                          className="css-17xejub"
-                        />
-                        <p
-                          className="chakra-text css-11ob47e"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="css-1eyj61a"
-                  >
-                    <div
-                      className="css-j7qwjs"
-                    >
-                      <div
-                        className="css-xokn3q"
-                      >
-                        <p
-                          className="chakra-text css-811q2t"
-                        >
-                          Early Contributor
-                        </p>
-                        <div
-                          className="css-17xejub"
-                        />
-                        <p
-                          className="chakra-text css-11ob47e"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="css-fxny4"
+                    className="css-1f7ccr8"
                   />
                   <div
-                    className="css-0"
+                    className="css-14bs28v"
                   >
                     <div
                       className="css-j7qwjs"
@@ -219,15 +238,15 @@ Array [
                         className="css-xokn3q"
                       >
                         <p
-                          className="chakra-text css-1b9z593"
+                          className="chakra-text css-11aqlj8"
                         >
                           $CODE allocation
                         </p>
                         <div
-                          className="css-17xejub"
+                          className="css-50ft43"
                         />
                         <p
-                          className="chakra-text css-2fnuyl"
+                          className="chakra-text css-11pmp78"
                         >
                           0
                         </p>
@@ -268,6 +287,16 @@ Array [
               Contract
             </p>
           </a>
+          <div
+            style={
+              Object {
+                "border": "1px solid rgba(78, 72, 83, 0.35)",
+                "height": "16px",
+                "marginLeft": "60px",
+                "marginTop": "2px",
+              }
+            }
+          />
           <a
             className="chakra-link css-9ogsct"
             href="https://discord.gg/devdao"
