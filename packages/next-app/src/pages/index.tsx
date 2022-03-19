@@ -100,6 +100,7 @@ const Home: NextPage = () => {
             background="#08010D"
             scrollSnapAlign={{ base: "start", lg: "none" }}
             position="relative"
+            zIndex="1"
           >
             <Flex mt={["32px", "48px"]} mb="22vh">
               <Logo />
@@ -151,7 +152,7 @@ const Home: NextPage = () => {
                 width: "1000%",
                 opacity: "1",
                 position: "fixed",
-                zIndex: "1",
+                zIndex: "0",
               }}
             >
               <Center position="absolute" top="0" left="0" right="0">
