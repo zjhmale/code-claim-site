@@ -13,7 +13,7 @@ import {
   ModalCloseButton,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ErrorToast } from "./toasts/error";
 
 interface WalletProps {
@@ -27,7 +27,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const toast = useToast();
   const isToastOpen = useRef(false);
 
-  const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
+  const [{}, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
 
   useEffect(() => {
@@ -66,9 +66,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
     return (
       <div>
         <Button
-          onClick={() =>
-            switchNetwork ? switchNetwork(networkData?.chains[0].id) : null
-          }
+          onClick={() => (switchNetwork ? switchNetwork(1) : null)}
           label="SWITCH NETWORK"
           buttonType={ButtonType.Connect}
           width="full"
