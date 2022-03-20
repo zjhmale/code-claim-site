@@ -15,6 +15,24 @@ import {
 import { useEffect, useRef } from "react";
 import { ErrorToast } from "./toasts/error";
 
+import { ModalButton, ModalButtonConfig } from "./ModalButton";
+
+const MetaMaskButtonConfig: ModalButtonConfig = {
+  id: "MetaMask",
+  backgroundColor: "rgba(94, 45, 0, 0.12)",
+  highlightColor: "#FF932D",
+  icon: "",
+  label: "MetaMask",
+};
+
+const WalletConnectButtonConfig: ModalButtonConfig = {
+  id: "WalletConnect",
+  backgroundColor: "rgba(129, 183, 255, 0.15)",
+  highlightColor: "#4C95F7",
+  icon: "",
+  label: "Wallet Connect",
+};
+
 interface WalletProps {
   isConnected: boolean | undefined;
   isUnsupported: boolean | undefined;
@@ -41,6 +59,16 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
       });
     }
   }, [connectError, toast, isToastOpen]);
+
+  const onClickModalButton = (name: string) => {
+    const connector = connectData.connectors.filter(
+      (connector) => connector.name === name,
+    );
+    if (connector.length > 0) {
+      connect(connector[0]);
+      onClose();
+    }
+  };
 
   if (isConnected && !isUnsupported) {
     return (
@@ -84,32 +112,31 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           width="full"
         />
 
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <Modal size="6xl" isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay
-            bg="rgba(4, 1, 7, 0.6)"
+            bg="rgba(4, 1, 7, 0.8)"
             backdropFilter="auto"
             backdropBlur="10px"
           />
-          <ModalContent bg="none">
+          <ModalContent bg="none" shadow="none">
             <ModalBody>
               <Flex
                 align="center"
                 justify="center"
                 wrap={["wrap-reverse", "nowrap"]}
               >
-                {connectData.connectors.map((x) => (
-                  <Button
-                    key={x.id}
-                    onClick={() => {
-                      connect(x);
-                      onClose();
-                    }}
-                    label={x.name}
-                    buttonType={ButtonType.Connect}
-                    w="240px"
-                    h="240px"
+                <ModalButton
+                  config={WalletConnectButtonConfig}
+                  onClick={() =>
+                    onClickModalButton(WalletConnectButtonConfig.id)
+                  }
+                />
+                <Flex ml={["0", "110px"]} mb={["32px", "0"]}>
+                  <ModalButton
+                    config={MetaMaskButtonConfig}
+                    onClick={() => onClickModalButton(MetaMaskButtonConfig.id)}
                   />
-                ))}
+                </Flex>
               </Flex>
             </ModalBody>
           </ModalContent>
