@@ -2,6 +2,7 @@ import { Button, ButtonType } from "@/components/Button";
 import { useConnect, useNetwork } from "wagmi";
 import {
   Box,
+  Flex,
   Text,
   HStack,
   Modal,
@@ -91,7 +92,11 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           />
           <ModalContent bg="none">
             <ModalBody>
-              <HStack>
+              <Flex
+                align="center"
+                justify="center"
+                wrap={["wrap-reverse", "nowrap"]}
+              >
                 {connectData.connectors.map((x) => (
                   <Button
                     key={x.id}
@@ -101,9 +106,11 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
                     }}
                     label={x.name}
                     buttonType={ButtonType.Connect}
+                    w="240px"
+                    h="240px"
                   />
                 ))}
-              </HStack>
+              </Flex>
             </ModalBody>
           </ModalContent>
         </Modal>
