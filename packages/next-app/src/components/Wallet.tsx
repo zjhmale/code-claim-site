@@ -27,7 +27,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const toast = useToast();
   const isToastOpen = useRef(false);
 
-  const [{}, switchNetwork] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
 
   useEffect(() => {
@@ -66,7 +66,9 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
     return (
       <div>
         <Button
-          onClick={() => (switchNetwork ? switchNetwork(1) : null)}
+          onClick={() =>
+            switchNetwork ? switchNetwork(networkData?.chains[0].id) : null
+          }
           label="SWITCH NETWORK"
           buttonType={ButtonType.Connect}
           width="full"
