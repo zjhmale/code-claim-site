@@ -1,8 +1,11 @@
-// FIXME: add real values (might be moved to a config file later)
-const tokenAddress = "";
+import { getContractAddress } from "@/utils";
+
 const tokenSymbol = "CODE";
 const tokenDecimals = 18;
-const tokenImage = "";
+const tokenImage =
+  typeof window !== "undefined"
+    ? `${window.location.protocol}//${window.location.host}/assets/devdao-logo_dark.svg`
+    : "";
 
 export async function addCodeToken(ethereum: any) {
   try {
@@ -11,7 +14,7 @@ export async function addCodeToken(ethereum: any) {
       params: {
         type: "ERC20",
         options: {
-          address: tokenAddress,
+          address: getContractAddress(),
           symbol: tokenSymbol,
           decimals: tokenDecimals,
           image: tokenImage,

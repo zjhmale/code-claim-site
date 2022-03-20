@@ -1,6 +1,3 @@
-import "@fontsource/ibm-plex-mono";
-import "@fontsource/zen-kaku-gothic-new";
-
 import { theme } from "@/chakra.config";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Provider, chain, Chain, Connector } from "wagmi";
@@ -9,6 +6,7 @@ import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 import type { AppProps } from "next/app";
 import { ethers } from "ethers";
+import { Fonts } from "@/components/Fonts";
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || "localhost";
@@ -77,6 +75,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider autoConnect connectors={connectors} provider={provider}>
       <ChakraProvider theme={theme}>
+        <Fonts />
         <Component {...pageProps} />
       </ChakraProvider>
     </Provider>

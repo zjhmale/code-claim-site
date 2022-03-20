@@ -25,7 +25,9 @@ export const ConfirmToast = ({
       <CheckIcon mr="5" color="#1AECAD" />
       <Text fontSize="sm">
         {message}
-        <Link href={link}>{link_message}</Link>
+        <Link ml={1} href={link}>
+          {link_message}
+        </Link>
       </Text>
     </Flex>
   </Box>

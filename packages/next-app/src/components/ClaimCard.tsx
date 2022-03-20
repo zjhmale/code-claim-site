@@ -1,16 +1,21 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useAccount, useSigner } from "wagmi";
+import { useAccount, useSigner, useWaitForTransaction } from "wagmi";
 import MerkleTree from "merkletreejs";
 import { ethers } from "ethers";
 import keccak256 from "keccak256";
+import localforage from "localforage";
+import { useTimeout } from "usehooks-ts";
 
 import { CODEToken__factory } from "@/typechain";
 import { getContractAddress, maskWalletAddress } from "@/utils";
+import useConfirmations from "@/hooks/useConfirmations";
 
 import airdropData from "../data/airdrop";
 import { addCodeToken } from "../utils/add-token";
 import { Header, ClaimedView, UnclaimedView } from "./ClaimCardComponents";
+import { ConfirmToast } from "./toasts/confirm";
+import { ErrorToast } from "./toasts/error";
 
 const TOKEN_DECIMALS = 18;
 
@@ -136,8 +141,31 @@ export const ClaimCard = ({
     fetchEns: true,
   });
 
+  const toast = useToast();
+
+  // Remove confetti after some delay that's set on activation
+  const [confettiDelay, setConfettiDelay] = useState<null | number>(null);
+  useTimeout(() => setConfetti({ state: false }), confettiDelay);
+
   const [claimDate, setClaimDate] = useState(new Date());
-  const [blockConfirmations, setBlockConfirmations] = useState(10);
+  const [txHash, setTxHash] = useState<undefined | string>();
+
+  const [{ data: waitTransaction }] = useWaitForTransaction({
+    hash: txHash,
+  });
+  useEffect(() => {
+    async function getThing() {
+      if (waitTransaction?.blockNumber) {
+        const block = await signer?.provider?.getBlock(
+          waitTransaction?.blockNumber,
+        );
+        if (block?.timestamp) {
+          setClaimDate(new Date(block.timestamp * 1000));
+        }
+      }
+    }
+    getThing();
+  }, [waitTransaction, signer]);
 
   const allocations =
     accountData?.address &&
@@ -162,6 +190,20 @@ export const ClaimCard = ({
     formattedAddress = maskWalletAddress(accountData.address);
   }
 
+  // OnMount
+  useEffect(() => {
+    async function getTxHash() {
+      const loadedTxHash = await localforage.getItem<string | undefined>(
+        "code_claim_tx_hash",
+      );
+      if (loadedTxHash) setTxHash(loadedTxHash);
+    }
+
+    getTxHash();
+  }, []);
+
+  const blockConfirmations = useConfirmations(txHash, 20);
+
   // Effect to set initial state after account connected
   useEffect(() => {
     const checkAlreadyClaimed = async () => {
@@ -184,9 +226,6 @@ export const ClaimCard = ({
             "0x" + leaf.toString("hex"),
           );
 
-          console.log(isVerified);
-          console.log(index);
-
           if (!isVerified) return console.error("Couldn't verify proof!");
 
           const tokenContract = CODEToken__factory.connect(
@@ -195,7 +234,10 @@ export const ClaimCard = ({
           );
           const isClaimed = await tokenContract.isClaimed(index);
 
-          if (isClaimed) setConfetti({ state: true });
+          if (isClaimed) {
+            setConfetti({ state: true });
+            setConfettiDelay(3000);
+          }
 
           setCardState(
             isClaimed ? ClaimCardState.claimed : ClaimCardState.unclaimed,
@@ -204,9 +246,8 @@ export const ClaimCard = ({
       }
     };
 
-    // FIXME:
-    // checkAlreadyClaimed();
-  }, [signer, cardState, isEligible, totalAllocation]);
+    checkAlreadyClaimed();
+  }, [signer, cardState, isEligible, totalAllocation, setConfetti]);
 
   const addCodeToMetaMask = async () => {
     if (window.ethereum === undefined) return;
@@ -235,10 +276,36 @@ export const ClaimCard = ({
       setCardState(ClaimCardState.isClaiming);
       const tx = await tokenContract.claimTokens(numTokens, proof);
       await tx.wait(1);
+
       setCardState(ClaimCardState.claimed);
-      console.warn("TODO: show confetti etc");
-    } catch (e) {
+
+      toast({
+        position: "bottom-right",
+        duration: null,
+        render: () => (
+          <ConfirmToast
+            message={`Successfully claimed ${totalAllocation} CODE tokens.`}
+            link={`https://etherscan.io/tx/${tx.hash}`}
+            link_message="View TX on Etherscan"
+          />
+        ),
+      });
+
+      setConfetti({ state: true });
+      setConfettiDelay(3000);
+
+      setTxHash(tx.hash);
+      await localforage.setItem("code_claim_tx_hash", tx.hash);
+    } catch (e: any) {
       setCardState(ClaimCardState.unclaimed);
+
+      toast({
+        position: "bottom-right",
+        render: () => (
+          <ErrorToast message={e?.message ?? "Error while claiming."} />
+        ),
+      });
+
       console.error(`Error when claiming tokens: ${e}`);
       console.log(e);
     }
@@ -255,9 +322,9 @@ export const ClaimCard = ({
 
   return (
     <Flex
-      w="100%"
+      w={["100%", "560px"]}
       backdropFilter="blur(300px)"
-      background="rgba(255, 255, 255, 0.5)"
+      background="rgba(255, 255, 255, 0.8)"
       border="3px solid #DEDEDE"
       borderRadius="24px"
       box-shadow="inset 0px 0px 100px rgba(255, 255, 255, 0.25)"
@@ -269,14 +336,21 @@ export const ClaimCard = ({
       {cardState === ClaimCardState.claimed && (
         <ClaimedView
           blockConfirmations={blockConfirmations}
-          claimDate={claimDate.toLocaleDateString("en-UK", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+          claimDate={claimDate.toLocaleDateString(
+            window?.navigator?.language || "en-UK",
+            {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            },
+          )}
           totalAllocation={totalAllocation.toString()}
           onAddCodeToMetaMask={addCodeToMetaMask}
-          onViewTransaction={() => console.log("view transaction")}
+          onViewTransaction={() =>
+            window.open(`https://etherscan.io/tx/${txHash}`, "_blank")
+          }
         />
       )}
       {cardState !== ClaimCardState.claimed && (

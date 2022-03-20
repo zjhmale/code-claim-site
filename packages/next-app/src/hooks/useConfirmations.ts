@@ -1,24 +1,35 @@
+import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useBlockNumber, useWaitForTransaction } from "wagmi";
 
 type BlockConfirmations = number | undefined;
 
 const useConfirmations = (
-  latestBlockHash: string | undefined,
+  txHash: string | undefined,
+  watchBlocksCount: number,
 ): number | undefined => {
-  const [{ data }] = useBlockNumber({ watch: true });
-  const [confirmations, setConfirmations] = useState<BlockConfirmations>(0);
   const [{ data: waitTransaction }] = useWaitForTransaction({
-    hash: latestBlockHash,
+    hash: txHash,
+  });
+
+  const [confirmations, setConfirmations] = useState<BlockConfirmations>(0);
+
+  const shouldWatchBlocks = !confirmations || confirmations < watchBlocksCount;
+
+  const [{ data: currentBlockNumber }] = useBlockNumber({
+    watch: shouldWatchBlocks,
   });
 
   useEffect(() => {
-    if (data && waitTransaction?.blockNumber) {
-      let blockConfirmations = data - waitTransaction?.blockNumber;
+    if (
+      shouldWatchBlocks &&
+      typeof currentBlockNumber !== "undefined" &&
+      waitTransaction?.blockNumber
+    ) {
+      let blockConfirmations = currentBlockNumber - waitTransaction.blockNumber;
       setConfirmations(blockConfirmations < 0 ? 0 : blockConfirmations);
     }
-    return (): void => {};
-  }, [waitTransaction, data]);
+  }, [shouldWatchBlocks, waitTransaction, currentBlockNumber]);
 
   return confirmations;
 };

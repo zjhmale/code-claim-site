@@ -1,4 +1,12 @@
-import { Box, Button, Flex, Image, Spacer, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Spacer,
+  Text,
+  Spinner,
+} from "@chakra-ui/react";
 import { MouseEventHandler } from "react";
 
 import { ClaimCardState } from "./ClaimCard";
@@ -18,16 +26,16 @@ const Avatar = ({
   return shouldShowPlaceholder ? (
     <Box
       background="gray.200"
-      w={["96px", "120px"]}
-      h={["96px", "120px"]}
+      w={["100px", "130px"]}
+      h={["100px", "130px"]}
       borderRadius="16px"
     />
   ) : (
     <Image
       src={imageUrl}
       alt="avatar"
-      w={["96px", "120px"]}
-      h={["96px", "120px"]}
+      w={["100px", "130px"]}
+      h={["100px", "130px"]}
       borderRadius="16px"
     />
   );
@@ -70,6 +78,33 @@ const ClaimButton = ({
   </Button>
 );
 
+const IsClaimingButton = ({ label }: { label: string }) => (
+  <Button
+    background="rgba(8, 1, 13, 0.05)"
+    color="#4E4853"
+    borderRadius="12px"
+    fontSize={["16px", "18px"]}
+    fontWeight="900"
+    w="100%"
+    h="56px"
+    _active={{}}
+    _disabled={{ opacity: 1, cursor: "default" }}
+    _hover={{}}
+    disabled
+  >
+    <Flex>
+      <Spinner />
+      <Text ml={2}>
+        CLAIMING{" "}
+        <span style={{ fontFamily: "IBM Plex Mono", fontWeight: 600 }}>
+          {label}
+        </span>{" "}
+        TOKENS
+      </Text>
+    </Flex>
+  </Button>
+);
+
 interface HeaderData {
   address: string;
   image: string;
@@ -84,7 +119,7 @@ export const Header = ({
 }) => (
   <Flex align="center">
     <Avatar imageUrl={image} showPlaceholder={showPlaceholder} />
-    <Flex direction="column" ml={["20px", "32px"]}>
+    <Flex direction="column" ml={"20px"}>
       {showLabel && (
         <Flex align="center">
           <Image
@@ -99,12 +134,7 @@ export const Header = ({
           </Text>
         </Flex>
       )}
-      <Text
-        color="#08010D"
-        fontSize={["32px", "42px"]}
-        fontWeight="500"
-        mt="-8px"
-      >
+      <Text color="#08010D" fontSize={["32px", "42px"]} fontWeight="500">
         {address}
       </Text>
     </Flex>
@@ -126,15 +156,17 @@ const Position = ({
         color={isBig ? "#08010D" : "#4E4853"}
         fontSize={isBig ? "24px" : "18px"}
         fontWeight="500"
+        lineHeight={isBig ? "24px" : "18px"}
       >
         {title}
       </Text>
-      <Spacer />
+      <Spacer h="1" />
       <Text
         color={isBig ? "#08010D" : "#4E4853"}
         fontFamily="IBM Plex Mono"
         fontSize={isBig ? "32px" : "24px"}
         fontWeight="400"
+        lineHeight={isBig ? "32px" : "24px"}
       >
         {value}
       </Text>
@@ -143,7 +175,7 @@ const Position = ({
 );
 
 interface ClaimedViewProps {
-  blockConfirmations: number;
+  blockConfirmations: undefined | number;
   claimDate: string;
   totalAllocation: string;
   onAddCodeToMetaMask: () => void;
@@ -160,7 +192,7 @@ export const ClaimedView = (props: ClaimedViewProps) => {
   } = props;
   return (
     <>
-      <Flex direction="column" mb="8">
+      <Flex direction="column" mb="10">
         <Box border="1px solid #08010D" opacity="8%" my="4" />
         <Box>
           <Position
@@ -168,7 +200,7 @@ export const ClaimedView = (props: ClaimedViewProps) => {
             value={totalAllocation}
             isBig={true}
           />
-          <Box mt="16px">
+          <Box mt="24px">
             <Text
               px="24px"
               fontFamily="Zen Kaku Gothic New"
@@ -179,7 +211,7 @@ export const ClaimedView = (props: ClaimedViewProps) => {
               Claimed on {claimDate}
             </Text>
 
-            <Flex mx="24px" mt="8px">
+            <Flex mx="24px" mt="10px">
               <Image
                 src="assets/block-confirmations.svg"
                 alt="confirmations"
@@ -187,16 +219,19 @@ export const ClaimedView = (props: ClaimedViewProps) => {
                 h="24px"
                 alignSelf="center"
               />
-              <Text
-                fontFamily="IBM Plex Mono"
-                bgGradient="linear(to-r, #AD00FF, #4E00EC)"
-                bgClip="text"
-                fontSize="18px"
-                fontWeight="500"
-                pl="8px"
-              >
-                {blockConfirmations} block confirmations
-              </Text>
+              {typeof blockConfirmations !== "undefined" && (
+                <Text
+                  fontFamily="IBM Plex Mono"
+                  bgGradient="linear(to-r, #AD00FF, #4E00EC)"
+                  bgClip="text"
+                  fontSize="18px"
+                  fontWeight="500"
+                  pl="8px"
+                >
+                  {blockConfirmations > 20 ? "> 20" : blockConfirmations} block
+                  confirmations
+                </Text>
+              )}
             </Flex>
           </Box>
         </Box>
@@ -265,19 +300,21 @@ export const UnclaimedView = ({
     <>
       <Flex direction="column" mb="8">
         <Box border="1px solid #08010D" opacity="8%" />
-        {positions.map((pos, index) => {
-          return (
-            <Box key={index} my="2">
-              <Position
-                title={pos.title}
-                value={pos.value.toString()}
-                isBig={false}
-              />
-            </Box>
-          );
-        })}
-        <Box border="1px solid #08010D" opacity="8%" my="4" />
-        <Box>
+        <Flex direction="column" justify="space-evenly" height="48">
+          {positions.map((pos, index) => {
+            return (
+              <Box key={index}>
+                <Position
+                  title={pos.title}
+                  value={pos.value.toString()}
+                  isBig={false}
+                />
+              </Box>
+            );
+          })}
+        </Flex>
+        <Box border="1px solid #08010D" opacity="8%" />
+        <Box mt="6">
           <Position
             title="$CODE allocation"
             value={totalAllocation}
@@ -288,6 +325,8 @@ export const UnclaimedView = ({
       <Box px="24px" pb="24px">
         {cardState === ClaimCardState.disconnected ? (
           <ButtonPlaceholder />
+        ) : cardState === ClaimCardState.isClaiming ? (
+          <IsClaimingButton label={totalAllocation} />
         ) : (
           <ClaimButton label={totalAllocation} onClick={onClickClaim} />
         )}
