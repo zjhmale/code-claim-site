@@ -49,7 +49,7 @@ Array [
               Airdrop
             </h1>
             <p
-              className="chakra-text css-wqku87"
+              className="chakra-text css-1o3hbk9"
             >
               $CODE is the new governance token for Developer DAO. Connect your wallet to determine your airdrop eligibility.
             </p>
@@ -82,7 +82,7 @@ Array [
                 target="_blank"
               >
                 <button
-                  className="chakra-button css-1rzszvy"
+                  className="chakra-button css-oqzrty"
                   type="button"
                 >
                   <div
