@@ -8,9 +8,7 @@ import {
   useDisclosure,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalCloseButton,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
@@ -86,12 +84,14 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
         />
 
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
-          <ModalOverlay />
-          <ModalContent pb="5">
-            <ModalHeader>Connect your wallet</ModalHeader>
-            <ModalCloseButton />
+          <ModalOverlay
+            bg="rgba(4, 1, 7, 0.6)"
+            backdropFilter="auto"
+            backdropBlur="10px"
+          />
+          <ModalContent bg="none">
             <ModalBody>
-              <HStack spacing="24px">
+              <HStack>
                 {connectData.connectors.map((x) => (
                   <Button
                     key={x.id}
