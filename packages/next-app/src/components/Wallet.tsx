@@ -85,7 +85,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           width="full"
         />
 
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
           <ModalContent pb="5">
             <ModalHeader>Connect your wallet</ModalHeader>
