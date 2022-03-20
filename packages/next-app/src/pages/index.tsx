@@ -68,6 +68,9 @@ const Home: NextPage = () => {
     typeof accountData !== "undefined" &&
     Object.entries(accountData).length > 0;
 
+  const isUnsupported = networkData.chain?.unsupported;
+  const isSupportedNetwork = !isUnsupported;
+
   return (
     <div>
       {!prefersReducedMotion && (
@@ -112,12 +115,9 @@ const Home: NextPage = () => {
               )}
             </Flex>
 
-            <MainBox
-              isConnected={isConnected}
-              isUnsupported={!!networkData.chain?.unsupported}
-            />
+            <MainBox isConnected={isConnected} isUnsupported={isUnsupported} />
             <Center position="absolute" bottom="0" left="0" right="0">
-              {isMobile && !networkData.chain?.unsupported && isConnected && (
+              {isMobile && isSupportedNetwork && isConnected && (
                 <Image
                   alignSelf="end"
                   mb="5"
@@ -131,7 +131,7 @@ const Home: NextPage = () => {
             </Center>
           </Box>
 
-          {(!isMobile || (!networkData.chain?.unsupported && isConnected)) && (
+          {(!isMobile || (isSupportedNetwork && isConnected)) && (
             <Flex
               w={{ base: "100vw", lg: "50vw" }}
               h="100vh"
@@ -168,7 +168,7 @@ const Home: NextPage = () => {
                 )}
               </Center>
               <SlideFade in={isConnected} offsetY="20px">
-                {!networkData.chain?.unsupported && (
+                {isSupportedNetwork && (
                   <Box position="relative" zIndex="popover">
                     <ClaimCard
                       setConfetti={({ state }: { state: boolean }) =>

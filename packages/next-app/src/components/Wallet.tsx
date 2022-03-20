@@ -13,7 +13,7 @@ import {
   ModalCloseButton,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ErrorToast } from "./toasts/error";
 
 interface WalletProps {
@@ -27,7 +27,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const toast = useToast();
   const isToastOpen = useRef(false);
 
-  const [{ data: networkData, error, loading }, switchNetwork] = useNetwork();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
   const [{ data: connectData, error: connectError }, connect] = useConnect();
 
   useEffect(() => {
