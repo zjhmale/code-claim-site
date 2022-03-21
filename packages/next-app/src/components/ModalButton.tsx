@@ -22,6 +22,7 @@ export const ModalButton = ({
     borderColor="transparent"
     borderRadius="30px"
     borderWidth="2px"
+    cursor="pointer"
     direction="column"
     justify="center"
     w="240px"
