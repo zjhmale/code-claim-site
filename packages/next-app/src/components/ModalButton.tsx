@@ -5,6 +5,7 @@ export interface ModalButtonConfig {
   backgroundColor: string;
   highlightColor: string;
   icon: string;
+  iconSize: string;
   label: string;
 }
 
@@ -30,7 +31,14 @@ export const ModalButton = ({
       borderColor: config.highlightColor,
     }}
   >
-    <Image src={config.icon} alt={config.label} w="116px" h="116px" mb="5px" />
+    <Flex align="center" justify="center" boxSize="116px">
+      <Image
+        src={config.icon}
+        alt={config.label}
+        boxSize={config.iconSize}
+        mb="5px"
+      />
+    </Flex>
     <Text color="#CFCFCF" fontSize="16px" fontWeight="500">
       Connect with
     </Text>

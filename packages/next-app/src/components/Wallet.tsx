@@ -21,7 +21,8 @@ const MetaMaskButtonConfig: ModalButtonConfig = {
   id: "MetaMask",
   backgroundColor: "rgba(94, 45, 0, 0.12)",
   highlightColor: "#FF932D",
-  icon: "",
+  icon: "assets/connect-with-metamask.svg",
+  iconSize: "116px",
   label: "MetaMask",
 };
 
@@ -29,7 +30,8 @@ const WalletConnectButtonConfig: ModalButtonConfig = {
   id: "WalletConnect",
   backgroundColor: "rgba(129, 183, 255, 0.15)",
   highlightColor: "#4C95F7",
-  icon: "",
+  icon: "assets/connect-with-walletconnect.svg",
+  iconSize: "84px",
   label: "Wallet Connect",
 };
 
