@@ -19,9 +19,9 @@ export const ModalButton = ({
   <Flex
     align="center"
     bg={config.backgroundColor}
-    borderColor="transparent"
     borderRadius="30px"
-    borderWidth="2px"
+    outline="solid 1px transparent"
+    transition="outline 0.6s linear"
     cursor="pointer"
     direction="column"
     justify="center"
@@ -29,7 +29,8 @@ export const ModalButton = ({
     h="240px"
     onClick={onClick}
     _hover={{
-      borderColor: config.highlightColor,
+      outlineColor: config.highlightColor,
+      outlineWidth: "2px",
     }}
   >
     <Flex align="center" justify="center" boxSize="116px">
