@@ -10,6 +10,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
@@ -42,6 +43,7 @@ interface WalletProps {
 
 export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const isWeb = useBreakpointValue({ base: false, lg: true }) ?? true;
 
   const toast = useToast();
   const isToastOpen = useRef(false);
@@ -113,13 +115,22 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           buttonType={ButtonType.Connect}
           width="full"
         />
-
         <Modal size="6xl" isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay
             bg="rgba(4, 1, 7, 0.8)"
             backdropFilter="auto"
-            backdropBlur="10px"
+            backdropBlur="8px"
+            w={["100vw", "50vw"]}
           />
+          {isWeb && (
+            <ModalOverlay
+              bg="rgba(4, 1, 7, 0.8)"
+              backdropFilter="auto"
+              backdropBlur="10px"
+              left="50%"
+              w="50vw"
+            />
+          )}
           <ModalContent bg="none" shadow="none">
             <ModalBody>
               <Flex
