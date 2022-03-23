@@ -7,8 +7,8 @@ class MyDocument extends Document {
         <Head>
           {/* This will use Font optimization: https://nextjs.org/docs/basic-features/font-optimization */}
           <link
-            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@500;900&display=swap"
-            rel="preload"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@500;900&display=optional"
+            rel="stylesheet"
           />
         </Head>
         <body>
