@@ -2,19 +2,39 @@ import { Button, ButtonType } from "@/components/Button";
 import { useConnect, useNetwork } from "wagmi";
 import {
   Box,
+  Flex,
   Text,
   HStack,
   Modal,
   useDisclosure,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalCloseButton,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import { ErrorToast } from "./toasts/error";
+
+import { ModalButton, ModalButtonConfig } from "./ModalButton";
+
+const MetaMaskButtonConfig: ModalButtonConfig = {
+  id: "MetaMask",
+  backgroundColor: "rgba(94, 45, 0, 0.12)",
+  highlightColor: "#FF932D",
+  icon: "assets/connect-with-metamask.svg",
+  iconSize: "116px",
+  label: "MetaMask",
+};
+
+const WalletConnectButtonConfig: ModalButtonConfig = {
+  id: "WalletConnect",
+  backgroundColor: "rgba(129, 183, 255, 0.15)",
+  highlightColor: "#4C95F7",
+  icon: "assets/connect-with-walletconnect.svg",
+  iconSize: "84px",
+  label: "Wallet Connect",
+};
 
 interface WalletProps {
   isConnected: boolean | undefined;
@@ -23,6 +43,7 @@ interface WalletProps {
 
 export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const isWeb = useBreakpointValue({ base: false, lg: true }) ?? true;
 
   const toast = useToast();
   const isToastOpen = useRef(false);
@@ -42,6 +63,16 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
       });
     }
   }, [connectError, toast, isToastOpen]);
+
+  const onClickModalButton = (name: string) => {
+    const connector = connectData.connectors.filter(
+      (connector) => connector.name === name,
+    );
+    if (connector.length > 0) {
+      connect(connector[0]);
+      onClose();
+    }
+  };
 
   if (isConnected && !isUnsupported) {
     return (
@@ -84,26 +115,42 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           buttonType={ButtonType.Connect}
           width="full"
         />
-
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent pb="5">
-            <ModalHeader>Connect your wallet</ModalHeader>
-            <ModalCloseButton />
+        <Modal size="2xl" isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay
+            bg="rgba(4, 1, 7, 0.8)"
+            backdropFilter="auto"
+            backdropBlur="8px"
+            w={["100vw", "50vw"]}
+          />
+          {isWeb && (
+            <ModalOverlay
+              bg="rgba(4, 1, 7, 0.8)"
+              backdropFilter="auto"
+              backdropBlur="10px"
+              left="50%"
+              w="50vw"
+            />
+          )}
+          <ModalContent bg="none" shadow="none">
             <ModalBody>
-              <HStack spacing="24px">
-                {connectData.connectors.map((x) => (
-                  <Button
-                    key={x.id}
-                    onClick={() => {
-                      connect(x);
-                      onClose();
-                    }}
-                    label={x.name}
-                    buttonType={ButtonType.Connect}
+              <Flex
+                align="center"
+                justify="center"
+                wrap={["wrap-reverse", "nowrap"]}
+              >
+                <ModalButton
+                  config={WalletConnectButtonConfig}
+                  onClick={() =>
+                    onClickModalButton(WalletConnectButtonConfig.id)
+                  }
+                />
+                <Flex ml={["0", "110px"]} mb={["32px", "0"]}>
+                  <ModalButton
+                    config={MetaMaskButtonConfig}
+                    onClick={() => onClickModalButton(MetaMaskButtonConfig.id)}
                   />
-                ))}
-              </HStack>
+                </Flex>
+              </Flex>
             </ModalBody>
           </ModalContent>
         </Modal>
