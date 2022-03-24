@@ -115,7 +115,7 @@ export const Wallet = ({ isConnected, isUnsupported }: WalletProps) => {
           buttonType={ButtonType.Connect}
           width="full"
         />
-        <Modal size="6xl" isOpen={isOpen} onClose={onClose} isCentered>
+        <Modal size="2xl" isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay
             bg="rgba(4, 1, 7, 0.8)"
             backdropFilter="auto"
