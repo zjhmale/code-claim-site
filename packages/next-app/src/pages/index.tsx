@@ -20,6 +20,7 @@ import { ClaimCard } from "@/components/ClaimCard";
 import { Logo } from "@/components/Logo";
 import { MainBox } from "@/components/MainBox";
 import { SocialLinks } from "@/components/SocialLinks";
+import { SocialLinksMobile } from "@/components/SocialLinksMobile";
 import { bounceAnimation } from "@/chakra.config";
 
 const Home: NextPage = () => {
@@ -110,7 +111,7 @@ const Home: NextPage = () => {
               {isMobile && (
                 <>
                   <Spacer />
-                  <SocialLinks />
+                  <SocialLinksMobile />
                 </>
               )}
             </Flex>
