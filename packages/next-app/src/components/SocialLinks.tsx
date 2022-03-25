@@ -47,6 +47,7 @@ export const SocialLinks = () => {
         style={{
           marginLeft: "60px",
           border: "1px solid rgba(78, 72, 83, 0.35)",
+          borderRadius: "8px",
           height: "16px",
           marginTop: "2px",
         }}
