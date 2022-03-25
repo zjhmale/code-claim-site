@@ -14,18 +14,19 @@ const SocialLink = ({ href, title }: SocialLinkProps) => (
     _after={{
       content: '""',
       position: "absolute",
-      bottom: "-1em",
+      bottom: "-0.7em",
       left: "5%",
       width: " 90%",
       height: "0.12em",
       backgroundColor: "#08010D",
+      borderRadius: "0.06em",
       opacity: 0,
       transition: "opacity 200ms, transform 200ms",
     }}
     _hover={{
       _after: {
         opacity: 1,
-        transform: "translate3d(0, -0.4em, 0)",
+        transform: "translate3d(0, -0.2em, 0)",
       },
     }}
   >
