@@ -1,64 +1,61 @@
-import { Flex, Image, Link, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Link, Text } from "@chakra-ui/react";
 
 interface SocialLinkProps {
-  icon: string;
-  iconAlt: string;
+  href: string;
   title: string;
-  isMobile: boolean;
 }
 
-const SocialLink = ({ icon, iconAlt, title, isMobile }: SocialLinkProps) =>
-  isMobile ? (
-    <Image src={icon} alt={iconAlt} w="32px" h="32px" />
-  ) : (
+const SocialLink = ({ href, title }: SocialLinkProps) => (
+  <Link
+    display="block"
+    position="relative"
+    href={href}
+    isExternal
+    _after={{
+      content: '""',
+      position: "absolute",
+      bottom: "-1em",
+      left: "5%",
+      width: " 90%",
+      height: "0.12em",
+      backgroundColor: "#08010D",
+      opacity: 0,
+      transition: "opacity 200ms, transform 200ms",
+    }}
+    _hover={{
+      _after: {
+        opacity: 1,
+        transform: "translate3d(0, -0.4em, 0)",
+      },
+    }}
+  >
     <Text fontSize="18px" fontWeight="500" color="#08010D">
       {title}
     </Text>
-  );
+  </Link>
+);
 
 export const SocialLinks = () => {
-  const isMobile = useBreakpointValue({ base: true, lg: false }) ?? false;
-
   return (
     <Flex align="center">
-      <Link href="https://github.com/Developer-DAO/code-claim-site" isExternal>
-        <SocialLink
-          icon="assets/github-icon.svg"
-          iconAlt="Contract link"
-          title="Contract"
-          isMobile={isMobile}
-        />
-      </Link>
-      {!isMobile && (
-        <div
-          style={{
-            marginLeft: "60px",
-            border: "1px solid rgba(78, 72, 83, 0.35)",
-            height: "16px",
-            marginTop: "2px",
-          }}
-        ></div>
-      )}
-      <Link href="https://discord.gg/devdao" isExternal ml={["32px", "60px"]}>
-        <SocialLink
-          icon="assets/discord-icon.svg"
-          iconAlt="Discord"
-          title="Discord"
-          isMobile={isMobile}
-        />
-      </Link>
-      <Link
-        href="https://twitter.com/developer_dao"
-        isExternal
-        ml={["32px", "60px"]}
-      >
-        <SocialLink
-          icon="assets/twitter-icon.svg"
-          iconAlt="Twitter"
-          title="Twitter"
-          isMobile={isMobile}
-        />
-      </Link>
+      <SocialLink
+        href="https://github.com/Developer-DAO/code-claim-site"
+        title="Contract"
+      />
+      <div
+        style={{
+          marginLeft: "60px",
+          border: "1px solid rgba(78, 72, 83, 0.35)",
+          height: "16px",
+          marginTop: "2px",
+        }}
+      ></div>
+      <Box ml="60px">
+        <SocialLink href="https://discord.gg/devdao" title="Discord" />
+      </Box>
+      <Box ml="60px">
+        <SocialLink href="https://twitter.com/developer_dao" title="Twitter" />
+      </Box>
     </Flex>
   );
 };
