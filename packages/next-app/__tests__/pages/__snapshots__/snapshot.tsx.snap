@@ -276,7 +276,7 @@ Array [
           className="css-70qvj9"
         >
           <a
-            className="chakra-link css-f4h6uy"
+            className="chakra-link css-9si2gb"
             href="https://github.com/Developer-DAO/code-claim-site"
             rel="noopener noreferrer"
             target="_blank"
@@ -291,36 +291,45 @@ Array [
             style={
               Object {
                 "border": "1px solid rgba(78, 72, 83, 0.35)",
+                "borderRadius": "8px",
                 "height": "16px",
                 "marginLeft": "60px",
                 "marginTop": "2px",
               }
             }
           />
-          <a
-            className="chakra-link css-9ogsct"
-            href="https://discord.gg/devdao"
-            rel="noopener noreferrer"
-            target="_blank"
+          <div
+            className="css-vyb7xx"
           >
-            <p
-              className="chakra-text css-1uzh1ux"
+            <a
+              className="chakra-link css-9si2gb"
+              href="https://discord.gg/devdao"
+              rel="noopener noreferrer"
+              target="_blank"
             >
-              Discord
-            </p>
-          </a>
-          <a
-            className="chakra-link css-9ogsct"
-            href="https://twitter.com/developer_dao"
-            rel="noopener noreferrer"
-            target="_blank"
+              <p
+                className="chakra-text css-1uzh1ux"
+              >
+                Discord
+              </p>
+            </a>
+          </div>
+          <div
+            className="css-vyb7xx"
           >
-            <p
-              className="chakra-text css-1uzh1ux"
+            <a
+              className="chakra-link css-9si2gb"
+              href="https://twitter.com/developer_dao"
+              rel="noopener noreferrer"
+              target="_blank"
             >
-              Twitter
-            </p>
-          </a>
+              <p
+                className="chakra-text css-1uzh1ux"
+              >
+                Twitter
+              </p>
+            </a>
+          </div>
         </div>
       </div>
     </div>
