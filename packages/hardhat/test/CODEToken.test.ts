@@ -31,6 +31,7 @@ const setup = deployments.createFixture(async () => {
     CODEToken,
     merkleTree,
     users,
+    merkleRoot,
   };
 });
 
@@ -65,14 +66,26 @@ describe('CODEToken', function () {
   it('can claim correct allocation amount only', async function () {
     const { users, merkleTree, CODEToken } = await setup();
 
+    const isClaimed = await CODEToken.isClaimed(0);
+    expect(isClaimed).to.be.false;
+
     // Get tokens for address correctly
     const correctFormattedAddress: string = ethers.utils.getAddress(users[1].address);
     const correctNumTokens: string = ethers.utils.parseUnits('100', TOKEN_DECIMALS).toString();
     const correctLeaf: Buffer = generateLeaf(correctFormattedAddress, correctNumTokens);
     const correctProof: string[] = merkleTree.getHexProof(correctLeaf);
+
     await expect(users[1].CODEToken.claimTokens(correctNumTokens, correctProof))
       .to.emit(CODEToken, 'Claim')
       .withArgs(correctFormattedAddress, ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
+
+    const userBalance = await CODEToken.balanceOf(users[1].address);
+    expect(userBalance).to.equal(ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
+
+    const isClaimedAfter = await CODEToken.isClaimed(0);
+    expect(isClaimedAfter).to.be.true;
+
+    await expect(users[1].CODEToken.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith('CODE: Tokens already claimed.');
 
     // Get tokens for address incorrectly using user[2]
     /* const otherFormattedAddress: string = ethers.utils.getAddress(users[2].address);
@@ -128,5 +141,10 @@ describe('CODEToken', function () {
     const { treasury } = await getNamedAccounts();
     const treasuryBalance = await CODEToken.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
-  })
+  });
+
+  it('cannot reset merkleroot', async function () {
+    const { CODEToken, merkleRoot } = await setup();
+    await expect(CODEToken.setMerkleRoot(merkleRoot)).to.be.revertedWith('CODE: Merkle root already set');
+  });
 });
