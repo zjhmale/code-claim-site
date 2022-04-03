@@ -35,6 +35,7 @@ contract CODEToken is ERC20, ERC20Permit, Ownable {
     function claimTokens(uint256 amount, bytes32[] calldata merkleProof) external {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         (bool valid, uint256 index) = MerkleProof.verify(merkleProof, merkleRoot, leaf);
+        require(block.timestamp <= claimPeriodEnds, "CODE: Claim period ends");
         require(valid, "CODE: Valid proof required.");
         require(!isClaimed(index), "CODE: Tokens already claimed.");
 
@@ -66,7 +67,7 @@ contract CODEToken is ERC20, ERC20Permit, Ownable {
     }
 
     function mint(uint256 additionalSupply) public onlyOwner {
-        require(mintingEnabled == true, "No new tokens can be minted");
+        require(mintingEnabled == true, "CODE: No new tokens can be minted");
         _mint(msg.sender, additionalSupply * (10**18));
     }
 }

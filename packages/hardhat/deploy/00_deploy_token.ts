@@ -18,6 +18,7 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [treasury, 6_500_000, 3_500_000, claimEnd /* 1651156281 */],
   });
 
+  console.log('deployer:', deployer);
   console.log('dd deployed to:', dd.address);
 };
 

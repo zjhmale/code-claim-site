@@ -40,7 +40,9 @@ describe('CODEToken', function () {
     const { treasury } = await getNamedAccounts();
     const Token = <CODEToken>await ethers.getContract('CODEToken');
     const treasuryBalance = await Token.balanceOf(treasury);
+    const airdropBalance = await Token.balanceOf(Token.address);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000).toString(), TOKEN_DECIMALS));
+    expect(airdropBalance).to.equal(ethers.utils.parseUnits((3_500_000).toString(), TOKEN_DECIMALS));
   });
 
   it('cannot claim if no allocation', async function () {
@@ -81,4 +83,50 @@ describe('CODEToken', function () {
       'CODE: Valid proof required.'
     ); */
   });
+
+  it('cannot claim if minting disabled', async function () {
+    await deployments.fixture(['CODEToken']);
+    const { deployer } = await getNamedAccounts();
+    const Token = <CODEToken>await ethers.getContract('CODEToken');
+    const ownerBalance = await Token.balanceOf(deployer);
+    expect(ownerBalance).to.equal(ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS));
+    await Token.mint(100);
+    const ownerBalanceAfter = await Token.balanceOf(deployer);
+    expect(ownerBalanceAfter).to.equal(ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
+    await Token.disableMinting();
+    await expect(Token.mint(100)).to.be.revertedWith('CODE: No new tokens can be minted');
+  });
+
+  it('cannot claim if claim period ends', async function () {
+    const { users, merkleTree } = await setup();
+    // Get properly formatted address
+    const formattedAddress: string = ethers.utils.getAddress(users[0].address);
+
+    // Get tokens for address
+    const numTokens: string = ethers.utils.parseUnits('100', TOKEN_DECIMALS).toString();
+
+    // Generate hashed leaf from address
+    const leaf: Buffer = generateLeaf(formattedAddress, numTokens);
+    // Generate airdrop proof
+    const proof: string[] = merkleTree.getHexProof(leaf);
+    const ninetyOneDays = 91 * 24 * 60 * 60;
+    await ethers.provider.send('evm_increaseTime', [ninetyOneDays]);
+
+    await expect(users[0].CODEToken.claimTokens(numTokens, proof)).to.be.revertedWith('CODE: Claim period ends');
+  });
+
+  it('cannot sweep if claim period not ends', async function () {
+    const { CODEToken } = await setup();
+
+    await expect(CODEToken.sweep()).to.be.revertedWith('CODE: Claim period not yet ended');
+
+    const ninetyOneDays = 91 * 24 * 60 * 60;
+    await ethers.provider.send('evm_increaseTime', [ninetyOneDays]);
+
+    await CODEToken.sweep();
+
+    const { treasury } = await getNamedAccounts();
+    const treasuryBalance = await CODEToken.balanceOf(treasury);
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+  })
 });
