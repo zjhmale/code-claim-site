@@ -33,6 +33,7 @@ contract CODEToken is ERC20, ERC20Permit, Ownable {
     }
 
     function claimTokens(uint256 amount, bytes32[] calldata merkleProof) external {
+        uint256 _amount = amount**1e18;
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         (bool valid, uint256 index) = MerkleProof.verify(merkleProof, merkleRoot, leaf);
         require(valid, "CODE: Valid proof required.");
@@ -41,9 +42,9 @@ contract CODEToken is ERC20, ERC20Permit, Ownable {
         console.log("Trying to claim %s tokens to %s", amount, msg.sender);
 
         claimed.set(index);
-        emit Claim(msg.sender, amount);
+        emit Claim(msg.sender, _amount);
 
-        _transfer(address(this), msg.sender, amount);
+        _transfer(address(this), msg.sender, _amount);
     }
 
     function isClaimed(uint256 index) public view returns (bool) {
