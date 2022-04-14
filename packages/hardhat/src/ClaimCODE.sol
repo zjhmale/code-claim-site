@@ -5,13 +5,11 @@ import "./MerkleProof.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
 import "hardhat/console.sol";
 
 contract ClaimCODE is Ownable, Pausable {
-    using SafeERC20 for IERC20;
     using BitMaps for BitMaps.BitMap;
 
     BitMaps.BitMap private claimed;
@@ -46,7 +44,7 @@ contract ClaimCODE is Ownable, Pausable {
         claimed.set(index);
         emit Claim(msg.sender, _amount);
 
-        codeToken.safeTransfer(msg.sender, _amount);
+        codeToken.transfer(msg.sender, _amount);
     }
 
     function isClaimed(uint256 index) public view returns (bool) {
