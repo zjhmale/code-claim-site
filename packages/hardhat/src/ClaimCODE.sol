@@ -3,13 +3,17 @@ pragma solidity ^0.8.9;
 
 import "./MerkleProof.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
 import "hardhat/console.sol";
 
-contract ClaimCODE is Ownable {
+contract ClaimCODE is Ownable, Pausable {
+    using SafeERC20 for IERC20;
     using BitMaps for BitMaps.BitMap;
+
     BitMaps.BitMap private claimed;
 
     bytes32 public merkleRoot;
@@ -32,7 +36,7 @@ contract ClaimCODE is Ownable {
         codeToken = IERC20(_codeToken);
     }
 
-    function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external {
+    function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external whenNotPaused {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, _amount));
         (bool valid, uint256 index) = MerkleProof.verify(_merkleProof, merkleRoot, leaf);
         if (!valid) revert InvalidProof();
@@ -42,7 +46,7 @@ contract ClaimCODE is Ownable {
         claimed.set(index);
         emit Claim(msg.sender, _amount);
 
-        codeToken.transfer(msg.sender, _amount);
+        codeToken.safeTransfer(msg.sender, _amount);
     }
 
     function isClaimed(uint256 index) public view returns (bool) {
@@ -53,5 +57,13 @@ contract ClaimCODE is Ownable {
         if (merkleRoot != bytes32(0)) revert InitError();
         merkleRoot = _merkleRoot;
         emit MerkleRootChanged(_merkleRoot);
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
     }
 }
