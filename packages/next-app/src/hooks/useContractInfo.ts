@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useContract, useProvider } from "wagmi";
 
-import { CODEToken, CODEToken__factory } from "@/typechain";
+import { CODEToken, ClaimCODE__factory } from "@/typechain";
 import { getContractAddress } from "@/utils";
 import { ethers } from "ethers";
 
@@ -20,7 +20,7 @@ const useContractInfo = (): ContractInfo => {
 
   const provider = useProvider();
   useEffect(() => {
-    const tokenContract = CODEToken__factory.connect(contractAddress, provider);
+    const tokenContract = ClaimCODE__factory.connect(contractAddress, provider);
 
     const fetchContractInfo = async () => {
       const claimPeriodEndsRes = await tokenContract.claimPeriodEnds();
