@@ -1,10 +1,10 @@
-import { expect } from './chai-setup';
+import { expect } from '../chai-setup';
 import { ethers, deployments, getUnnamedAccounts, getNamedAccounts } from 'hardhat';
-import { CODEToken } from '../../next-app/src/typechain';
-import { setupUsers } from './utils';
-import { generateLeaf } from './utils/merkleUtils';
+import { CODEToken } from '../../../next-app/src/typechain';
+import { setupUsers } from '../utils';
+import { generateLeaf } from '../utils/merkleUtils';
 
-import MerkleGenerator from '../utils/merkleGenerator';
+import MerkleGenerator from '../../utils/merkleGenerator';
 
 const TOKEN_DECIMALS = 18;
 
@@ -85,7 +85,9 @@ describe('CODEToken', function () {
     const isClaimedAfter = await CODEToken.isClaimed(0);
     expect(isClaimedAfter).to.be.true;
 
-    await expect(users[1].CODEToken.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith('CODE: Tokens already claimed.');
+    await expect(users[1].CODEToken.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith(
+      'CODE: Tokens already claimed.'
+    );
 
     // Get tokens for address incorrectly using user[2]
     /* const otherFormattedAddress: string = ethers.utils.getAddress(users[2].address);
