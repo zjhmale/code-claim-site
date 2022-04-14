@@ -57,11 +57,11 @@ contract ClaimCODE is Ownable, Pausable {
         emit MerkleRootChanged(_merkleRoot);
     }
 
-    function pause() public onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 }
