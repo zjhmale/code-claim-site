@@ -1,7 +1,7 @@
 import { expect } from './chai-setup';
 import { ethers, getUnnamedAccounts } from 'hardhat';
 import { generateLeaf } from './utils/merkleUtils';
-import { CODEToken } from '../../next-app/src/typechain';
+import { ClaimCODE } from '../../next-app/src/typechain';
 import { setupUsers } from './utils';
 import MerkleGenerator from '../utils/merkleGenerator';
 
@@ -14,8 +14,8 @@ describe('MerkleProof', function () {
     await this.merkleProof.deployed();
     const unnamedAccounts = await getUnnamedAccounts();
 
-    const CODEToken = <CODEToken>await ethers.getContract('CODEToken');
-    this.users = await setupUsers(unnamedAccounts, { CODEToken });
+    const ClaimCODE = <ClaimCODE>await ethers.getContract('ClaimCODE');
+    this.users = await setupUsers(unnamedAccounts, { ClaimCODE });
 
     const airdrop = {
       [unnamedAccounts[1]]: 100,
