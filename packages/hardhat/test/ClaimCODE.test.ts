@@ -1,6 +1,6 @@
 import { expect } from './chai-setup';
 import { ethers, deployments, getUnnamedAccounts, getNamedAccounts } from 'hardhat';
-import { ClaimCODE, CODE, CODEToken } from '../../next-app/src/typechain';
+import { ClaimCODE, CODE } from '../../next-app/src/typechain';
 import { setupUsers } from './utils';
 import { generateLeaf } from './utils/merkleUtils';
 
@@ -10,6 +10,10 @@ const TOKEN_DECIMALS = 18;
 
 const setup = deployments.createFixture(async () => {
   await deployments.fixture(['ClaimCODE']);
+
+  const merkleProofCf = await ethers.getContractFactory('MerkleProofWrapper');
+  const merkleProof = await merkleProofCf.deploy();
+  await merkleProof.deployed();
 
   const unnamedAccounts = await getUnnamedAccounts();
   const airdrop = {
@@ -32,8 +36,9 @@ const setup = deployments.createFixture(async () => {
     CODE,
     ClaimCODE,
     merkleTree,
-    users,
     merkleRoot,
+    merkleProof,
+    users,
   };
 });
 
@@ -65,16 +70,18 @@ describe('Claim CODE', function () {
   });
 
   it('can claim correct allocation amount only', async function () {
-    const { users, merkleTree, CODE, ClaimCODE } = await setup();
-
-    const isClaimed = await ClaimCODE.isClaimed(0);
-    expect(isClaimed).to.be.false;
+    const { users, merkleProof, merkleRoot, merkleTree, CODE, ClaimCODE } = await setup();
 
     // Get tokens for address correctly
     const correctFormattedAddress: string = ethers.utils.getAddress(users[1].address);
     const correctNumTokens: string = ethers.utils.parseUnits('100', TOKEN_DECIMALS).toString();
     const correctLeaf: Buffer = generateLeaf(correctFormattedAddress, correctNumTokens);
     const correctProof: string[] = merkleTree.getHexProof(correctLeaf);
+    const result = await merkleProof.verify(correctProof, merkleRoot, correctLeaf);
+    const correctIndex = result[1].toNumber();
+
+    const isClaimed = await ClaimCODE.isClaimed(correctIndex);
+    expect(isClaimed).to.be.false;
 
     await expect(users[1].ClaimCODE.claimTokens(correctNumTokens, correctProof))
       .to.emit(ClaimCODE, 'Claim')
@@ -83,12 +90,10 @@ describe('Claim CODE', function () {
     const userBalance = await CODE.balanceOf(users[1].address);
     expect(userBalance).to.equal(ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
 
-    const isClaimedAfter = await ClaimCODE.isClaimed(0);
+    const isClaimedAfter = await ClaimCODE.isClaimed(correctIndex);
     expect(isClaimedAfter).to.be.true;
 
-    await expect(users[1].ClaimCODE.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith(
-      'AlreadyClaimed()'
-    );
+    await expect(users[1].ClaimCODE.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith('AlreadyClaimed()');
   });
 
   it('cannot claim if claim period ends', async function () {
@@ -112,5 +117,42 @@ describe('Claim CODE', function () {
   it('cannot reset merkleroot', async function () {
     const { ClaimCODE, merkleRoot } = await setup();
     await expect(ClaimCODE.setMerkleRoot(merkleRoot)).to.be.revertedWith('InitError()');
+  });
+
+  it('cannot claim if contract is paused', async function () {
+    const { users, merkleRoot, merkleProof, merkleTree, CODE, ClaimCODE } = await setup();
+
+    const userId = 2;
+    const userAmount = 200;
+
+    // Get tokens for address correctly
+    const correctFormattedAddress: string = ethers.utils.getAddress(users[userId].address);
+    const correctNumTokens: string = ethers.utils.parseUnits(userAmount.toString(), TOKEN_DECIMALS).toString();
+    const correctLeaf: Buffer = generateLeaf(correctFormattedAddress, correctNumTokens);
+    const correctProof: string[] = merkleTree.getHexProof(correctLeaf);
+    const result = await merkleProof.verify(correctProof, merkleRoot, correctLeaf);
+    const correctIndex = result[1].toNumber();
+
+    await ClaimCODE.pause();
+
+    await expect(users[userId].ClaimCODE.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith(
+      'Pausable: paused'
+    );
+
+    await ClaimCODE.unpause();
+
+    const isClaimed = await ClaimCODE.isClaimed(correctIndex);
+    expect(isClaimed).to.be.false;
+
+    await expect(users[userId].ClaimCODE.claimTokens(correctNumTokens, correctProof))
+      .to.emit(ClaimCODE, 'Claim')
+      .withArgs(correctFormattedAddress, ethers.utils.parseUnits(userAmount.toString(), TOKEN_DECIMALS));
+
+    const userBalance = await CODE.balanceOf(users[userId].address);
+    expect(userBalance).to.equal(ethers.utils.parseUnits(userAmount.toString(), TOKEN_DECIMALS));
+
+    const isClaimedAfter = await ClaimCODE.isClaimed(correctIndex);
+    console.log('after:', isClaimedAfter);
+    expect(isClaimedAfter).to.be.true;
   });
 });
