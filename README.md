@@ -37,10 +37,10 @@ Here is a list of the main scripts to run:
 
 To deploy to Rinkeby, these are the steps:
 
-1. Set env vars ETH_NODE_URI = 'https://rinkeby.infura.io/v3/<projectId>', MNEMONIC = 'words words words.... words'
+1. Set env vars ETH_NODE_URI = 'https://rinkeby.infura.io/v3/$projectId' (or other node services e.g. alchemy, quicknode), MNEMONIC = 'words words words.... words'
 2. `yarn deploy rinkeby`
 3. `yarn execute rinkeby scripts/setMerkleRoot <merkleRoot>`
-4. `npx hardhat --network rinkeby etherscan-verify --api-key <etherscan API key>`
+4. `cd packages/hardhat && npx hardhat --network rinkeby etherscan-verify --api-key <etherscan API key>`
 
 The code that gets network specific resources from env variables (like ETH_NODE_URI and MNEMONIC) is located at `packages/hardhat/utils/network.ts`.
 To change how e.g. the accounts are defined (by setting PKs directly instead of using mnemonic), the `accounts` function in that file would need to be changed. This function is then used in hardhat.config.ts to get the accounts info per network.
