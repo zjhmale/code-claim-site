@@ -7,7 +7,7 @@ import keccak256 from "keccak256";
 import localforage from "localforage";
 import { useTimeout } from "usehooks-ts";
 
-import { CODEToken__factory } from "@/typechain";
+import { ClaimCODE__factory } from "@/typechain";
 import { getContractAddress, maskWalletAddress } from "@/utils";
 import useConfirmations from "@/hooks/useConfirmations";
 
@@ -228,7 +228,7 @@ export const ClaimCard = ({
 
           if (!isVerified) return console.error("Couldn't verify proof!");
 
-          const tokenContract = CODEToken__factory.connect(
+          const tokenContract = ClaimCODE__factory.connect(
             contractAddress,
             signer,
           );
@@ -258,7 +258,7 @@ export const ClaimCard = ({
     if (!isEligible) return console.warn("Not eligibile!");
     if (!signer) return console.warn("Not connected!");
 
-    const tokenContract = CODEToken__factory.connect(contractAddress, signer);
+    const tokenContract = ClaimCODE__factory.connect(contractAddress, signer);
 
     const contractMerkleRoot = await tokenContract.merkleRoot();
 
