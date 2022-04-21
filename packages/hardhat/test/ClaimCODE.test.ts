@@ -30,11 +30,15 @@ const setup = deployments.createFixture(async () => {
   const ClaimCODE = <ClaimCODE>await ethers.getContract('ClaimCODE');
   const users = await setupUsers(unnamedAccounts, { ClaimCODE });
 
-  await ClaimCODE.setMerkleRoot(merkleRoot);
+  const { treasury } = await getNamedAccounts();
+  const treasuryOwnedClaimCODE = await ClaimCODE.connect(await ethers.getSigner(treasury));
+
+  await treasuryOwnedClaimCODE.setMerkleRoot(merkleRoot);
 
   return {
     CODE,
     ClaimCODE,
+    treasuryOwnedClaimCODE,
     merkleTree,
     merkleRoot,
     merkleProof,
@@ -50,6 +54,13 @@ describe('Claim CODE', function () {
     const airdropBalance = await CODE.balanceOf(ClaimCODE.address);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000).toString(), TOKEN_DECIMALS));
     expect(airdropBalance).to.equal(ethers.utils.parseUnits((3_500_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('Deployment should assign treasury as the owner of claim contract', async function () {
+    const { ClaimCODE } = await setup();
+    const { treasury } = await getNamedAccounts();
+    const owner = await ClaimCODE.owner();
+    expect(treasury).to.equal(owner);
   });
 
   it('cannot claim if no allocation', async function () {
@@ -115,12 +126,12 @@ describe('Claim CODE', function () {
   });
 
   it('cannot reset merkleroot', async function () {
-    const { ClaimCODE, merkleRoot } = await setup();
-    await expect(ClaimCODE.setMerkleRoot(merkleRoot)).to.be.revertedWith('InitError()');
+    const { treasuryOwnedClaimCODE, merkleRoot } = await setup();
+    await expect(treasuryOwnedClaimCODE.setMerkleRoot(merkleRoot)).to.be.revertedWith('InitError()');
   });
 
   it('cannot claim if contract is paused', async function () {
-    const { users, merkleRoot, merkleProof, merkleTree, CODE, ClaimCODE } = await setup();
+    const { users, merkleRoot, merkleProof, merkleTree, CODE, ClaimCODE, treasuryOwnedClaimCODE } = await setup();
 
     const userId = 2;
     const userAmount = 200;
@@ -133,13 +144,13 @@ describe('Claim CODE', function () {
     const result = await merkleProof.verify(correctProof, merkleRoot, correctLeaf);
     const correctIndex = result[1].toNumber();
 
-    await ClaimCODE.pause();
+    await treasuryOwnedClaimCODE.pause();
 
     await expect(users[userId].ClaimCODE.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith(
       'Pausable: paused'
     );
 
-    await ClaimCODE.unpause();
+    await treasuryOwnedClaimCODE.unpause();
 
     const isClaimed = await ClaimCODE.isClaimed(correctIndex);
     expect(isClaimed).to.be.false;

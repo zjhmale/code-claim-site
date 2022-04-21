@@ -27,6 +27,11 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await connectContract.transfer(treasury, ethers.utils.parseUnits((6_500_000).toString(), 18));
   await connectContract.transfer(dd.address, ethers.utils.parseUnits((3_500_000).toString(), 18));
 
+  const claimContract = await ethers.getContract('ClaimCODE');
+  const connectClaimContract = await claimContract.connect(await ethers.getSigner(deployer));
+
+  await connectClaimContract.transferOwnership(treasury);
+
   console.log('treasuryAmount:', (await codeContract.balanceOf(treasury)).toString());
   console.log('airdropAmount:', (await codeContract.balanceOf(dd.address)).toString());
 
