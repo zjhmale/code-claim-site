@@ -26,6 +26,7 @@ contract ClaimCODE is Ownable, Pausable {
     error InvalidProof();
     error AlreadyClaimed();
     error ClaimEnded();
+    error ClaimNotEnded();
     error InitError();
 
     constructor(uint256 _claimPeriodEnds, address _codeToken) {
@@ -55,6 +56,11 @@ contract ClaimCODE is Ownable, Pausable {
         if (merkleRoot != bytes32(0)) revert InitError();
         merkleRoot = _merkleRoot;
         emit MerkleRootChanged(_merkleRoot);
+    }
+
+    function sweep() external onlyOwner {
+        if (block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
+        codeToken.transfer(owner(), codeToken.balanceOf(address(this)));
     }
 
     function pause() external onlyOwner {

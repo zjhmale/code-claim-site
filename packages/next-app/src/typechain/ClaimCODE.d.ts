@@ -31,6 +31,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setMerkleRoot(bytes32)": FunctionFragment;
+    "sweep()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
   };
@@ -63,6 +64,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     values: [BytesLike],
   ): string;
+  encodeFunctionData(functionFragment: "sweep", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string],
@@ -91,6 +93,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: "sweep", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike,
@@ -206,6 +209,10 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
+    sweep(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -247,6 +254,10 @@ export class ClaimCODE extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  sweep(
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> },
@@ -283,6 +294,8 @@ export class ClaimCODE extends BaseContract {
       _merkleRoot: BytesLike,
       overrides?: CallOverrides,
     ): Promise<void>;
+
+    sweep(overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -381,6 +394,10 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
+    sweep(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -423,6 +440,10 @@ export class ClaimCODE extends BaseContract {
 
     setMerkleRoot(
       _merkleRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    sweep(
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 

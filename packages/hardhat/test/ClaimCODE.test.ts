@@ -166,4 +166,21 @@ describe('Claim CODE', function () {
     console.log('after:', isClaimedAfter);
     expect(isClaimedAfter).to.be.true;
   });
+
+  it('cannot sweep if claim period not ends', async function () {
+    const { CODE, ClaimCODE, treasuryOwnedClaimCODE } = await setup();
+
+    await expect(ClaimCODE.sweep()).to.be.revertedWith('Ownable: caller is not the owner');
+
+    await expect(treasuryOwnedClaimCODE.sweep()).to.be.revertedWith('ClaimNotEnded()');
+
+    const ninetyOneDays = 91 * 24 * 60 * 60;
+    await ethers.provider.send('evm_increaseTime', [ninetyOneDays]);
+
+    await treasuryOwnedClaimCODE.sweep();
+
+    const { treasury } = await getNamedAccounts();
+    const treasuryBalance = await CODE.balanceOf(treasury);
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+  });
 });
