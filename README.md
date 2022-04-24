@@ -41,6 +41,7 @@ To deploy to Rinkeby, these are the steps:
 2. `yarn deploy rinkeby`
 3. `yarn execute rinkeby scripts/setMerkleRoot <merkleRoot>`
 4. `cd packages/hardhat && npx hardhat --network rinkeby etherscan-verify --api-key <etherscan API key>`
+5. `yarn execute rinkeby scripts/merkleRootSanityCheck`
 
 The code that gets network specific resources from env variables (like ETH_NODE_URI and MNEMONIC) is located at `packages/hardhat/utils/network.ts`.
 To change how e.g. the accounts are defined (by setting PKs directly instead of using mnemonic), the `accounts` function in that file would need to be changed. This function is then used in hardhat.config.ts to get the accounts info per network.

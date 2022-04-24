@@ -35,9 +35,13 @@ contract ClaimCODE is Ownable, Pausable {
         codeToken = IERC20(_codeToken);
     }
 
+    function verify(bytes32[] memory proof, bytes32 leaf) public view returns (bool, uint256) {
+        return MerkleProof.verify(proof, merkleRoot, leaf);
+    }
+
     function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external whenNotPaused {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, _amount));
-        (bool valid, uint256 index) = MerkleProof.verify(_merkleProof, merkleRoot, leaf);
+        (bool valid, uint256 index) = verify(_merkleProof, leaf);
         if (!valid) revert InvalidProof();
         if (isClaimed(index)) revert AlreadyClaimed();
         if (block.timestamp > claimPeriodEnds) revert ClaimEnded();

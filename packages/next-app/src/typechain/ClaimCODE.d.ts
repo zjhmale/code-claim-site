@@ -34,6 +34,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "sweep()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
+    "verify(bytes32[],bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -70,6 +71,10 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     values: [string],
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "verify",
+    values: [BytesLike[], BytesLike],
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "claimPeriodEnds",
@@ -99,6 +104,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
   events: {
     "Claim(address,uint256)": EventFragment;
@@ -221,6 +227,12 @@ export class ClaimCODE extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<[boolean, BigNumber]>;
   };
 
   claimPeriodEnds(overrides?: CallOverrides): Promise<BigNumber>;
@@ -267,6 +279,12 @@ export class ClaimCODE extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  verify(
+    proof: BytesLike[],
+    leaf: BytesLike,
+    overrides?: CallOverrides,
+  ): Promise<[boolean, BigNumber]>;
+
   callStatic: {
     claimPeriodEnds(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -303,6 +321,12 @@ export class ClaimCODE extends BaseContract {
     ): Promise<void>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<[boolean, BigNumber]>;
   };
 
   filters: {
@@ -406,6 +430,12 @@ export class ClaimCODE extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -454,6 +484,12 @@ export class ClaimCODE extends BaseContract {
 
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };
 }
