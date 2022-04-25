@@ -25,15 +25,19 @@ describe('CODE', function () {
       `AccessControl: account ${treasury.toLowerCase()} is missing role ${mintRole}`
     );
 
+    const treasuryBalExp = 6_500_000 - 690_000; // trasnfered from treasury to vesting
+
     const treasuryBalance = await CODE.balanceOf(treasury);
-    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000).toString(), TOKEN_DECIMALS));
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits(treasuryBalExp.toString(), TOKEN_DECIMALS));
 
     await CODE.grantRole(mintRole, treasury);
 
     await tc.mint(treasury, ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
 
     const treasuryBalanceAfter = await CODE.balanceOf(treasury);
-    expect(treasuryBalanceAfter).to.equal(ethers.utils.parseUnits((6_600_000).toString(), TOKEN_DECIMALS));
+    expect(treasuryBalanceAfter).to.equal(
+      ethers.utils.parseUnits((treasuryBalExp + 100_000).toString(), TOKEN_DECIMALS)
+    );
 
     await CODE.revokeRole(mintRole, treasury);
 
