@@ -18,7 +18,8 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [codeContract.address, vestingStart],
   });
 
-  await connectContract.transfer(dd.address, ethers.utils.parseUnits((690_000).toString(), 18));
+  // only 50% will go vesting
+  await connectContract.transfer(dd.address, ethers.utils.parseUnits((690_000 / 2).toString(), 18));
 
   const vestingContract = await ethers.getContract('Vesting');
   const connectVestingContract = await vestingContract.connect(await ethers.getSigner(deployer));

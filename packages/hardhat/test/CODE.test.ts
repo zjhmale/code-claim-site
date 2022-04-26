@@ -25,7 +25,7 @@ describe('CODE', function () {
       `AccessControl: account ${treasury.toLowerCase()} is missing role ${mintRole}`
     );
 
-    const treasuryBalExp = 6_500_000 - 690_000; // trasnfered from treasury to vesting
+    const treasuryBalExp = 6_500_000 - 690_000 / 2; // trasnfered from treasury to vesting
 
     const treasuryBalance = await CODE.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits(treasuryBalExp.toString(), TOKEN_DECIMALS));
