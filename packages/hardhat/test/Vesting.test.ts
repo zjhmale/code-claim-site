@@ -13,9 +13,9 @@ const setup = deployments.createFixture(async () => {
   const payees = [unnamedAccounts[1], unnamedAccounts[2], unnamedAccounts[3]];
   // shares should sum up to 690_000
   const shares = [
-    ethers.utils.parseUnits((300_000).toString(), TOKEN_DECIMALS),
-    ethers.utils.parseUnits((300_000).toString(), TOKEN_DECIMALS),
-    ethers.utils.parseUnits((90_000).toString(), TOKEN_DECIMALS),
+    ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS),
+    ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS),
+    ethers.utils.parseUnits((45_000).toString(), TOKEN_DECIMALS),
   ];
 
   const CODE = <CODE>await ethers.getContract('CODE');
@@ -39,7 +39,7 @@ describe('Vesting', function () {
   it('Deployment should assign vesting supply of tokens correctly', async function () {
     const { CODE, Vesting } = await setup();
     const vestingBalance = await CODE.balanceOf(Vesting.address);
-    expect(vestingBalance).to.equal(ethers.utils.parseUnits((690_000).toString(), TOKEN_DECIMALS));
+    expect(vestingBalance).to.equal(ethers.utils.parseUnits((690_000 / 2).toString(), TOKEN_DECIMALS));
   });
 
   it('Deployment should assign treasury as the owner of vesting contract', async function () {
@@ -75,11 +75,11 @@ describe('Vesting', function () {
 
     await users[1].Vesting.release();
     expect(await CODE.balanceOf(users[1].address)).to.equal(
-      ethers.utils.parseUnits(((300_000 * 2) / 24).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits(((150_000 * 2) / 24).toString(), TOKEN_DECIMALS)
     );
 
     expect(await users[1].Vesting.released(users[1].address)).to.equal(
-      ethers.utils.parseUnits(((300_000 * 2) / 24).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits(((150_000 * 2) / 24).toString(), TOKEN_DECIMALS)
     );
 
     const anotherEightMonthAndTenDayAfter = 8 * 30 * 24 * 60 * 60 + 10 * 24 * 60 * 60;
@@ -87,10 +87,10 @@ describe('Vesting', function () {
 
     await users[1].Vesting.release();
     expect(await CODE.balanceOf(users[1].address)).to.equal(
-      ethers.utils.parseUnits(((300_000 * 10) / 24).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits(((150_000 * 10) / 24).toString(), TOKEN_DECIMALS)
     );
     expect(await users[1].Vesting.released(users[1].address)).to.equal(
-      ethers.utils.parseUnits(((300_000 * 10) / 24).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits(((150_000 * 10) / 24).toString(), TOKEN_DECIMALS)
     );
   });
 
@@ -102,10 +102,10 @@ describe('Vesting', function () {
 
     await users[1].Vesting.release();
     expect(await CODE.balanceOf(users[1].address)).to.equal(
-      ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits(((150_000 * 12) / 24).toString(), TOKEN_DECIMALS)
     );
     expect(await users[1].Vesting.released(users[1].address)).to.equal(
-      ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits(((150_000 * 12) / 24).toString(), TOKEN_DECIMALS)
     );
 
     const anotherYearsAfter = 365 * 24 * 60 * 60 + 10 * 24 * 60 * 60;
@@ -113,10 +113,10 @@ describe('Vesting', function () {
 
     await users[1].Vesting.release();
     expect(await CODE.balanceOf(users[1].address)).to.equal(
-      ethers.utils.parseUnits((300_000).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS)
     );
     expect(await users[1].Vesting.released(users[1].address)).to.equal(
-      ethers.utils.parseUnits((300_000).toString(), TOKEN_DECIMALS)
+      ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS)
     );
   });
 

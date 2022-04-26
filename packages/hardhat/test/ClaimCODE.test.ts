@@ -67,7 +67,7 @@ describe('Claim CODE', function () {
     const treasuryBalance = await CODE.balanceOf(treasury);
     const airdropBalance = await CODE.balanceOf(ClaimCODE.address);
     // trasnfered from treasury to vesting
-    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000 - 690_000).toString(), TOKEN_DECIMALS));
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000 - 690_000 / 2).toString(), TOKEN_DECIMALS));
     expect(airdropBalance).to.equal(ethers.utils.parseUnits((3_500_000).toString(), TOKEN_DECIMALS));
   });
 
@@ -197,7 +197,7 @@ describe('Claim CODE', function () {
     const { treasury } = await getNamedAccounts();
     const treasuryBalance = await CODE.balanceOf(treasury);
     // trasnfered from treasury to vesting
-    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000 - 690_000).toString(), TOKEN_DECIMALS));
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000 - 690_000 / 2).toString(), TOKEN_DECIMALS));
   });
 
   it('sweep other erc20 tokens if claim period not ends', async function () {

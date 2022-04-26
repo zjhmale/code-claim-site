@@ -19,7 +19,8 @@ contract Vesting is Ownable {
     uint256 public immutable duration = 2 * 365 days; // total 2 years vesting period
     uint256 public immutable releasePeriod = 30 days; // release every month
     uint256 public immutable totalEpochs = 24; // total release epochs will be 24 months
-    uint256 public immutable totalShares = 690_000 * 1e18; // The Founding Team will retain 6%, current Advisors will retain 0.9%
+    // The Founding Team will retain 6%, current Advisors will retain 0.9% and only 50% will be vested
+    uint256 public immutable totalShares = (690_000 / 2) * 1e18;
 
     constructor(address _codeToken, uint256 _startTimestamp) {
         codeToken = IERC20(_codeToken);
