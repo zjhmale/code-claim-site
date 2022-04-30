@@ -35,7 +35,7 @@ contract ClaimCODE is Ownable, Pausable {
         codeToken = IERC20(_codeToken);
     }
 
-    function verify(bytes32[] memory proof, bytes32 leaf) public view returns (bool, uint256) {
+    function verify(bytes32[] calldata proof, bytes32 leaf) public view returns (bool, uint256) {
         return MerkleProof.verify(proof, merkleRoot, leaf);
     }
 
