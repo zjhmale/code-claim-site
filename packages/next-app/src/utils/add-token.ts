@@ -1,4 +1,4 @@
-import { getContractAddress } from "@/utils";
+import { getTokenAddress } from "@/utils";
 
 const tokenSymbol = "CODE";
 const tokenDecimals = 18;
@@ -14,7 +14,7 @@ export async function addCodeToken(ethereum: any) {
       params: {
         type: "ERC20",
         options: {
-          address: getContractAddress(),
+          address: getTokenAddress(),
           symbol: tokenSymbol,
           decimals: tokenDecimals,
           image: tokenImage,
