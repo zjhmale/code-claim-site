@@ -2,7 +2,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, `cp .env.sample .env.local` and set the values as necessary. 
+For local development, only the contract addresses are mandatory.
+The remaining values will default to localhost.
+
+Then, run the development server:
 
 ```bash
 npm run dev
