@@ -26,6 +26,7 @@ contract ClaimCODE is Ownable, Pausable {
     error InvalidProof();
     error AlreadyClaimed();
     error ClaimEnded();
+    error ClaimNotEnded();
     error InitError();
 
     constructor(uint256 _claimPeriodEnds, address _codeToken) {
@@ -34,9 +35,13 @@ contract ClaimCODE is Ownable, Pausable {
         codeToken = IERC20(_codeToken);
     }
 
+    function verify(bytes32[] calldata proof, bytes32 leaf) public view returns (bool, uint256) {
+        return MerkleProof.verify(proof, merkleRoot, leaf);
+    }
+
     function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external whenNotPaused {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, _amount));
-        (bool valid, uint256 index) = MerkleProof.verify(_merkleProof, merkleRoot, leaf);
+        (bool valid, uint256 index) = verify(_merkleProof, leaf);
         if (!valid) revert InvalidProof();
         if (isClaimed(index)) revert AlreadyClaimed();
         if (block.timestamp > claimPeriodEnds) revert ClaimEnded();
@@ -55,6 +60,11 @@ contract ClaimCODE is Ownable, Pausable {
         if (merkleRoot != bytes32(0)) revert InitError();
         merkleRoot = _merkleRoot;
         emit MerkleRootChanged(_merkleRoot);
+    }
+
+    function sweep() external onlyOwner {
+        if (block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
+        codeToken.transfer(owner(), codeToken.balanceOf(address(this)));
     }
 
     function pause() external onlyOwner {

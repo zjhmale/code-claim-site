@@ -24,17 +24,17 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "claimPeriodEnds()": FunctionFragment;
     "claimTokens(uint256,bytes32[])": FunctionFragment;
     "codeToken()": FunctionFragment;
-    "disableMinting()": FunctionFragment;
-    "disableMintingByGovernance()": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
     "merkleRoot()": FunctionFragment;
-    "mintByGovernance(address,uint256)": FunctionFragment;
-    "mintGovernance()": FunctionFragment;
-    "mintingEnabled()": FunctionFragment;
     "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setMerkleRoot(bytes32)": FunctionFragment;
+    "sweep()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
+    "verify(bytes32[],bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -47,14 +47,6 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "codeToken", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "disableMinting",
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: "disableMintingByGovernance",
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
     functionFragment: "isClaimed",
     values: [BigNumberish],
   ): string;
@@ -62,19 +54,9 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "merkleRoot",
     values?: undefined,
   ): string;
-  encodeFunctionData(
-    functionFragment: "mintByGovernance",
-    values: [string, BigNumberish],
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintGovernance",
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintingEnabled",
-    values?: undefined,
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined,
@@ -83,9 +65,15 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     values: [BytesLike],
   ): string;
+  encodeFunctionData(functionFragment: "sweep", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string],
+  ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "verify",
+    values: [BytesLike[], BytesLike],
   ): string;
 
   decodeFunctionResult(
@@ -97,29 +85,11 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "codeToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "disableMinting",
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "disableMintingByGovernance",
-    data: BytesLike,
-  ): Result;
   decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "mintByGovernance",
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintGovernance",
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintingEnabled",
-    data: BytesLike,
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike,
@@ -128,24 +98,27 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: "sweep", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
   events: {
     "Claim(address,uint256)": EventFragment;
     "MerkleRootChanged(bytes32)": EventFragment;
-    "MintedByGovernance(address,uint256)": EventFragment;
-    "MintingDisabled()": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MerkleRootChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MintedByGovernance"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MintingDisabled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export type ClaimEvent = TypedEvent<
@@ -156,15 +129,13 @@ export type MerkleRootChangedEvent = TypedEvent<
   [string] & { _merkleRoot: string }
 >;
 
-export type MintedByGovernanceEvent = TypedEvent<
-  [string, BigNumber] & { _target: string; _amount: BigNumber }
->;
-
-export type MintingDisabledEvent = TypedEvent<[] & {}>;
-
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
+
+export type PausedEvent = TypedEvent<[string] & { account: string }>;
+
+export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
 export class ClaimCODE extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -220,14 +191,6 @@ export class ClaimCODE extends BaseContract {
 
     codeToken(overrides?: CallOverrides): Promise<[string]>;
 
-    disableMinting(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
-
-    disableMintingByGovernance(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides,
@@ -235,17 +198,13 @@ export class ClaimCODE extends BaseContract {
 
     merkleRoot(overrides?: CallOverrides): Promise<[string]>;
 
-    mintByGovernance(
-      _target: string,
-      _amount: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    pause(
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
-    mintGovernance(overrides?: CallOverrides): Promise<[boolean]>;
-
-    mintingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -256,10 +215,24 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
+    sweep(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<[boolean, BigNumber]>;
   };
 
   claimPeriodEnds(overrides?: CallOverrides): Promise<BigNumber>;
@@ -272,29 +245,17 @@ export class ClaimCODE extends BaseContract {
 
   codeToken(overrides?: CallOverrides): Promise<string>;
 
-  disableMinting(
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>;
-
-  disableMintingByGovernance(
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>;
-
   isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   merkleRoot(overrides?: CallOverrides): Promise<string>;
 
-  mintByGovernance(
-    _target: string,
-    _amount: BigNumberish,
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  pause(
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
-  mintGovernance(overrides?: CallOverrides): Promise<boolean>;
-
-  mintingEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
+  paused(overrides?: CallOverrides): Promise<boolean>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> },
@@ -305,10 +266,24 @@ export class ClaimCODE extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
+  sweep(
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
+
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  verify(
+    proof: BytesLike[],
+    leaf: BytesLike,
+    overrides?: CallOverrides,
+  ): Promise<[boolean, BigNumber]>;
 
   callStatic: {
     claimPeriodEnds(overrides?: CallOverrides): Promise<BigNumber>;
@@ -321,25 +296,15 @@ export class ClaimCODE extends BaseContract {
 
     codeToken(overrides?: CallOverrides): Promise<string>;
 
-    disableMinting(overrides?: CallOverrides): Promise<void>;
-
-    disableMintingByGovernance(overrides?: CallOverrides): Promise<void>;
-
     isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     merkleRoot(overrides?: CallOverrides): Promise<string>;
 
-    mintByGovernance(
-      _target: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>;
-
-    mintGovernance(overrides?: CallOverrides): Promise<boolean>;
-
-    mintingEnabled(overrides?: CallOverrides): Promise<boolean>;
-
     owner(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -348,10 +313,20 @@ export class ClaimCODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
+    sweep(overrides?: CallOverrides): Promise<void>;
+
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides,
     ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
+    ): Promise<[boolean, BigNumber]>;
   };
 
   filters: {
@@ -379,26 +354,6 @@ export class ClaimCODE extends BaseContract {
       _merkleRoot?: null,
     ): TypedEventFilter<[string], { _merkleRoot: string }>;
 
-    "MintedByGovernance(address,uint256)"(
-      _target?: string | null,
-      _amount?: null,
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { _target: string; _amount: BigNumber }
-    >;
-
-    MintedByGovernance(
-      _target?: string | null,
-      _amount?: null,
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { _target: string; _amount: BigNumber }
-    >;
-
-    "MintingDisabled()"(): TypedEventFilter<[], {}>;
-
-    MintingDisabled(): TypedEventFilter<[], {}>;
-
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null,
@@ -414,6 +369,18 @@ export class ClaimCODE extends BaseContract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    "Paused(address)"(
+      account?: null,
+    ): TypedEventFilter<[string], { account: string }>;
+
+    Paused(account?: null): TypedEventFilter<[string], { account: string }>;
+
+    "Unpaused(address)"(
+      account?: null,
+    ): TypedEventFilter<[string], { account: string }>;
+
+    Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
   };
 
   estimateGas: {
@@ -427,14 +394,6 @@ export class ClaimCODE extends BaseContract {
 
     codeToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    disableMinting(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>;
-
-    disableMintingByGovernance(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides,
@@ -442,17 +401,13 @@ export class ClaimCODE extends BaseContract {
 
     merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mintByGovernance(
-      _target: string,
-      _amount: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
-    mintGovernance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mintingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -463,9 +418,23 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
+    sweep(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
 
@@ -480,14 +449,6 @@ export class ClaimCODE extends BaseContract {
 
     codeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    disableMinting(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>;
-
-    disableMintingByGovernance(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides,
@@ -495,17 +456,13 @@ export class ClaimCODE extends BaseContract {
 
     merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    mintByGovernance(
-      _target: string,
-      _amount: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
-    mintGovernance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mintingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -516,9 +473,23 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
+    sweep(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    verify(
+      proof: BytesLike[],
+      leaf: BytesLike,
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };
 }

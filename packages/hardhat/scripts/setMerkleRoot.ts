@@ -1,14 +1,14 @@
 import { ethers, getNamedAccounts } from 'hardhat';
-import { CODEToken } from '../../next-app/src/typechain';
+import { ClaimCODE } from '../../next-app/src/typechain';
 
 const args = process.argv.slice(2);
 const merkleRoot = args[0];
 
 async function main() {
-  const { deployer } = await getNamedAccounts();
+  const { treasury } = await getNamedAccounts();
 
-  const tokenContract = <CODEToken>await ethers.getContract('CODEToken', deployer);
-  const tx = await tokenContract.setMerkleRoot(merkleRoot);
+  const claimContract = <ClaimCODE>await ethers.getContract('ClaimCODE', treasury);
+  const tx = await claimContract.setMerkleRoot(merkleRoot);
   console.log(`Setting merkle root "${merkleRoot}"`);
   await tx.wait();
 }
