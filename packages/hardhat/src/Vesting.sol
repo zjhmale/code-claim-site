@@ -49,7 +49,7 @@ contract Vesting is Ownable {
         }
     }
 
-    function addPayees(address[] memory _payees, uint256[] memory _shares) public {
+    function addPayees(address[] memory _payees, uint256[] memory _shares) public onlyOwner {
         require(_payees.length == _shares.length, "Vesting: payees and shares length mismatch");
         require(_payees.length > 0, "Vesting: no payees");
 

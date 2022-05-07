@@ -136,4 +136,12 @@ describe('Vesting', function () {
     const treasuryBalance = await CODE.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000).toString(), TOKEN_DECIMALS));
   });
+
+  it('only owner can add payee', async function () {
+    const { users } = await setup();
+    const payees = [users[0].address];
+    // shares should sum up to 690_000
+    const shares = [ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS)];
+    await expect(users[0].Vesting.addPayees(payees, shares)).to.be.revertedWith('Ownable: caller is not the owner');
+  });
 });
