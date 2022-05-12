@@ -15,6 +15,10 @@ const setup = deployments.createFixture(async () => {
   const merkleProof = await merkleProofCf.deploy();
   await merkleProof.deployed();
 
+  const mockERC20Cf = await ethers.getContractFactory('MockERC20');
+  const mockERC20 = await mockERC20Cf.deploy();
+  await mockERC20.deployed();
+
   const unnamedAccounts = await getUnnamedAccounts();
   const airdrop = {
     [unnamedAccounts[1]]: 100,
@@ -38,6 +42,7 @@ const setup = deployments.createFixture(async () => {
   return {
     CODE,
     ClaimCODE,
+    mockERC20,
     treasuryOwnedClaimCODE,
     merkleTree,
     merkleRoot,
@@ -170,17 +175,36 @@ describe('Claim CODE', function () {
   it('cannot sweep if claim period not ends', async function () {
     const { CODE, ClaimCODE, treasuryOwnedClaimCODE } = await setup();
 
-    await expect(ClaimCODE.sweep()).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(ClaimCODE.sweep(CODE.address)).to.be.revertedWith('Ownable: caller is not the owner');
 
-    await expect(treasuryOwnedClaimCODE.sweep()).to.be.revertedWith('ClaimNotEnded()');
+    await expect(treasuryOwnedClaimCODE.sweep(CODE.address)).to.be.revertedWith('ClaimNotEnded()');
 
     const ninetyOneDays = 91 * 24 * 60 * 60;
     await ethers.provider.send('evm_increaseTime', [ninetyOneDays]);
 
-    await treasuryOwnedClaimCODE.sweep();
+    await treasuryOwnedClaimCODE.sweep(CODE.address);
 
     const { treasury } = await getNamedAccounts();
     const treasuryBalance = await CODE.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('sweep other erc20 tokens if claim period not ends', async function () {
+    const { mockERC20, treasuryOwnedClaimCODE } = await setup();
+    const { deployer, treasury } = await getNamedAccounts();
+
+    const mockBalance = await mockERC20.balanceOf(deployer);
+    expect(mockBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+    const tc = await mockERC20.connect(await ethers.getSigner(deployer));
+
+    await tc.transfer(treasuryOwnedClaimCODE.address, ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+
+    const contractBalance = await mockERC20.balanceOf(treasuryOwnedClaimCODE.address);
+    expect(contractBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+
+    await treasuryOwnedClaimCODE.sweep(mockERC20.address);
+
+    const treasuryBalance = await mockERC20.balanceOf(treasury);
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
   });
 });

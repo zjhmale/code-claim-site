@@ -31,7 +31,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setMerkleRoot(bytes32)": FunctionFragment;
-    "sweep()": FunctionFragment;
+    "sweep(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "verify(bytes32[],bytes32)": FunctionFragment;
@@ -65,7 +65,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     values: [BytesLike],
   ): string;
-  encodeFunctionData(functionFragment: "sweep", values?: undefined): string;
+  encodeFunctionData(functionFragment: "sweep", values: [string]): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string],
@@ -216,6 +216,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<ContractTransaction>;
 
     sweep(
+      token: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -267,6 +268,7 @@ export class ClaimCODE extends BaseContract {
   ): Promise<ContractTransaction>;
 
   sweep(
+    token: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -313,7 +315,7 @@ export class ClaimCODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
-    sweep(overrides?: CallOverrides): Promise<void>;
+    sweep(token: string, overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -419,6 +421,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<BigNumber>;
 
     sweep(
+      token: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -474,6 +477,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     sweep(
+      token: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
