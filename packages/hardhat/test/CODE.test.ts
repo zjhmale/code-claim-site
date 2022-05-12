@@ -37,6 +37,10 @@ describe('CODE', function () {
     const { CODE } = await setup();
     const { deployer, treasury } = await getNamedAccounts();
 
+    const adminRole = await CODE.DEFAULT_ADMIN_ROLE();
+    expect(await CODE.hasRole(adminRole, deployer)).to.be.false;
+    expect(await CODE.hasRole(adminRole, treasury)).to.be.true;
+
     const dc = await CODE.connect(await ethers.getSigner(deployer));
     const mintRole = await CODE.MINTER_ROLE();
     await expect(dc.mint(treasury, ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS))).to.be.revertedWith(
@@ -123,7 +127,7 @@ describe('CODE', function () {
         to: treasuryOwnedCODE.address,
         value: ethers.utils.parseEther('1.0'),
       });
-    } catch {}
+    } catch { }
     expect(await ethers.provider.getBalance(treasuryOwnedCODE.address)).to.equal(
       ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
     );
