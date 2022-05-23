@@ -27,7 +27,7 @@ contract Vesting is Ownable {
         start = _startTimestamp;
     }
 
-    function release() public {
+    function release() external {
         address account = _msgSender();
         require(shares[account] > 0, "Vesting: account has no shares");
         uint256 releasable = vestedAmount(account);
@@ -49,11 +49,11 @@ contract Vesting is Ownable {
         }
     }
 
-    function addPayees(address[] memory _payees, uint256[] memory _shares) public onlyOwner {
+    function addPayees(address[] calldata _payees, uint256[] calldata _shares) external onlyOwner {
         require(_payees.length == _shares.length, "Vesting: payees and shares length mismatch");
         require(_payees.length > 0, "Vesting: no payees");
 
-        uint256 _totalShares = 0;
+        uint256 _totalShares;
         for (uint256 i = 0; i < _payees.length; i++) {
             _addPayee(_payees[i], _shares[i]);
             _totalShares += _shares[i];
