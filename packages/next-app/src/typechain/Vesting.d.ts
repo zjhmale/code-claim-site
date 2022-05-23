@@ -193,7 +193,7 @@ export class Vesting extends BaseContract {
     duration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     epoch(
-      period: BigNumberish,
+      _period: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
 
@@ -248,7 +248,7 @@ export class Vesting extends BaseContract {
 
   duration(overrides?: CallOverrides): Promise<BigNumber>;
 
-  epoch(period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+  epoch(_period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -298,7 +298,7 @@ export class Vesting extends BaseContract {
 
     duration(overrides?: CallOverrides): Promise<BigNumber>;
 
-    epoch(period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    epoch(_period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -364,7 +364,7 @@ export class Vesting extends BaseContract {
 
     duration(overrides?: CallOverrides): Promise<BigNumber>;
 
-    epoch(period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    epoch(_period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -419,7 +419,7 @@ export class Vesting extends BaseContract {
     duration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     epoch(
-      period: BigNumberish,
+      _period: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 

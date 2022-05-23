@@ -71,9 +71,9 @@ contract Vesting is Ownable {
         shares[_account] = _shares;
     }
 
-    function epoch(uint256 period) public pure returns (uint256) {
-        uint256 m = period % releasePeriod;
-        return (period - m) / releasePeriod;
+    function epoch(uint256 _period) public pure returns (uint256) {
+        uint256 m = _period % releasePeriod;
+        return (_period - m) / releasePeriod;
     }
 
     function sweep() external onlyOwner {
