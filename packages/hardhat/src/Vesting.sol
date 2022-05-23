@@ -32,6 +32,9 @@ contract Vesting is Ownable {
         require(shares[account] > 0, "Vesting: account has no shares");
         uint256 releasable = vestedAmount(account);
         require(releasable > 0, "Vesting: account is not due payment");
+        if (releasable > shares[account]) {
+            releasable = shares[account];
+        }
 
         released[account] += releasable;
         totalReleased += releasable;
