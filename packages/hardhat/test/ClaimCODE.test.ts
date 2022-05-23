@@ -211,16 +211,26 @@ describe('Claim CODE', function () {
   it('ensure claim contract dont receive Ether', async function () {
     const { treasuryOwnedClaimCODE } = await setup();
     const [deployer] = await ethers.getSigners();
-    console.log(`contract ether balance ${ethers.utils.formatEther(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address))}`)
-    expect(await ethers.provider.getBalance(deployer.address)).to.gt(ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS));
-    expect(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)).to.equal(ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS));
+    console.log(
+      `contract ether balance ${ethers.utils.formatEther(
+        await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)
+      )}`
+    );
+    expect(await ethers.provider.getBalance(deployer.address)).to.gt(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
+    expect(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)).to.equal(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
     try {
       // Error: Transaction reverted: function selector was not recognized and there's no fallback nor receive function
       await deployer.sendTransaction({
         to: treasuryOwnedClaimCODE.address,
-        value: ethers.utils.parseEther("1.0"),
+        value: ethers.utils.parseEther('1.0'),
       });
-    } catch { }
-    expect(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)).to.equal(ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS));
+    } catch {}
+    expect(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)).to.equal(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
   });
 });

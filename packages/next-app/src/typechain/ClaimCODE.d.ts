@@ -111,6 +111,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "MerkleRootChanged(bytes32)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "Sweep(address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
@@ -118,6 +119,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MerkleRootChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Sweep"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
@@ -134,6 +136,8 @@ export type OwnershipTransferredEvent = TypedEvent<
 >;
 
 export type PausedEvent = TypedEvent<[string] & { account: string }>;
+
+export type SweepEvent = TypedEvent<[string] & { _token: string }>;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
@@ -192,7 +196,7 @@ export class ClaimCODE extends BaseContract {
     codeToken(overrides?: CallOverrides): Promise<[string]>;
 
     isClaimed(
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<[boolean]>;
 
@@ -216,7 +220,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<ContractTransaction>;
 
     sweep(
-      token: string,
+      _token: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -230,8 +234,8 @@ export class ClaimCODE extends BaseContract {
     ): Promise<ContractTransaction>;
 
     verify(
-      proof: BytesLike[],
-      leaf: BytesLike,
+      _proof: BytesLike[],
+      _leaf: BytesLike,
       overrides?: CallOverrides,
     ): Promise<[boolean, BigNumber]>;
   };
@@ -246,7 +250,7 @@ export class ClaimCODE extends BaseContract {
 
   codeToken(overrides?: CallOverrides): Promise<string>;
 
-  isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  isClaimed(_index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   merkleRoot(overrides?: CallOverrides): Promise<string>;
 
@@ -268,7 +272,7 @@ export class ClaimCODE extends BaseContract {
   ): Promise<ContractTransaction>;
 
   sweep(
-    token: string,
+    _token: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -282,8 +286,8 @@ export class ClaimCODE extends BaseContract {
   ): Promise<ContractTransaction>;
 
   verify(
-    proof: BytesLike[],
-    leaf: BytesLike,
+    _proof: BytesLike[],
+    _leaf: BytesLike,
     overrides?: CallOverrides,
   ): Promise<[boolean, BigNumber]>;
 
@@ -298,7 +302,10 @@ export class ClaimCODE extends BaseContract {
 
     codeToken(overrides?: CallOverrides): Promise<string>;
 
-    isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    isClaimed(
+      _index: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<boolean>;
 
     merkleRoot(overrides?: CallOverrides): Promise<string>;
 
@@ -315,7 +322,7 @@ export class ClaimCODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
-    sweep(token: string, overrides?: CallOverrides): Promise<void>;
+    sweep(_token: string, overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -325,8 +332,8 @@ export class ClaimCODE extends BaseContract {
     unpause(overrides?: CallOverrides): Promise<void>;
 
     verify(
-      proof: BytesLike[],
-      leaf: BytesLike,
+      _proof: BytesLike[],
+      _leaf: BytesLike,
       overrides?: CallOverrides,
     ): Promise<[boolean, BigNumber]>;
   };
@@ -378,6 +385,12 @@ export class ClaimCODE extends BaseContract {
 
     Paused(account?: null): TypedEventFilter<[string], { account: string }>;
 
+    "Sweep(address)"(
+      _token?: null,
+    ): TypedEventFilter<[string], { _token: string }>;
+
+    Sweep(_token?: null): TypedEventFilter<[string], { _token: string }>;
+
     "Unpaused(address)"(
       account?: null,
     ): TypedEventFilter<[string], { account: string }>;
@@ -397,7 +410,7 @@ export class ClaimCODE extends BaseContract {
     codeToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     isClaimed(
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
@@ -421,7 +434,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<BigNumber>;
 
     sweep(
-      token: string,
+      _token: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -435,8 +448,8 @@ export class ClaimCODE extends BaseContract {
     ): Promise<BigNumber>;
 
     verify(
-      proof: BytesLike[],
-      leaf: BytesLike,
+      _proof: BytesLike[],
+      _leaf: BytesLike,
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
@@ -453,7 +466,7 @@ export class ClaimCODE extends BaseContract {
     codeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isClaimed(
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
@@ -477,7 +490,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     sweep(
-      token: string,
+      _token: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
@@ -491,8 +504,8 @@ export class ClaimCODE extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     verify(
-      proof: BytesLike[],
-      leaf: BytesLike,
+      _proof: BytesLike[],
+      _leaf: BytesLike,
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };

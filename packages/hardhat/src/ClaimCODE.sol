@@ -21,6 +21,7 @@ contract ClaimCODE is Ownable, Pausable {
 
     event MerkleRootChanged(bytes32 _merkleRoot);
     event Claim(address indexed _claimant, uint256 _amount);
+    event Sweep(address _token);
 
     error Address0Error();
     error InvalidProof();
@@ -35,8 +36,8 @@ contract ClaimCODE is Ownable, Pausable {
         codeToken = IERC20(_codeToken);
     }
 
-    function verify(bytes32[] calldata proof, bytes32 leaf) public view returns (bool, uint256) {
-        return MerkleProof.verify(proof, merkleRoot, leaf);
+    function verify(bytes32[] calldata _proof, bytes32 _leaf) public view returns (bool, uint256) {
+        return MerkleProof.verify(_proof, merkleRoot, _leaf);
     }
 
     function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external whenNotPaused {
@@ -52,8 +53,8 @@ contract ClaimCODE is Ownable, Pausable {
         codeToken.transfer(msg.sender, _amount);
     }
 
-    function isClaimed(uint256 index) public view returns (bool) {
-        return claimed.get(index);
+    function isClaimed(uint256 _index) public view returns (bool) {
+        return claimed.get(_index);
     }
 
     function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner {
@@ -62,9 +63,10 @@ contract ClaimCODE is Ownable, Pausable {
         emit MerkleRootChanged(_merkleRoot);
     }
 
-    function sweep(IERC20 token) external onlyOwner {
-        if (token == codeToken && block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
-        token.transfer(owner(), token.balanceOf(address(this)));
+    function sweep(IERC20 _token) external onlyOwner {
+        if (_token == codeToken && block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
+        _token.transfer(owner(), _token.balanceOf(address(this)));
+        emit Sweep(address(_token));
     }
 
     function pause() external onlyOwner {
