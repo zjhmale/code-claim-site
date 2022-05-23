@@ -127,7 +127,7 @@ describe('CODE', function () {
         to: treasuryOwnedCODE.address,
         value: ethers.utils.parseEther('1.0'),
       });
-    } catch { }
+    } catch {}
     expect(await ethers.provider.getBalance(treasuryOwnedCODE.address)).to.equal(
       ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
     );

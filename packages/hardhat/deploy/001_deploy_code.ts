@@ -13,7 +13,6 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [treasury],
   });
 
-
   const codeContract = await ethers.getContract('CODE');
   const adminRole = await codeContract.DEFAULT_ADMIN_ROLE();
   const connectContract = await codeContract.connect(await ethers.getSigner(deployer));

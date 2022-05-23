@@ -43,18 +43,18 @@ contract CODE is ERC20, ERC20Permit, AccessControl, ERC20Burnable, ERC20Votes {
 
     // The following functions are overrides required by ERC20Votes
     function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
+        address _from,
+        address _to,
+        uint256 _amount
     ) internal override(ERC20, ERC20Votes) {
-        super._afterTokenTransfer(from, to, amount);
+        super._afterTokenTransfer(_from, _to, _amount);
     }
 
-    function _mint(address to, uint256 amount) internal override(ERC20, ERC20Votes) {
-        super._mint(to, amount);
+    function _mint(address _to, uint256 _amount) internal override(ERC20, ERC20Votes) {
+        super._mint(_to, _amount);
     }
 
-    function _burn(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
-        super._burn(account, amount);
+    function _burn(address _account, uint256 _amount) internal override(ERC20, ERC20Votes) {
+        super._burn(_account, _amount);
     }
 }
