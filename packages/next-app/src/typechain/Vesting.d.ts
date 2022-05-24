@@ -36,7 +36,6 @@ interface VestingInterface extends ethers.utils.Interface {
     "sweep()": FunctionFragment;
     "totalEpochs()": FunctionFragment;
     "totalReleased()": FunctionFragment;
-    "totalShares()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "vestedAmount(address)": FunctionFragment;
   };
@@ -72,10 +71,6 @@ interface VestingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "totalReleased",
-    values?: undefined,
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalShares",
     values?: undefined,
   ): string;
   encodeFunctionData(
@@ -118,10 +113,6 @@ interface VestingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "totalReleased",
-    data: BytesLike,
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalShares",
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -247,8 +238,6 @@ export class Vesting extends BaseContract {
 
     totalReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    totalShares(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -304,8 +293,6 @@ export class Vesting extends BaseContract {
 
   totalReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
-  totalShares(overrides?: CallOverrides): Promise<BigNumber>;
-
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> },
@@ -351,8 +338,6 @@ export class Vesting extends BaseContract {
     totalEpochs(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalReleased(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalShares(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -460,8 +445,6 @@ export class Vesting extends BaseContract {
 
     totalReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
-    totalShares(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -526,8 +509,6 @@ export class Vesting extends BaseContract {
     totalEpochs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalShares(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

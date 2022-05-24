@@ -19,7 +19,7 @@ contract Vesting is Ownable {
     uint256 public immutable releasePeriod = 30 days; // release every month
     uint256 public immutable totalEpochs = 24; // total release epochs will be 24 months
     // The Founding Team will retain 6%, current Advisors will retain 0.9% and only 50% will be vested
-    uint256 public immutable totalShares = (690_000 / 2) * 1e18;
+    // uint256 public immutable totalShares = (690_000 / 2) * 1e18;
 
     event PaymentReleased(address _payee, uint256 _amount);
     event PayeeAddedOrUpdated(address _payee, uint256 _shares);
@@ -68,13 +68,9 @@ contract Vesting is Ownable {
         if (_payees.length == 0) revert PayeesEmpty();
         if (_payees.length != _shares.length) revert PayeesSharesMismatch();
 
-        uint256 _totalShares;
         for (uint256 i = 0; i < _payees.length; i++) {
             addOrUpdatePayee(_payees[i], _shares[i]);
-            _totalShares += _shares[i];
         }
-
-        if (_totalShares != totalShares) revert TotalSharesMismatch();
     }
 
     function addOrUpdatePayee(address _account, uint256 _shares) public onlyOwner {
