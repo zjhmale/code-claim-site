@@ -22,6 +22,18 @@ contract Vesting is Ownable {
     // The Founding Team will retain 6%, current Advisors will retain 0.9% and only 50% will be vested
     uint256 public immutable totalShares = (690_000 / 2) * 1e18;
 
+    event PayeeAdded(address _payee, uint256 _shares);
+    event PaymentReleased(address _payee, uint256 _amount);
+
+    error AccountHasNoShare();
+    error AccountHasNoDuePayment();
+    error PayeesEmpty();
+    error PayeesSharesMismatch();
+    error TotalSharesMismatch();
+    error Address0Error();
+    error Shares0Error();
+    error ClaimNotEnded();
+
     constructor(address _codeToken, uint256 _startTimestamp) {
         codeToken = IERC20(_codeToken);
         start = _startTimestamp;
@@ -29,9 +41,9 @@ contract Vesting is Ownable {
 
     function release() external {
         address account = _msgSender();
-        require(shares[account] > 0, "Vesting: account has no shares");
+        if (shares[account] <= 0) revert AccountHasNoShare();
         uint256 releasable = vestedAmount(account);
-        require(releasable > 0, "Vesting: account is not due payment");
+        if (releasable <= 0) revert AccountHasNoDuePayment();
         if (releasable > shares[account]) {
             releasable = shares[account];
         }
@@ -40,6 +52,7 @@ contract Vesting is Ownable {
         totalReleased += releasable;
 
         codeToken.transfer(account, releasable);
+        emit PaymentReleased(account, releasable);
     }
 
     function vestedAmount(address _account) public view returns (uint256) {
@@ -53,8 +66,8 @@ contract Vesting is Ownable {
     }
 
     function addPayees(address[] calldata _payees, uint256[] calldata _shares) external onlyOwner {
-        require(_payees.length == _shares.length, "Vesting: payees and shares length mismatch");
-        require(_payees.length > 0, "Vesting: no payees");
+        if (_payees.length == 0) revert PayeesEmpty();
+        if (_payees.length != _shares.length) revert PayeesSharesMismatch();
 
         uint256 _totalShares;
         for (uint256 i = 0; i < _payees.length; i++) {
@@ -62,16 +75,17 @@ contract Vesting is Ownable {
             _totalShares += _shares[i];
         }
 
-        require(_totalShares == totalShares, "TotalShares mismatch");
+        if (_totalShares != totalShares) revert TotalSharesMismatch();
     }
 
     function _addPayee(address _account, uint256 _shares) private {
-        require(_account != address(0), "Vesting: account is the zero address");
-        require(_shares > 0, "Vesting: shares are 0");
+        if (_shares == 0) revert Shares0Error();
+        if (_account == address(0)) revert Address0Error();
         require(shares[_account] == 0, "Vesting: account already has shares");
 
         payees.push(_account);
         shares[_account] = _shares;
+        emit PayeeAdded(_account, _shares);
     }
 
     function epoch(uint256 _period) public pure returns (uint256) {
@@ -80,7 +94,7 @@ contract Vesting is Ownable {
 
     function sweep() external onlyOwner {
         uint256 releasePeriodEnds = start + duration;
-        require(block.timestamp > releasePeriodEnds, "Vesting: Release period not ends");
+        if (block.timestamp <= releasePeriodEnds) revert ClaimNotEnded();
         codeToken.transfer(owner(), codeToken.balanceOf(address(this)));
     }
 }

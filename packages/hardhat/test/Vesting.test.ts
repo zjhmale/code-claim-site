@@ -64,12 +64,12 @@ describe('Vesting', function () {
     const tenDayAfter = 10 * 24 * 60 * 60;
     await ethers.provider.send('evm_increaseTime', [tenDayAfter]);
     // vesting tokens will only be released every month
-    await expect(users[1].Vesting.release()).to.be.revertedWith('Vesting: account is not due payment');
+    await expect(users[1].Vesting.release()).to.be.revertedWith('AccountHasNoDuePayment()');
   });
 
   it('non payee got no vesting', async function () {
     const { users } = await setup();
-    await expect(users[0].Vesting.release()).to.be.revertedWith('Vesting: account has no shares');
+    await expect(users[0].Vesting.release()).to.be.revertedWith('AccountHasNoShare()');
   });
 
   it('release part of shares if vesting duration not ends', async function () {
@@ -130,7 +130,7 @@ describe('Vesting', function () {
 
     await expect(Vesting.sweep()).to.be.revertedWith('Ownable: caller is not the owner');
 
-    await expect(treasuryOwnedVesting.sweep()).to.be.revertedWith('Vesting: Release period not ends');
+    await expect(treasuryOwnedVesting.sweep()).to.be.revertedWith('ClaimNotEnded()');
 
     const twoYearsAfter = 2 * 365 * 24 * 60 * 60 + 10 * 24 * 60 * 60;
     await ethers.provider.send('evm_increaseTime', [twoYearsAfter]);

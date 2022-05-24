@@ -129,13 +129,25 @@ interface VestingInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "PayeeAdded(address,uint256)": EventFragment;
+    "PaymentReleased(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PayeeAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentReleased"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type PayeeAddedEvent = TypedEvent<
+  [string, BigNumber] & { _payee: string; _shares: BigNumber }
+>;
+
+export type PaymentReleasedEvent = TypedEvent<
+  [string, BigNumber] & { _payee: string; _amount: BigNumber }
 >;
 
 export class Vesting extends BaseContract {
@@ -350,6 +362,38 @@ export class Vesting extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "PayeeAdded(address,uint256)"(
+      _payee?: null,
+      _shares?: null,
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _payee: string; _shares: BigNumber }
+    >;
+
+    PayeeAdded(
+      _payee?: null,
+      _shares?: null,
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _payee: string; _shares: BigNumber }
+    >;
+
+    "PaymentReleased(address,uint256)"(
+      _payee?: null,
+      _amount?: null,
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _payee: string; _amount: BigNumber }
+    >;
+
+    PaymentReleased(
+      _payee?: null,
+      _amount?: null,
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _payee: string; _amount: BigNumber }
     >;
   };
 
