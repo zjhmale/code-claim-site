@@ -21,12 +21,12 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface VestingInterface extends ethers.utils.Interface {
   functions: {
-    "addPayees(address[],uint256[])": FunctionFragment;
+    "addOrUpdatePayee(address,uint256)": FunctionFragment;
+    "addOrUpdatePayees(address[],uint256[])": FunctionFragment;
     "codeToken()": FunctionFragment;
     "duration()": FunctionFragment;
     "epoch(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "payees(uint256)": FunctionFragment;
     "release()": FunctionFragment;
     "releasePeriod()": FunctionFragment;
     "released(address)": FunctionFragment;
@@ -42,17 +42,17 @@ interface VestingInterface extends ethers.utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "addPayees",
+    functionFragment: "addOrUpdatePayee",
+    values: [string, BigNumberish],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addOrUpdatePayees",
     values: [string[], BigNumberish[]],
   ): string;
   encodeFunctionData(functionFragment: "codeToken", values?: undefined): string;
   encodeFunctionData(functionFragment: "duration", values?: undefined): string;
   encodeFunctionData(functionFragment: "epoch", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "payees",
-    values: [BigNumberish],
-  ): string;
   encodeFunctionData(functionFragment: "release", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "releasePeriod",
@@ -87,12 +87,18 @@ interface VestingInterface extends ethers.utils.Interface {
     values: [string],
   ): string;
 
-  decodeFunctionResult(functionFragment: "addPayees", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addOrUpdatePayee",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addOrUpdatePayees",
+    data: BytesLike,
+  ): Result;
   decodeFunctionResult(functionFragment: "codeToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "duration", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "epoch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "payees", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "releasePeriod",
@@ -129,12 +135,12 @@ interface VestingInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
-    "PayeeAdded(address,uint256)": EventFragment;
+    "PayeeAddedOrUpdated(address,uint256)": EventFragment;
     "PaymentReleased(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PayeeAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PayeeAddedOrUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentReleased"): EventFragment;
 }
 
@@ -142,7 +148,7 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type PayeeAddedEvent = TypedEvent<
+export type PayeeAddedOrUpdatedEvent = TypedEvent<
   [string, BigNumber] & { _payee: string; _shares: BigNumber }
 >;
 
@@ -194,7 +200,13 @@ export class Vesting extends BaseContract {
   interface: VestingInterface;
 
   functions: {
-    addPayees(
+    addOrUpdatePayee(
+      _account: string,
+      _shares: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    addOrUpdatePayees(
       _payees: string[],
       _shares: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -210,8 +222,6 @@ export class Vesting extends BaseContract {
     ): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    payees(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     release(
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -250,7 +260,13 @@ export class Vesting extends BaseContract {
     ): Promise<[BigNumber]>;
   };
 
-  addPayees(
+  addOrUpdatePayee(
+    _account: string,
+    _shares: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  addOrUpdatePayees(
     _payees: string[],
     _shares: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> },
@@ -263,8 +279,6 @@ export class Vesting extends BaseContract {
   epoch(_period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  payees(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   release(
     overrides?: Overrides & { from?: string | Promise<string> },
@@ -300,7 +314,13 @@ export class Vesting extends BaseContract {
   vestedAmount(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    addPayees(
+    addOrUpdatePayee(
+      _account: string,
+      _shares: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    addOrUpdatePayees(
       _payees: string[],
       _shares: BigNumberish[],
       overrides?: CallOverrides,
@@ -313,8 +333,6 @@ export class Vesting extends BaseContract {
     epoch(_period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    payees(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     release(overrides?: CallOverrides): Promise<void>;
 
@@ -364,7 +382,7 @@ export class Vesting extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "PayeeAdded(address,uint256)"(
+    "PayeeAddedOrUpdated(address,uint256)"(
       _payee?: null,
       _shares?: null,
     ): TypedEventFilter<
@@ -372,7 +390,7 @@ export class Vesting extends BaseContract {
       { _payee: string; _shares: BigNumber }
     >;
 
-    PayeeAdded(
+    PayeeAddedOrUpdated(
       _payee?: null,
       _shares?: null,
     ): TypedEventFilter<
@@ -398,7 +416,13 @@ export class Vesting extends BaseContract {
   };
 
   estimateGas: {
-    addPayees(
+    addOrUpdatePayee(
+      _account: string,
+      _shares: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    addOrUpdatePayees(
       _payees: string[],
       _shares: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -411,8 +435,6 @@ export class Vesting extends BaseContract {
     epoch(_period: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    payees(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     release(
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -452,7 +474,13 @@ export class Vesting extends BaseContract {
   };
 
   populateTransaction: {
-    addPayees(
+    addOrUpdatePayee(
+      _account: string,
+      _shares: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    addOrUpdatePayees(
       _payees: string[],
       _shares: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> },
@@ -468,11 +496,6 @@ export class Vesting extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    payees(
-      arg0: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>;
 
     release(
       overrides?: Overrides & { from?: string | Promise<string> },

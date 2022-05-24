@@ -25,7 +25,7 @@ const setup = deployments.createFixture(async () => {
   const { treasury } = await getNamedAccounts();
   const treasuryOwnedVesting = await Vesting.connect(await ethers.getSigner(treasury));
 
-  await treasuryOwnedVesting.addPayees(payees, shares);
+  await treasuryOwnedVesting.addOrUpdatePayees(payees, shares);
 
   return {
     CODE,
@@ -47,6 +47,17 @@ describe('Vesting', function () {
     const { treasury } = await getNamedAccounts();
     const owner = await Vesting.owner();
     expect(treasury).to.equal(owner);
+  });
+
+  it('update payee shares', async function () {
+    const { treasuryOwnedVesting } = await setup();
+    const unnamedAccounts = await getUnnamedAccounts();
+    const account1 = unnamedAccounts[1];
+    const oldShares = ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS);
+    const newShares = ethers.utils.parseUnits((300_000).toString(), TOKEN_DECIMALS);
+    expect(await treasuryOwnedVesting.shares(account1)).to.equal(oldShares);
+    await treasuryOwnedVesting.addOrUpdatePayee(account1, newShares);
+    expect(await treasuryOwnedVesting.shares(account1)).to.equal(newShares);
   });
 
   it('should calculate the right epoch', async function () {
@@ -147,6 +158,8 @@ describe('Vesting', function () {
     const payees = [users[0].address];
     // shares should sum up to 690_000
     const shares = [ethers.utils.parseUnits((150_000).toString(), TOKEN_DECIMALS)];
-    await expect(users[0].Vesting.addPayees(payees, shares)).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(users[0].Vesting.addOrUpdatePayees(payees, shares)).to.be.revertedWith(
+      'Ownable: caller is not the owner'
+    );
   });
 });

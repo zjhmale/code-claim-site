@@ -11,7 +11,6 @@ contract Vesting is Ownable {
 
     mapping(address => uint256) public shares;
     mapping(address => uint256) public released;
-    address[] public payees;
 
     IERC20 public immutable codeToken;
 
@@ -22,8 +21,8 @@ contract Vesting is Ownable {
     // The Founding Team will retain 6%, current Advisors will retain 0.9% and only 50% will be vested
     uint256 public immutable totalShares = (690_000 / 2) * 1e18;
 
-    event PayeeAdded(address _payee, uint256 _shares);
     event PaymentReleased(address _payee, uint256 _amount);
+    event PayeeAddedOrUpdated(address _payee, uint256 _shares);
 
     error AccountHasNoShare();
     error AccountHasNoDuePayment();
@@ -65,27 +64,25 @@ contract Vesting is Ownable {
         }
     }
 
-    function addPayees(address[] calldata _payees, uint256[] calldata _shares) external onlyOwner {
+    function addOrUpdatePayees(address[] calldata _payees, uint256[] calldata _shares) external onlyOwner {
         if (_payees.length == 0) revert PayeesEmpty();
         if (_payees.length != _shares.length) revert PayeesSharesMismatch();
 
         uint256 _totalShares;
         for (uint256 i = 0; i < _payees.length; i++) {
-            _addPayee(_payees[i], _shares[i]);
+            addOrUpdatePayee(_payees[i], _shares[i]);
             _totalShares += _shares[i];
         }
 
         if (_totalShares != totalShares) revert TotalSharesMismatch();
     }
 
-    function _addPayee(address _account, uint256 _shares) private {
+    function addOrUpdatePayee(address _account, uint256 _shares) public onlyOwner {
         if (_shares == 0) revert Shares0Error();
         if (_account == address(0)) revert Address0Error();
-        require(shares[_account] == 0, "Vesting: account already has shares");
 
-        payees.push(_account);
         shares[_account] = _shares;
-        emit PayeeAdded(_account, _shares);
+        emit PayeeAddedOrUpdated(_account, _shares);
     }
 
     function epoch(uint256 _period) public pure returns (uint256) {
