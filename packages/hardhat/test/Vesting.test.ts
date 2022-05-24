@@ -49,9 +49,14 @@ describe('Vesting', function () {
     expect(treasury).to.equal(owner);
   });
 
-  it('no releasable assets at exactly the same time after vesting contract deployed', async function () {
+  it('should calculate the right epoch', async function () {
     const { Vesting } = await setup();
-    expect(await Vesting.epoch(0)).to.equal(0);
+    // no releasable assets at exactly the same time after vesting contract deployed
+    expect(await Vesting.epoch(0 * 24 * 60 * 60)).to.equal(0);
+    expect(await Vesting.epoch(29 * 24 * 60 * 60)).to.equal(0);
+    expect(await Vesting.epoch(35 * 24 * 60 * 60)).to.equal(1);
+    expect(await Vesting.epoch(59 * 24 * 60 * 60)).to.equal(1);
+    expect(await Vesting.epoch(60 * 24 * 60 * 60)).to.equal(2);
   });
 
   it('no releasable assets within the first 30 days', async function () {
