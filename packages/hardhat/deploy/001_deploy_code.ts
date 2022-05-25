@@ -5,11 +5,12 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer, treasury } = await getNamedAccounts();
 
   const dd = await deploy('CODE', {
     from: deployer,
     log: true,
+    args: [treasury],
   });
 
   console.log('CODE contract deployer:', deployer);
