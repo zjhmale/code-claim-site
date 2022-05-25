@@ -5,6 +5,7 @@ import "./MerkleProof.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
 import "hardhat/console.sol";
@@ -21,7 +22,8 @@ contract ClaimCODE is Ownable, Pausable {
 
     event MerkleRootChanged(bytes32 _merkleRoot);
     event Claim(address indexed _claimant, uint256 _amount);
-    event Sweep(address _token);
+    event Sweep20(address _token);
+    event Sweep721(address _token, uint256 _tokenID);
 
     error Address0Error();
     error InvalidProof();
@@ -63,11 +65,17 @@ contract ClaimCODE is Ownable, Pausable {
         emit MerkleRootChanged(_merkleRoot);
     }
 
-    function sweep(address _tokenAddr) external onlyOwner {
+    function sweep20(address _tokenAddr) external onlyOwner {
         IERC20 token = IERC20(_tokenAddr);
         if (_tokenAddr == address(codeToken) && block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
         token.transfer(owner(), token.balanceOf(address(this)));
-        emit Sweep(_tokenAddr);
+        emit Sweep20(_tokenAddr);
+    }
+
+    function sweep721(address _tokenAddr, uint256 _tokenID) external onlyOwner {
+        IERC721 token = IERC721(_tokenAddr);
+        token.transferFrom(address(this), owner(), _tokenID);
+        emit Sweep721(_tokenAddr, _tokenID);
     }
 
     function pause() external onlyOwner {

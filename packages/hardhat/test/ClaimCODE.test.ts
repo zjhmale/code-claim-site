@@ -19,6 +19,10 @@ const setup = deployments.createFixture(async () => {
   const mockERC20 = await mockERC20Cf.deploy();
   await mockERC20.deployed();
 
+  const mockERC721Cf = await ethers.getContractFactory('MockERC721');
+  const mockERC721 = await mockERC721Cf.deploy();
+  await mockERC721.deployed();
+
   const unnamedAccounts = await getUnnamedAccounts();
   const airdrop = {
     [unnamedAccounts[1]]: 100,
@@ -39,10 +43,15 @@ const setup = deployments.createFixture(async () => {
 
   await treasuryOwnedClaimCODE.setMerkleRoot(merkleRoot);
 
+  await mockERC721.mintTo(treasury);
+  const treasuryOwnedNFT = await mockERC721.connect(await ethers.getSigner(treasury));
+  await treasuryOwnedNFT.transferFrom(treasury, ClaimCODE.address, 1);
+
   return {
     CODE,
     ClaimCODE,
     mockERC20,
+    mockERC721,
     treasuryOwnedClaimCODE,
     merkleTree,
     merkleRoot,
@@ -175,14 +184,14 @@ describe('Claim CODE', function () {
   it('cannot sweep if claim period not ends', async function () {
     const { CODE, ClaimCODE, treasuryOwnedClaimCODE } = await setup();
 
-    await expect(ClaimCODE.sweep(CODE.address)).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(ClaimCODE.sweep20(CODE.address)).to.be.revertedWith('Ownable: caller is not the owner');
 
-    await expect(treasuryOwnedClaimCODE.sweep(CODE.address)).to.be.revertedWith('ClaimNotEnded()');
+    await expect(treasuryOwnedClaimCODE.sweep20(CODE.address)).to.be.revertedWith('ClaimNotEnded()');
 
     const ninetyOneDays = 91 * 24 * 60 * 60;
     await ethers.provider.send('evm_increaseTime', [ninetyOneDays]);
 
-    await treasuryOwnedClaimCODE.sweep(CODE.address);
+    await treasuryOwnedClaimCODE.sweep20(CODE.address);
 
     const { treasury } = await getNamedAccounts();
     const treasuryBalance = await CODE.balanceOf(treasury);
@@ -202,10 +211,27 @@ describe('Claim CODE', function () {
     const contractBalance = await mockERC20.balanceOf(treasuryOwnedClaimCODE.address);
     expect(contractBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
 
-    await treasuryOwnedClaimCODE.sweep(mockERC20.address);
+    await treasuryOwnedClaimCODE.sweep20(mockERC20.address);
 
     const treasuryBalance = await mockERC20.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('sweep erc721 tokens', async function () {
+    const { mockERC721, treasuryOwnedClaimCODE } = await setup();
+    const { treasury } = await getNamedAccounts();
+
+    const treasuryBalanceBefore = await mockERC721.balanceOf(treasury);
+    expect(treasuryBalanceBefore).to.equal(0);
+    const contractBalanceBefore = await mockERC721.balanceOf(treasuryOwnedClaimCODE.address);
+    expect(contractBalanceBefore).to.equal(1);
+
+    await treasuryOwnedClaimCODE.sweep721(mockERC721.address, 1);
+
+    const treasuryBalanceAfter = await mockERC721.balanceOf(treasury);
+    expect(treasuryBalanceAfter).to.equal(1);
+    const contractBalanceAfter = await mockERC721.balanceOf(treasuryOwnedClaimCODE.address);
+    expect(contractBalanceAfter).to.equal(0);
   });
 
   it('ensure claim contract dont receive Ether', async function () {

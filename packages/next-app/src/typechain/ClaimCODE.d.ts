@@ -31,7 +31,8 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setMerkleRoot(bytes32)": FunctionFragment;
-    "sweep(address)": FunctionFragment;
+    "sweep20(address)": FunctionFragment;
+    "sweep721(address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "verify(bytes32[],bytes32)": FunctionFragment;
@@ -65,7 +66,11 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     values: [BytesLike],
   ): string;
-  encodeFunctionData(functionFragment: "sweep", values: [string]): string;
+  encodeFunctionData(functionFragment: "sweep20", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "sweep721",
+    values: [string, BigNumberish],
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string],
@@ -98,7 +103,8 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     functionFragment: "setMerkleRoot",
     data: BytesLike,
   ): Result;
-  decodeFunctionResult(functionFragment: "sweep", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sweep20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sweep721", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike,
@@ -111,7 +117,8 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
     "MerkleRootChanged(bytes32)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
-    "Sweep(address)": EventFragment;
+    "Sweep20(address)": EventFragment;
+    "Sweep721(address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
@@ -119,7 +126,8 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MerkleRootChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Sweep"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Sweep20"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Sweep721"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
@@ -137,7 +145,11 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type PausedEvent = TypedEvent<[string] & { account: string }>;
 
-export type SweepEvent = TypedEvent<[string] & { _token: string }>;
+export type Sweep20Event = TypedEvent<[string] & { _token: string }>;
+
+export type Sweep721Event = TypedEvent<
+  [string, BigNumber] & { _token: string; _tokenID: BigNumber }
+>;
 
 export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
@@ -219,8 +231,14 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
-    sweep(
+    sweep20(
       _tokenAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    sweep721(
+      _tokenAddr: string,
+      _tokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -271,8 +289,14 @@ export class ClaimCODE extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
-  sweep(
+  sweep20(
     _tokenAddr: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  sweep721(
+    _tokenAddr: string,
+    _tokenID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -322,7 +346,13 @@ export class ClaimCODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
-    sweep(_tokenAddr: string, overrides?: CallOverrides): Promise<void>;
+    sweep20(_tokenAddr: string, overrides?: CallOverrides): Promise<void>;
+
+    sweep721(
+      _tokenAddr: string,
+      _tokenID: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -385,11 +415,27 @@ export class ClaimCODE extends BaseContract {
 
     Paused(account?: null): TypedEventFilter<[string], { account: string }>;
 
-    "Sweep(address)"(
+    "Sweep20(address)"(
       _token?: null,
     ): TypedEventFilter<[string], { _token: string }>;
 
-    Sweep(_token?: null): TypedEventFilter<[string], { _token: string }>;
+    Sweep20(_token?: null): TypedEventFilter<[string], { _token: string }>;
+
+    "Sweep721(address,uint256)"(
+      _token?: null,
+      _tokenID?: null,
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _token: string; _tokenID: BigNumber }
+    >;
+
+    Sweep721(
+      _token?: null,
+      _tokenID?: null,
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _token: string; _tokenID: BigNumber }
+    >;
 
     "Unpaused(address)"(
       account?: null,
@@ -433,8 +479,14 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
-    sweep(
+    sweep20(
       _tokenAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    sweep721(
+      _tokenAddr: string,
+      _tokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -489,8 +541,14 @@ export class ClaimCODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
-    sweep(
+    sweep20(
       _tokenAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    sweep721(
+      _tokenAddr: string,
+      _tokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
