@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "hardhat/console.sol";
 
@@ -23,6 +24,8 @@ contract Vesting is Ownable {
 
     event PaymentReleased(address _payee, uint256 _amount);
     event PayeeAddedOrUpdated(address _payee, uint256 _shares);
+    event Sweep20(address _token);
+    event Sweep721(address _token, uint256 _tokenID);
 
     error AccountHasNoShare();
     error AccountHasNoDuePayment();
@@ -31,7 +34,7 @@ contract Vesting is Ownable {
     error TotalSharesMismatch();
     error Address0Error();
     error Shares0Error();
-    error ClaimNotEnded();
+    error ReleaseNotEnded();
 
     constructor(address _codeToken, uint256 _startTimestamp) {
         codeToken = IERC20(_codeToken);
@@ -85,9 +88,17 @@ contract Vesting is Ownable {
         return _period / releasePeriod;
     }
 
-    function sweep() external onlyOwner {
+    function sweep20(address _tokenAddr) external onlyOwner {
+        IERC20 token = IERC20(_tokenAddr);
         uint256 releasePeriodEnds = start + duration;
-        if (block.timestamp <= releasePeriodEnds) revert ClaimNotEnded();
-        codeToken.transfer(owner(), codeToken.balanceOf(address(this)));
+        if (_tokenAddr == address(codeToken) && block.timestamp <= releasePeriodEnds) revert ReleaseNotEnded();
+        token.transfer(owner(), token.balanceOf(address(this)));
+        emit Sweep20(_tokenAddr);
+    }
+
+    function sweep721(address _tokenAddr, uint256 _tokenID) external onlyOwner {
+        IERC721 token = IERC721(_tokenAddr);
+        token.transferFrom(address(this), owner(), _tokenID);
+        emit Sweep721(_tokenAddr, _tokenID);
     }
 }

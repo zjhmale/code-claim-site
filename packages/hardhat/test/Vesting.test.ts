@@ -8,8 +8,15 @@ const TOKEN_DECIMALS = 18;
 const setup = deployments.createFixture(async () => {
   await deployments.fixture(['Vesting']);
 
-  const unnamedAccounts = await getUnnamedAccounts();
+  const mockERC20Cf = await ethers.getContractFactory('MockERC20');
+  const mockERC20 = await mockERC20Cf.deploy();
+  await mockERC20.deployed();
 
+  const mockERC721Cf = await ethers.getContractFactory('MockERC721');
+  const mockERC721 = await mockERC721Cf.deploy();
+  await mockERC721.deployed();
+
+  const unnamedAccounts = await getUnnamedAccounts();
   const payees = [unnamedAccounts[1], unnamedAccounts[2], unnamedAccounts[3]];
   // shares should sum up to 690_000
   const shares = [
@@ -27,9 +34,15 @@ const setup = deployments.createFixture(async () => {
 
   await treasuryOwnedVesting.addOrUpdatePayees(payees, shares);
 
+  await mockERC721.mintTo(treasury);
+  const treasuryOwnedNFT = await mockERC721.connect(await ethers.getSigner(treasury));
+  await treasuryOwnedNFT.transferFrom(treasury, Vesting.address, 1);
+
   return {
     CODE,
     Vesting,
+    mockERC20,
+    mockERC721,
     treasuryOwnedVesting,
     users,
   };
@@ -139,18 +152,80 @@ describe('Vesting', function () {
   it('cannot sweep if claim period not ends', async function () {
     const { CODE, Vesting, treasuryOwnedVesting } = await setup();
 
-    await expect(Vesting.sweep()).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(Vesting.sweep20(CODE.address)).to.be.revertedWith('Ownable: caller is not the owner');
 
-    await expect(treasuryOwnedVesting.sweep()).to.be.revertedWith('ClaimNotEnded()');
+    await expect(treasuryOwnedVesting.sweep20(CODE.address)).to.be.revertedWith('ReleaseNotEnded()');
 
     const twoYearsAfter = 2 * 365 * 24 * 60 * 60 + 10 * 24 * 60 * 60;
     await ethers.provider.send('evm_increaseTime', [twoYearsAfter]);
 
-    await treasuryOwnedVesting.sweep();
+    await treasuryOwnedVesting.sweep20(CODE.address);
 
     const { treasury } = await getNamedAccounts();
     const treasuryBalance = await CODE.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((6_500_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('sweep other erc20 tokens if claim period not ends', async function () {
+    const { mockERC20, treasuryOwnedVesting } = await setup();
+    const { deployer, treasury } = await getNamedAccounts();
+
+    const mockBalance = await mockERC20.balanceOf(deployer);
+    expect(mockBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+    const tc = await mockERC20.connect(await ethers.getSigner(deployer));
+
+    await tc.transfer(treasuryOwnedVesting.address, ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+
+    const contractBalance = await mockERC20.balanceOf(treasuryOwnedVesting.address);
+    expect(contractBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+
+    await treasuryOwnedVesting.sweep20(mockERC20.address);
+
+    const treasuryBalance = await mockERC20.balanceOf(treasury);
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('sweep erc721 tokens', async function () {
+    const { mockERC721, treasuryOwnedVesting } = await setup();
+    const { treasury } = await getNamedAccounts();
+
+    const treasuryBalanceBefore = await mockERC721.balanceOf(treasury);
+    expect(treasuryBalanceBefore).to.equal(0);
+    const contractBalanceBefore = await mockERC721.balanceOf(treasuryOwnedVesting.address);
+    expect(contractBalanceBefore).to.equal(1);
+
+    await treasuryOwnedVesting.sweep721(mockERC721.address, 1);
+
+    const treasuryBalanceAfter = await mockERC721.balanceOf(treasury);
+    expect(treasuryBalanceAfter).to.equal(1);
+    const contractBalanceAfter = await mockERC721.balanceOf(treasuryOwnedVesting.address);
+    expect(contractBalanceAfter).to.equal(0);
+  });
+
+  it('ensure claim contract dont receive Ether', async function () {
+    const { treasuryOwnedVesting } = await setup();
+    const [deployer] = await ethers.getSigners();
+    console.log(
+      `contract ether balance ${ethers.utils.formatEther(
+        await ethers.provider.getBalance(treasuryOwnedVesting.address)
+      )}`
+    );
+    expect(await ethers.provider.getBalance(deployer.address)).to.gt(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
+    expect(await ethers.provider.getBalance(treasuryOwnedVesting.address)).to.equal(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
+    try {
+      // Error: Transaction reverted: function selector was not recognized and there's no fallback nor receive function
+      await deployer.sendTransaction({
+        to: treasuryOwnedVesting.address,
+        value: ethers.utils.parseEther('1.0'),
+      });
+    } catch {}
+    expect(await ethers.provider.getBalance(treasuryOwnedVesting.address)).to.equal(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
   });
 
   it('only owner can add payee', async function () {
