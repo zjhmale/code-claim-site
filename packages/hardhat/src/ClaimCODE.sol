@@ -63,10 +63,11 @@ contract ClaimCODE is Ownable, Pausable {
         emit MerkleRootChanged(_merkleRoot);
     }
 
-    function sweep(IERC20 _token) external onlyOwner {
-        if (_token == codeToken && block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
-        _token.transfer(owner(), _token.balanceOf(address(this)));
-        emit Sweep(address(_token));
+    function sweep(address _tokenAddr) external onlyOwner {
+        IERC20 token = IERC20(_tokenAddr);
+        if (_tokenAddr == address(codeToken) && block.timestamp <= claimPeriodEnds) revert ClaimNotEnded();
+        token.transfer(owner(), token.balanceOf(address(this)));
+        emit Sweep(_tokenAddr);
     }
 
     function pause() external onlyOwner {

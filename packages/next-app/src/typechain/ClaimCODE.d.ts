@@ -220,7 +220,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<ContractTransaction>;
 
     sweep(
-      _token: string,
+      _tokenAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -272,7 +272,7 @@ export class ClaimCODE extends BaseContract {
   ): Promise<ContractTransaction>;
 
   sweep(
-    _token: string,
+    _tokenAddr: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -322,7 +322,7 @@ export class ClaimCODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
-    sweep(_token: string, overrides?: CallOverrides): Promise<void>;
+    sweep(_tokenAddr: string, overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -434,7 +434,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<BigNumber>;
 
     sweep(
-      _token: string,
+      _tokenAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -490,7 +490,7 @@ export class ClaimCODE extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     sweep(
-      _token: string,
+      _tokenAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
