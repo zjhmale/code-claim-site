@@ -7,8 +7,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-contract CODE is ERC20, ERC20Permit, AccessControl, ERC20Burnable {
+contract CODE is ERC20, ERC20Permit, AccessControl, ERC20Burnable, ERC20Votes {
     bytes32 public constant SWEEP_ROLE = keccak256("SWEEP_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -38,5 +39,22 @@ contract CODE is ERC20, ERC20Permit, AccessControl, ERC20Burnable {
         IERC721 token = IERC721(_tokenAddr);
         token.transferFrom(address(this), _to, _tokenID);
         emit Sweep721(_tokenAddr, _to, _tokenID);
+    }
+
+    // The following functions are overrides required by ERC20Votes
+    function _afterTokenTransfer(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) internal override(ERC20, ERC20Votes) {
+        super._afterTokenTransfer(_from, _to, _amount);
+    }
+
+    function _mint(address _to, uint256 _amount) internal override(ERC20, ERC20Votes) {
+        super._mint(_to, _amount);
+    }
+
+    function _burn(address _account, uint256 _amount) internal override(ERC20, ERC20Votes) {
+        super._burn(_account, _amount);
     }
 }
