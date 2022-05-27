@@ -24,6 +24,7 @@ interface CODEInterface extends ethers.utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
+    "SWEEP_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -42,6 +43,8 @@ interface CODEInterface extends ethers.utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "sweep20(address,address)": FunctionFragment;
+    "sweep721(address,address,uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -58,6 +61,10 @@ interface CODEInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "MINTER_ROLE",
+    values?: undefined,
+  ): string;
+  encodeFunctionData(
+    functionFragment: "SWEEP_ROLE",
     values?: undefined,
   ): string;
   encodeFunctionData(
@@ -125,6 +132,14 @@ interface CODEInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike],
   ): string;
+  encodeFunctionData(
+    functionFragment: "sweep20",
+    values: [string, string],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sweep721",
+    values: [string, string, BigNumberish],
+  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -151,6 +166,7 @@ interface CODEInterface extends ethers.utils.Interface {
     functionFragment: "MINTER_ROLE",
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: "SWEEP_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -184,6 +200,8 @@ interface CODEInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike,
   ): Result;
+  decodeFunctionResult(functionFragment: "sweep20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sweep721", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -200,6 +218,8 @@ interface CODEInterface extends ethers.utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Sweep20(address,address)": EventFragment;
+    "Sweep721(address,address,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
@@ -207,6 +227,8 @@ interface CODEInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Sweep20"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Sweep721"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -232,6 +254,18 @@ export type RoleGrantedEvent = TypedEvent<
 
 export type RoleRevokedEvent = TypedEvent<
   [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type Sweep20Event = TypedEvent<
+  [string, string] & { _token: string; _to: string }
+>;
+
+export type Sweep721Event = TypedEvent<
+  [string, string, BigNumber] & {
+    _token: string;
+    _to: string;
+    _tokenID: BigNumber;
+  }
 >;
 
 export type TransferEvent = TypedEvent<
@@ -287,6 +321,8 @@ export class CODE extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    SWEEP_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
       owner: string,
@@ -379,6 +415,19 @@ export class CODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<[boolean]>;
 
+    sweep20(
+      _tokenAddr: string,
+      _to: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    sweep721(
+      _tokenAddr: string,
+      _to: string,
+      _tokenID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -402,6 +451,8 @@ export class CODE extends BaseContract {
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  SWEEP_ROLE(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     owner: string,
@@ -494,6 +545,19 @@ export class CODE extends BaseContract {
     overrides?: CallOverrides,
   ): Promise<boolean>;
 
+  sweep20(
+    _tokenAddr: string,
+    _to: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  sweep721(
+    _tokenAddr: string,
+    _to: string,
+    _tokenID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
   symbol(overrides?: CallOverrides): Promise<string>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -517,6 +581,8 @@ export class CODE extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    SWEEP_ROLE(overrides?: CallOverrides): Promise<string>;
 
     allowance(
       owner: string,
@@ -605,6 +671,19 @@ export class CODE extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides,
     ): Promise<boolean>;
+
+    sweep20(
+      _tokenAddr: string,
+      _to: string,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    sweep721(
+      _tokenAddr: string,
+      _to: string,
+      _tokenID: BigNumberish,
+      overrides?: CallOverrides,
+    ): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -697,6 +776,34 @@ export class CODE extends BaseContract {
       { role: string; account: string; sender: string }
     >;
 
+    "Sweep20(address,address)"(
+      _token?: null,
+      _to?: null,
+    ): TypedEventFilter<[string, string], { _token: string; _to: string }>;
+
+    Sweep20(
+      _token?: null,
+      _to?: null,
+    ): TypedEventFilter<[string, string], { _token: string; _to: string }>;
+
+    "Sweep721(address,address,uint256)"(
+      _token?: null,
+      _to?: null,
+      _tokenID?: null,
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { _token: string; _to: string; _tokenID: BigNumber }
+    >;
+
+    Sweep721(
+      _token?: null,
+      _to?: null,
+      _tokenID?: null,
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { _token: string; _to: string; _tokenID: BigNumber }
+    >;
+
     "Transfer(address,address,uint256)"(
       from?: string | null,
       to?: string | null,
@@ -722,6 +829,8 @@ export class CODE extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SWEEP_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -817,6 +926,19 @@ export class CODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
+    sweep20(
+      _tokenAddr: string,
+      _to: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    sweep721(
+      _tokenAddr: string,
+      _to: string,
+      _tokenID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -843,6 +965,8 @@ export class CODE extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    SWEEP_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -942,6 +1066,19 @@ export class CODE extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>;
+
+    sweep20(
+      _tokenAddr: string,
+      _to: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    sweep721(
+      _tokenAddr: string,
+      _to: string,
+      _tokenID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;

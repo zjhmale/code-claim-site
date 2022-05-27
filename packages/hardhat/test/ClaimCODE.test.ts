@@ -15,6 +15,14 @@ const setup = deployments.createFixture(async () => {
   const merkleProof = await merkleProofCf.deploy();
   await merkleProof.deployed();
 
+  const mockERC20Cf = await ethers.getContractFactory('MockERC20');
+  const mockERC20 = await mockERC20Cf.deploy();
+  await mockERC20.deployed();
+
+  const mockERC721Cf = await ethers.getContractFactory('MockERC721');
+  const mockERC721 = await mockERC721Cf.deploy();
+  await mockERC721.deployed();
+
   const unnamedAccounts = await getUnnamedAccounts();
   const airdrop = {
     [unnamedAccounts[1]]: 100,
@@ -35,9 +43,15 @@ const setup = deployments.createFixture(async () => {
 
   await treasuryOwnedClaimCODE.setMerkleRoot(merkleRoot);
 
+  await mockERC721.mintTo(treasury);
+  const treasuryOwnedNFT = await mockERC721.connect(await ethers.getSigner(treasury));
+  await treasuryOwnedNFT.transferFrom(treasury, ClaimCODE.address, 1);
+
   return {
     CODE,
     ClaimCODE,
+    mockERC20,
+    mockERC721,
     treasuryOwnedClaimCODE,
     merkleTree,
     merkleRoot,
@@ -170,17 +184,79 @@ describe('Claim CODE', function () {
   it('cannot sweep if claim period not ends', async function () {
     const { CODE, ClaimCODE, treasuryOwnedClaimCODE } = await setup();
 
-    await expect(ClaimCODE.sweep()).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(ClaimCODE.sweep20(CODE.address)).to.be.revertedWith('Ownable: caller is not the owner');
 
-    await expect(treasuryOwnedClaimCODE.sweep()).to.be.revertedWith('ClaimNotEnded()');
+    await expect(treasuryOwnedClaimCODE.sweep20(CODE.address)).to.be.revertedWith('ClaimNotEnded()');
 
     const ninetyOneDays = 91 * 24 * 60 * 60;
     await ethers.provider.send('evm_increaseTime', [ninetyOneDays]);
 
-    await treasuryOwnedClaimCODE.sweep();
+    await treasuryOwnedClaimCODE.sweep20(CODE.address);
 
     const { treasury } = await getNamedAccounts();
     const treasuryBalance = await CODE.balanceOf(treasury);
     expect(treasuryBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('sweep other erc20 tokens if claim period not ends', async function () {
+    const { mockERC20, treasuryOwnedClaimCODE } = await setup();
+    const { deployer, treasury } = await getNamedAccounts();
+
+    const mockBalance = await mockERC20.balanceOf(deployer);
+    expect(mockBalance).to.equal(ethers.utils.parseUnits((10_000_000).toString(), TOKEN_DECIMALS));
+    const tc = await mockERC20.connect(await ethers.getSigner(deployer));
+
+    await tc.transfer(treasuryOwnedClaimCODE.address, ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+
+    const contractBalance = await mockERC20.balanceOf(treasuryOwnedClaimCODE.address);
+    expect(contractBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+
+    await treasuryOwnedClaimCODE.sweep20(mockERC20.address);
+
+    const treasuryBalance = await mockERC20.balanceOf(treasury);
+    expect(treasuryBalance).to.equal(ethers.utils.parseUnits((100_000).toString(), TOKEN_DECIMALS));
+  });
+
+  it('sweep erc721 tokens', async function () {
+    const { mockERC721, treasuryOwnedClaimCODE } = await setup();
+    const { treasury } = await getNamedAccounts();
+
+    const treasuryBalanceBefore = await mockERC721.balanceOf(treasury);
+    expect(treasuryBalanceBefore).to.equal(0);
+    const contractBalanceBefore = await mockERC721.balanceOf(treasuryOwnedClaimCODE.address);
+    expect(contractBalanceBefore).to.equal(1);
+
+    await treasuryOwnedClaimCODE.sweep721(mockERC721.address, 1);
+
+    const treasuryBalanceAfter = await mockERC721.balanceOf(treasury);
+    expect(treasuryBalanceAfter).to.equal(1);
+    const contractBalanceAfter = await mockERC721.balanceOf(treasuryOwnedClaimCODE.address);
+    expect(contractBalanceAfter).to.equal(0);
+  });
+
+  it('ensure claim contract dont receive Ether', async function () {
+    const { treasuryOwnedClaimCODE } = await setup();
+    const [deployer] = await ethers.getSigners();
+    console.log(
+      `contract ether balance ${ethers.utils.formatEther(
+        await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)
+      )}`
+    );
+    expect(await ethers.provider.getBalance(deployer.address)).to.gt(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
+    expect(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)).to.equal(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
+    try {
+      // Error: Transaction reverted: function selector was not recognized and there's no fallback nor receive function
+      await deployer.sendTransaction({
+        to: treasuryOwnedClaimCODE.address,
+        value: ethers.utils.parseEther('1.0'),
+      });
+    } catch {}
+    expect(await ethers.provider.getBalance(treasuryOwnedClaimCODE.address)).to.equal(
+      ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS)
+    );
   });
 });
