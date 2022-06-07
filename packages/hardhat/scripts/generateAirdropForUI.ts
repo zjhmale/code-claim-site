@@ -14,7 +14,7 @@ const earlyContribPath = args[2];
 
 if (!nftHoldersPath) throw new Error('Missing nftHoldersPath as first argument!');
 if (!votesAndPoapPath) throw new Error('Missing votesAndPoapPath as second argument!');
-if (!earlyContribPath) throw new Error('Missing earlyContribPath as second argument!');
+if (!earlyContribPath) throw new Error('Missing earlyContribPath as third argument!');
 
 async function main() {
   // Load addresses
