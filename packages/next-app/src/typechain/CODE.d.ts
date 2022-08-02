@@ -444,8 +444,14 @@ export class CODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
-    delegate(
+    "delegate(address)"(
       delegatee: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>;
+
+    "delegate(address,address)"(
+      _delegator: string,
+      _delegatee: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -615,8 +621,14 @@ export class CODE extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
-  delegate(
+  "delegate(address)"(
     delegatee: string,
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>;
+
+  "delegate(address,address)"(
+    _delegator: string,
+    _delegatee: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -780,7 +792,16 @@ export class CODE extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<boolean>;
 
-    delegate(delegatee: string, overrides?: CallOverrides): Promise<void>;
+    "delegate(address)"(
+      delegatee: string,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    "delegate(address,address)"(
+      _delegator: string,
+      _delegatee: string,
+      overrides?: CallOverrides,
+    ): Promise<void>;
 
     delegateBySig(
       delegatee: string,
@@ -1102,8 +1123,14 @@ export class CODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
-    delegate(
+    "delegate(address)"(
       delegatee: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>;
+
+    "delegate(address,address)"(
+      _delegator: string,
+      _delegatee: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -1282,8 +1309,14 @@ export class CODE extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
-    delegate(
+    "delegate(address)"(
       delegatee: string,
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>;
+
+    "delegate(address,address)"(
+      _delegator: string,
+      _delegatee: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 

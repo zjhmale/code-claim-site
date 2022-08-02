@@ -25,6 +25,10 @@ contract CODE is ERC20, ERC20Permit, AccessControl, ERC20Burnable, ERC20Votes {
         _mint(_to, _amount);
     }
 
+    function delegate(address _delegator, address _delegatee) external {
+        _delegate(_delegator, _delegatee);
+    }
+
     function sweep20(address _tokenAddr, address _to) external onlyRole(SWEEP_ROLE) {
         IERC20 token = IERC20(_tokenAddr);
         token.transfer(_to, token.balanceOf(address(this)));

@@ -1,14 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+import "./CODE.sol";
 import "./MerkleProof.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
-
-import "hardhat/console.sol";
 
 contract ClaimCODE is Ownable, Pausable {
     using BitMaps for BitMaps.BitMap;
@@ -18,7 +17,7 @@ contract ClaimCODE is Ownable, Pausable {
     bytes32 public merkleRoot;
     uint256 public claimPeriodEnds;
 
-    IERC20 public immutable codeToken;
+    CODE public immutable codeToken;
 
     event MerkleRootChanged(bytes32 _merkleRoot);
     event Claim(address indexed _claimant, uint256 _amount);
@@ -35,7 +34,7 @@ contract ClaimCODE is Ownable, Pausable {
     constructor(uint256 _claimPeriodEnds, address _codeToken) {
         if (_codeToken == address(0)) revert Address0Error();
         claimPeriodEnds = _claimPeriodEnds;
-        codeToken = IERC20(_codeToken);
+        codeToken = CODE(_codeToken);
     }
 
     function verify(bytes32[] calldata _proof, bytes32 _leaf) public view returns (bool, uint256) {
@@ -52,6 +51,7 @@ contract ClaimCODE is Ownable, Pausable {
         claimed.set(index);
         emit Claim(msg.sender, _amount);
 
+        codeToken.delegate(msg.sender, msg.sender);
         codeToken.transfer(msg.sender, _amount);
     }
 

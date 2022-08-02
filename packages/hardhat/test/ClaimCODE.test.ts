@@ -108,15 +108,24 @@ describe('Claim CODE', function () {
     const isClaimed = await ClaimCODE.isClaimed(correctIndex);
     expect(isClaimed).to.be.false;
 
+    const userBalance = await CODE.balanceOf(users[1].address);
+    expect(userBalance).to.equal(ethers.utils.parseUnits((0).toString(), TOKEN_DECIMALS));
+
+    const delegatee = await CODE.delegates(users[1].address);
+    expect(delegatee).to.equal('0x0000000000000000000000000000000000000000'); // no delegatee
+
     await expect(users[1].ClaimCODE.claimTokens(correctNumTokens, correctProof))
       .to.emit(ClaimCODE, 'Claim')
       .withArgs(correctFormattedAddress, ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
 
-    const userBalance = await CODE.balanceOf(users[1].address);
-    expect(userBalance).to.equal(ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
+    const userBalanceAfter = await CODE.balanceOf(users[1].address);
+    expect(userBalanceAfter).to.equal(ethers.utils.parseUnits((100).toString(), TOKEN_DECIMALS));
 
     const isClaimedAfter = await ClaimCODE.isClaimed(correctIndex);
     expect(isClaimedAfter).to.be.true;
+
+    const delegateeAfter = await CODE.delegates(users[1].address);
+    expect(delegateeAfter).to.equal(users[1].address); // auto self delegation
 
     await expect(users[1].ClaimCODE.claimTokens(correctNumTokens, correctProof)).to.be.revertedWith('AlreadyClaimed()');
   });
