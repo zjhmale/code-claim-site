@@ -22,6 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface CODEInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "DELEGATE_ROLE()": FunctionFragment;
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "SWEEP_ROLE()": FunctionFragment;
@@ -61,6 +62,10 @@ interface CODEInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined,
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DELEGATE_ROLE",
     values?: undefined,
   ): string;
   encodeFunctionData(
@@ -194,6 +199,10 @@ interface CODEInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DELEGATE_ROLE",
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
@@ -399,6 +408,8 @@ export class CODE extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    DELEGATE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -576,6 +587,8 @@ export class CODE extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  DELEGATE_ROLE(overrides?: CallOverrides): Promise<string>;
+
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -749,6 +762,8 @@ export class CODE extends BaseContract {
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DELEGATE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
@@ -1078,6 +1093,8 @@ export class CODE extends BaseContract {
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    DELEGATE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1260,6 +1277,8 @@ export class CODE extends BaseContract {
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
+
+    DELEGATE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

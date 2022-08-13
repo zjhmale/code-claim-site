@@ -32,6 +32,11 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await connectClaimContract.transferOwnership(treasury);
 
+  // only ClaimCODE contract can call delegate function from CODE contract
+  const codeAdmin = await codeContract.connect(await ethers.getSigner(treasury));
+  const delegateRole = await codeContract.DELEGATE_ROLE();
+  await codeAdmin.grantRole(delegateRole, dd.address);
+
   console.log('treasuryAmount:', (await codeContract.balanceOf(treasury)).toString());
   console.log('airdropAmount:', (await codeContract.balanceOf(dd.address)).toString());
 

@@ -22,7 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface ClaimCODEInterface extends ethers.utils.Interface {
   functions: {
     "claimPeriodEnds()": FunctionFragment;
-    "claimTokens(uint256,bytes32[])": FunctionFragment;
+    "claimTokens(uint256,bytes32[],address)": FunctionFragment;
     "codeToken()": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
     "merkleRoot()": FunctionFragment;
@@ -44,7 +44,7 @@ interface ClaimCODEInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "claimTokens",
-    values: [BigNumberish, BytesLike[]],
+    values: [BigNumberish, BytesLike[], string],
   ): string;
   encodeFunctionData(functionFragment: "codeToken", values?: undefined): string;
   encodeFunctionData(
@@ -202,6 +202,7 @@ export class ClaimCODE extends BaseContract {
     claimTokens(
       _amount: BigNumberish,
       _merkleProof: BytesLike[],
+      _delegatee: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
@@ -263,6 +264,7 @@ export class ClaimCODE extends BaseContract {
   claimTokens(
     _amount: BigNumberish,
     _merkleProof: BytesLike[],
+    _delegatee: string,
     overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
@@ -321,6 +323,7 @@ export class ClaimCODE extends BaseContract {
     claimTokens(
       _amount: BigNumberish,
       _merkleProof: BytesLike[],
+      _delegatee: string,
       overrides?: CallOverrides,
     ): Promise<void>;
 
@@ -450,6 +453,7 @@ export class ClaimCODE extends BaseContract {
     claimTokens(
       _amount: BigNumberish,
       _merkleProof: BytesLike[],
+      _delegatee: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
@@ -512,6 +516,7 @@ export class ClaimCODE extends BaseContract {
     claimTokens(
       _amount: BigNumberish,
       _merkleProof: BytesLike[],
+      _delegatee: string,
       overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 

@@ -184,7 +184,11 @@ export const ClaimCard = ({
 
     try {
       setCardState(ClaimCardState.isClaiming);
-      const tx = await tokenContract.claimTokens(numTokens, proof);
+      const tx = await tokenContract.claimTokens(
+        numTokens,
+        proof,
+        accountData?.address,
+      );
       await tx.wait(1);
 
       setCardState(ClaimCardState.claimed);

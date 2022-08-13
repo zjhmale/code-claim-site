@@ -17,7 +17,7 @@ contract ClaimCODE is Ownable, Pausable {
     bytes32 public merkleRoot;
     uint256 public claimPeriodEnds;
 
-    CODE public immutable codeToken;
+    ICODE public immutable codeToken;
 
     event MerkleRootChanged(bytes32 _merkleRoot);
     event Claim(address indexed _claimant, uint256 _amount);
@@ -34,14 +34,18 @@ contract ClaimCODE is Ownable, Pausable {
     constructor(uint256 _claimPeriodEnds, address _codeToken) {
         if (_codeToken == address(0)) revert Address0Error();
         claimPeriodEnds = _claimPeriodEnds;
-        codeToken = CODE(_codeToken);
+        codeToken = ICODE(_codeToken);
     }
 
     function verify(bytes32[] calldata _proof, bytes32 _leaf) public view returns (bool, uint256) {
         return MerkleProof.verify(_proof, merkleRoot, _leaf);
     }
 
-    function claimTokens(uint256 _amount, bytes32[] calldata _merkleProof) external whenNotPaused {
+    function claimTokens(
+        uint256 _amount,
+        bytes32[] calldata _merkleProof,
+        address _delegatee
+    ) external whenNotPaused {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, _amount));
         (bool valid, uint256 index) = verify(_merkleProof, leaf);
         if (!valid) revert InvalidProof();
@@ -51,7 +55,7 @@ contract ClaimCODE is Ownable, Pausable {
         claimed.set(index);
         emit Claim(msg.sender, _amount);
 
-        codeToken.delegate(msg.sender, msg.sender);
+        codeToken.delegate(msg.sender, _delegatee);
         codeToken.transfer(msg.sender, _amount);
     }
 
